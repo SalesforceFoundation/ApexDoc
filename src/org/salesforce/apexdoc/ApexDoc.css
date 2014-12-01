@@ -1,0 +1,140 @@
+body{
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:100%;
+	margin:0px;
+	padding:0px;
+}
+
+/* the top page banner  */
+.topsection {
+	background-color:SteelBlue;
+	width:100%;
+	height:100px;
+	color:white;
+	border:1px solid #000;
+}
+.topsection td{
+	color:white;
+	padding:8px;
+}
+
+/* section-title is the horizontal section headers that declare the classname, methods, etc. */
+.section-title {
+	background-color:SteelBlue;
+	border:1px solid #000000;
+	color:white;
+	padding:5px;
+	font-size:.9em;
+	font-weight:bold;
+	margin-bottom:2px;
+}
+
+/* details is used for displaying the apexdoc values like author, date, description, params, return value, etc. */
+.details {
+	border-color:lightgray;
+}
+.details th{
+	background-color:whitesmoke;
+	/* border:1px solid gray; */
+	color:black;
+	font-size:.7em;
+	padding:3px;
+	text-align:right;
+	/* width:150px; */
+}
+.details th.paramHeader{
+	background-color:white;
+	color:black;
+	text-align:center;
+}
+.details th.param{
+	background-color:whitesmoke;
+	color:black;
+	padding-left:10px;
+}
+.details td{
+	font-size:.7em;
+}
+
+/* properties is used to display the table of class properties */
+.properties {
+	border-color:lightgray;
+}
+.properties td{
+	vertical-align: top;
+}
+.clsPropertyName {
+	font-size:.7em;
+	font-weight:bold;	
+}
+.clsPropertyDeclaration {
+	font-family:Courier;
+	font-size:.7em;
+	font-weight:normal;	
+	color:MediumBlue;
+}
+.clsPropertyDescription {
+	font-size:.7em;
+	font-weight:normal;	
+}	
+
+/* trigger is the set of styles to provide the expand/collapse bar */
+h2.trigger {
+	/* padding: 0 0 0 10px;*/
+	margin: 0 0 2 0;
+	/* background: url(h2_trigger_a.gif) no-repeat; */
+	background-color:gray;
+	border:1px solid #000000;
+	/* height: 46px; */
+	/* line-height: 300%; */ 
+	/* width: 450px; */
+	font-size: .8em;
+	font-weight: bold;
+	padding:2px;
+}
+h2.trigger a {
+	color: #fff;
+	text-decoration: none;
+	/* display: block; */
+}
+h2.trigger a:hover { 
+	color: #ccc; 
+}
+h2.active {
+	background-position: left bottom;
+} /*--When toggle is triggered, it will shift the image to the bottom to show its "opened" state--*/
+
+
+/* toggle_container is the section that gets shown/hidden when the trigger is expanded/collapsed */
+.toggle_container {
+	/* margin: 0 0 5px; */
+	/* padding: 0; */
+	/* border-top: 1px solid #d6d6d6; */
+	/* background: #f0f0f0 url(toggle_block_stretch.gif) repeat-y left top; */
+	/* overflow: hidden; */
+	/* font-size: 1.2em; */
+	/* width: 800px; */
+	/* clear: both; */
+	padding: 10px; /*--Padding of Container--*/
+}
+.toggle_container_subtitle {
+	font-family:Courier;
+	font-size:.8em;
+	font-weight:normal;
+	color:MediumBlue;
+	height: 26px;
+}
+
+
+/* leftmenus styles for the menu of class names */
+.leftmenus{
+	vertical-align:top;
+}
+.leftmenus div{
+	font-size:.7em;
+	font-weight:bold;
+	background-color:#e6e6e6;
+	border-bottom:1px solid #ccc;
+	padding:5px;
+	cursor:pointer;
+}
