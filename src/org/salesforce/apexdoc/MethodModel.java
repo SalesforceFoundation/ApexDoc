@@ -8,14 +8,14 @@ public class MethodModel extends ApexModel {
                 params = new ArrayList<String>();
         }
         
-        public void setNameLine(String nameLine) {
+        public void setNameLine(String nameLine, int iLine) {
                 // remove anything after the parameter list
                 if (nameLine != null) {
                         int i = nameLine.lastIndexOf(")");
                         if (i >= 0) 
                                 nameLine = nameLine.substring(0, i+1);
                 }
-                super.setNameLine(nameLine);
+                super.setNameLine(nameLine, iLine);
         }
         
         public ArrayList<String> getParams() {

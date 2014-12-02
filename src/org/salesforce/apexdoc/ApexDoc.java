@@ -51,6 +51,7 @@ public class ApexDoc {
                 String targetDirectory = "";
                 String homefilepath = "";
                 String authorfilepath = "";
+                String hostedSourceURL = "";
 
                 // parse command line parameters
                 for (int i = 0; i < args.length; i++) {
@@ -59,6 +60,8 @@ public class ApexDoc {
                                 continue;
                         } else if (args[i].equalsIgnoreCase("-s")) {
                                 sourceDirectory = args[++i];
+                        } else if (args[i].equalsIgnoreCase("-g")) {
+                            hostedSourceURL = args[++i];
                         } else if (args[i].equalsIgnoreCase("-t")) {
                                 targetDirectory = args[++i];
                         } else if (args[i].equalsIgnoreCase("-h")) {
@@ -76,9 +79,10 @@ public class ApexDoc {
                 
                 // default scope to global and public if not specified
                 if (rgstrScope == null || rgstrScope.length == 0) {
-                        rgstrScope = new String[2];
+                        rgstrScope = new String[3];
                         rgstrScope[0] = "global";
                         rgstrScope[1] = "public";
+                        rgstrScope[3] = "webService";
                 }
                                 
                 // find all the files to parse
@@ -111,7 +115,7 @@ public class ApexDoc {
                 if (monitor != null) monitor.worked(1);
                 
                 // create our set of HTML files
-                fm.createDoc(cModels, projectDetail, homeContents, monitor);
+                fm.createDoc(cModels, projectDetail, homeContents, hostedSourceURL, monitor);
                 if (monitor != null) monitor.done();
                 
                 // we are done!
@@ -154,8 +158,9 @@ public class ApexDoc {
                     //          in apex, methods that start with get and take no params, or set with 1 param, are actually properties.
                     //
 
-            
+                    int iLine = 0;
                     while ((strLine = br.readLine()) != null)   {
+                        iLine++;
                     
                         strLine = strLine.trim();
                         if (strLine.length() == 0) 
@@ -205,7 +210,7 @@ public class ApexDoc {
                         // look for a class
                         if (!classparsed && strLine.contains(" class ")) {
                                 classparsed = true;
-                                fillClassModel(cModel, strLine, lstComments);
+                                fillClassModel(cModel, strLine, lstComments, iLine);
                                 lstComments.clear();
                                 continue;
                         }
@@ -213,10 +218,12 @@ public class ApexDoc {
                         // look for a method
                         if (strLine.contains("(")) {
                                 // deal with a method over multiple lines.
-                                while (!strLine.contains(")"))
+                                while (!strLine.contains(")")) {
                                     strLine += br.readLine();
+                                    iLine++;
+                                }
                                 MethodModel mModel = new MethodModel();
-                                fillMethodModel(mModel, strLine, lstComments);
+                                fillMethodModel(mModel, strLine, lstComments, iLine);
                                 methods.add(mModel);
                                 lstComments.clear();
                                 continue;                               
@@ -237,7 +244,7 @@ public class ApexDoc {
                         
                         // must be a property
                         PropertyModel propertyModel = new PropertyModel();
-                        fillPropertyModel(propertyModel, strLine, lstComments);
+                        fillPropertyModel(propertyModel, strLine, lstComments, iLine);
                         properties.add(propertyModel);
                         lstComments.clear();
                         continue;
@@ -266,8 +273,8 @@ public class ApexDoc {
             return false;
         }
         
-        private static void fillPropertyModel(PropertyModel propertyModel, String name, ArrayList<String> lstComments) {
-                propertyModel.setNameLine(name);
+        private static void fillPropertyModel(PropertyModel propertyModel, String name, ArrayList<String> lstComments, int iLine) {
+                propertyModel.setNameLine(name, iLine);
                 boolean inDescription = false;
                 for (String comment : lstComments) {
                         comment = comment.trim();
@@ -294,8 +301,8 @@ public class ApexDoc {
                 }
         }
         
-        private static void fillMethodModel(MethodModel mModel, String name, ArrayList<String> lstComments){
-                mModel.setNameLine(name);
+        private static void fillMethodModel(MethodModel mModel, String name, ArrayList<String> lstComments, int iLine){
+                mModel.setNameLine(name, iLine);
                 boolean inDescription = false;
                 for (String comment : lstComments) {
                         comment = comment.trim();
@@ -351,9 +358,9 @@ public class ApexDoc {
                         //System.out.println("#### ::" + comment);
                 }
         }
-        private static void fillClassModel(ClassModel cModel, String name, ArrayList<String> lstComments){
+        private static void fillClassModel(ClassModel cModel, String name, ArrayList<String> lstComments, int iLine){
                 //System.out.println("@@@@ " + name);
-                cModel.setNameLine(name);
+                cModel.setNameLine(name, iLine);
                 boolean inDescription = false;
                 for (String comment : lstComments) {
                         comment = comment.trim();

@@ -4,8 +4,12 @@ public class ApexModel {
     public String getNameLine() {
             return nameLine;
     }
-    public void setNameLine(String nameLine) {
+    public int getInameLine() {
+        return inameLine;
+}
+    public void setNameLine(String nameLine, int iLine) {
             this.nameLine = nameLine.trim();
+            this.inameLine = iLine;
     }
     public String getDescription() {
             return description == null ? "" : description;
@@ -33,6 +37,7 @@ public class ApexModel {
     }
     
     private String nameLine;
+    private int inameLine;
     private String description;
     private String author;
     private String date;

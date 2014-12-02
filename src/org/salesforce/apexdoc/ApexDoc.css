@@ -138,3 +138,7 @@ h2.active {
 	padding:5px;
 	cursor:pointer;
 }
+
+.hostedSourceLink {
+    text-decoration: initial;	
+}

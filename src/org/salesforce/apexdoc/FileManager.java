@@ -103,8 +103,11 @@ public class FileManager {
                 return false;
         }
         
+        private String strLinkfromModel(ApexModel model, String strClassName, String hostedSourceURL) {
+            return "<a target=\"_blank\" class=\"hostedSourceLink\" href=\"" + hostedSourceURL + strClassName + ".cls#L" + model.getInameLine() + "\">";
+        }
         
-        public void makeFile(ArrayList<ClassModel> cModels, String projectDetail, String homeContents, IProgressMonitor monitor){
+        public void makeFile(ArrayList<ClassModel> cModels, String projectDetail, String homeContents, String hostedSourceURL, IProgressMonitor monitor){
                 //System.out.println("Class::::::::::::::::::::::::");
                 String links = "<table width='100%'><tr style='vertical-align:top;'>" ;
                 links += getPageLinks(cModels);
@@ -129,7 +132,8 @@ public class FileManager {
                         if(cModel.getNameLine() != null && cModel.getNameLine().length() > 0){
                                 fileName = cModel.getClassName();
                                 contents += "<td width='80%'>";
-                                contents += "<h2 class='section-title'>" + cModel.getClassName() + 
+                                contents += "<h2 class='section-title'>" + strLinkfromModel(cModel, cModel.getClassName(), hostedSourceURL) +  
+                                                                cModel.getClassName() + "</a>" +
                                                                 "<span style='float:right;margin-top:-5px;'><input type='button' value='+/- all' onclick='ToggleAll();' /></span>" +
                                                         "</h2>" +
                                                         "<table class='details' rules='all' border='1' cellpadding='6'>" +
@@ -145,7 +149,9 @@ public class FileManager {
                                 
                                 //System.out.println("Properties::::::::::::::::::::::::");
                                 for (PropertyModel prop : cModel.getProperties()) {
-                                        contents += "<tr><td class='clsPropertyName'>" + prop.getPropertyName() + "</td>";
+                                        contents += "<tr><td class='clsPropertyName'>" + 
+                                                strLinkfromModel(prop, cModel.getClassName(), hostedSourceURL) +
+                                                prop.getPropertyName() + "</a></td>";
                                         contents += "<td><div class='clsPropertyDeclaration'>" + prop.getNameLine() + "</div>";
                                         contents += "<div class='clsPropertyDescription'>" + escapeHTML(prop.getDescription()) + "</div></tr>";
                                 }
@@ -158,7 +164,9 @@ public class FileManager {
                                 for (MethodModel method : cModel.getMethods()) {
                                         contents += "<h2 class='trigger'><input type='button' value='+' style='width:24px' />&nbsp;&nbsp;<a href='#'>" + method.getMethodName() + "</a></h2>" +
                                                                 "<div class='toggle_container'>" +
-                                                                "<div class='toggle_container_subtitle'>" + method.getNameLine() + "</div>" +
+                                                                "<div class='toggle_container_subtitle'>" + 
+                                                                    strLinkfromModel(method, cModel.getClassName(), hostedSourceURL) +
+                                                                    method.getNameLine() + "</a></div>" +
                                                                 "<table class='details' rules='all' border='1' cellpadding='6'>" + 
                                                                 (method.getAuthor() != "" ? "<tr><th>Author</th><td>" + method.getAuthor() + "</td></tr> " : "") +
                                                                 (method.getDate() != "" ? "<tr><th>Date</th><td>" + method.getDate() + "</td></tr> " : "") +
@@ -272,8 +280,8 @@ public class FileManager {
         
         
         
-        public void createDoc(ArrayList<ClassModel> cModels, String projectDetail, String homeContents, IProgressMonitor monitor){
-                makeFile(cModels, projectDetail, homeContents, monitor);
+        public void createDoc(ArrayList<ClassModel> cModels, String projectDetail, String homeContents, String hostedSourceURL, IProgressMonitor monitor){
+                makeFile(cModels, projectDetail, homeContents, hostedSourceURL, monitor);
         }
         
         public String parseProjectDetail(String filePath){
