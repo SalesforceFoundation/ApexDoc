@@ -5,7 +5,7 @@ public class ApexModel {
             return nameLine;
     }
     public void setNameLine(String nameLine) {
-            this.nameLine = nameLine;
+            this.nameLine = nameLine.trim();
     }
     public String getDescription() {
             return description == null ? "" : description;

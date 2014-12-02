@@ -170,6 +170,8 @@ public class ApexDoc {
                         // gather up our comments
                         if (strLine.startsWith("/**")) {
                                 commentsStarted = true;
+                                if (strLine.endsWith("*/"))
+                                    commentsStarted = false;
                                 lstComments.clear();
                                 continue;
                         }
@@ -223,6 +225,15 @@ public class ApexDoc {
                         // TODO: need to handle nested class.  ignore it for now!
                         if (strLine.contains(" class "))
                                 continue;
+                        
+                        // handle set & get within the property
+                        if (strLine.contains(" get ") || 
+                           strLine.contains(" set ") ||
+                           strLine.contains(" get;") ||
+                           strLine.contains(" set;") ||
+                           strLine.contains(" get{") ||
+                           strLine.contains(" set{"))
+                            continue;
                         
                         // must be a property
                         PropertyModel propertyModel = new PropertyModel();

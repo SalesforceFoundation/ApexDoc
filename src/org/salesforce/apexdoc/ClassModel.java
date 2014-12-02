@@ -34,11 +34,13 @@ public class ClassModel extends ApexModel {
                 if(nameLine != null && nameLine.trim().length() > 0 ){
                         //System.out.println("## File Name = " + nameLine.trim().lastIndexOf(" "));
                         int fFound = nameLine.indexOf("class ");
-                        int lFound = nameLine.indexOf(" ", fFound + 6);
+                        if (fFound > -1)
+                            nameLine = nameLine.substring(fFound + 6).trim();
+                        int lFound = nameLine.indexOf(" ");
                         if(lFound == -1)
-                                return nameLine.substring(fFound + 6);
+                                return nameLine;
                         try{
-                                String name = nameLine.substring(fFound + 6, lFound);
+                                String name = nameLine.substring(0, lFound);
                                 return name;
                         }catch(Exception ex){
                                 return nameLine.substring(nameLine.lastIndexOf(" ") + 1);
