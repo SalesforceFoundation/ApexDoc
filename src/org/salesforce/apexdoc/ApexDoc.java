@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 public class ApexDoc {
 
@@ -108,6 +109,9 @@ public class ApexDoc {
                         if (monitor != null) monitor.worked(1);
                 }
                 
+                // create our Groups
+                Hashtable<String, ClassGroup> mapClassNameToClassGroup = createMapClassNameToClassGroup(cModels); 
+                                
                 // load up optional specified file templates
                 String projectDetail = fm.parseHTMLFile(authorfilepath);
                 if (monitor != null) monitor.worked(1);
@@ -115,7 +119,7 @@ public class ApexDoc {
                 if (monitor != null) monitor.worked(1);
                 
                 // create our set of HTML files
-                fm.createDoc(cModels, projectDetail, homeContents, hostedSourceURL, monitor);
+                fm.createDoc(mapClassNameToClassGroup, cModels, projectDetail, homeContents, hostedSourceURL, monitor);
                 if (monitor != null) monitor.done();
                 
                 // we are done!
@@ -132,6 +136,25 @@ public class ApexDoc {
                 System.out.println("<homefile> - Optional. Specifies the html file that contains the contents for the home page\'s content area.");;
                 System.out.println("<authorfile> - Optional. Specifies the text file that contains project information for the documentation header.");
                 System.out.println("<scope> - Optional. Semicolon seperated list of scopes to document.  Defaults to 'global;public'. ");               
+        }
+        
+        private static Hashtable<String, ClassGroup> createMapClassNameToClassGroup(ArrayList<ClassModel> cModels) {
+            Hashtable<String, ClassGroup> map = new Hashtable<String, ClassGroup>();
+            for (ClassModel cmodel : cModels) {
+                String strGroup = cmodel.getClassGroup();
+                String strGroupContent = cmodel.getClassGroupContent();
+                ClassGroup cg;
+                if (strGroup != null) {
+                    cg = map.get(strGroup);
+                    if (cg == null)
+                        cg = new ClassGroup(strGroup, strGroupContent);
+                    else if (cg.getContent() == null)
+                        cg.setContent(strGroupContent);
+                    // put the new or potentially modified ClassGroup back in the map
+                    map.put(strGroup, cg);
+                }
+            }
+            return map;
         }
         
         public static ClassModel parseFileContents(String filePath){
@@ -253,7 +276,7 @@ public class ApexDoc {
                     cModel.setMethods(methods);
                     cModel.setProperties(properties);
                     
-                    debug(cModel);
+                    //debug(cModel);
                     //Close the input stream
                     in.close();
                     return cModel;
@@ -367,14 +390,14 @@ public class ApexDoc {
                         comment = comment.trim();
                         int idxStart = comment.toLowerCase().indexOf("* @description");
                         if(idxStart != -1){
-                                cModel.setDescription(comment.substring(idxStart + 15).trim());
+                                cModel.setDescription(comment.substring(idxStart + 14).trim());
                                 inDescription = true;
                                 continue;
                         }
                         
                         idxStart = comment.toLowerCase().indexOf("* @author");
                         if(idxStart != -1){
-                                cModel.setAuthor(comment.substring(idxStart + 10).trim());
+                                cModel.setAuthor(comment.substring(idxStart + 9).trim());
                                 inDescription = false;
                                 continue;
                         }
@@ -382,6 +405,20 @@ public class ApexDoc {
                         idxStart = comment.toLowerCase().indexOf("* @date");
                         if(idxStart != -1){
                                 cModel.setDate(comment.substring(idxStart + 7).trim());
+                                inDescription = false;
+                                continue;
+                        }
+                        
+                        idxStart = comment.toLowerCase().indexOf("* @group "); // needed to include space to not match group-content.
+                        if(idxStart != -1){
+                                cModel.setClassGroup(comment.substring(idxStart + 8).trim());
+                                inDescription = false;
+                                continue;
+                        }
+                        
+                        idxStart = comment.toLowerCase().indexOf("* @group-content");
+                        if(idxStart != -1){
+                                cModel.setClassGroupContent(comment.substring(idxStart + 16).trim());
                                 inDescription = false;
                                 continue;
                         }

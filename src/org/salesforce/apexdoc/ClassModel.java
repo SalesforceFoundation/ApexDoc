@@ -10,6 +10,8 @@ public class ClassModel extends ApexModel {
 
         private ArrayList<MethodModel> methods;
         private ArrayList<PropertyModel> properties;
+        private String strClassGroup;
+        private String strClassGroupContent;
         
         public ArrayList<PropertyModel> getProperties() {
                 return properties;
@@ -51,4 +53,19 @@ public class ClassModel extends ApexModel {
                 
         }
         
+        public String getClassGroup() {
+            return strClassGroup;
+        }
+        
+        public void setClassGroup(String strGroup) {
+            strClassGroup = strGroup;
+        }
+        
+        public String getClassGroupContent() {
+            return strClassGroupContent;
+        }
+        
+        public void setClassGroupContent(String strGroupContent) {
+            strClassGroupContent = strGroupContent;
+        }
 }

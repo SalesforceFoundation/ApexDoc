@@ -107,10 +107,10 @@ public class FileManager {
             return "<a target=\"_blank\" class=\"hostedSourceLink\" href=\"" + hostedSourceURL + strClassName + ".cls#L" + model.getInameLine() + "\">";
         }
         
-        public void makeFile(ArrayList<ClassModel> cModels, String projectDetail, String homeContents, String hostedSourceURL, IProgressMonitor monitor){
+        public void makeFile(Hashtable<String, ClassGroup> mapClassNameToClassGroup, ArrayList<ClassModel> cModels, String projectDetail, String homeContents, String hostedSourceURL, IProgressMonitor monitor){
                 //System.out.println("Class::::::::::::::::::::::::");
                 String links = "<table width='100%'><tr style='vertical-align:top;'>" ;
-                links += getPageLinks(cModels);
+                links += getPageLinks(mapClassNameToClassGroup, cModels);
                 
                 if(homeContents != null && homeContents.trim().length() > 0 ){
                         homeContents = links + "<td width='80%'>" + "<h2 class='section-title'>Home</h2>" + homeContents + "</td>";
@@ -215,19 +215,34 @@ public class FileManager {
                 createHTML(classHashTable, monitor);
         }
         
-        public String getPageLinks(ArrayList<ClassModel> cModels){
-                String links = "<td width='20%' class='leftmenus'>";
-                links += "<div onclick=\"gotomenu('index.html');\">Home</div>";
-                for(ClassModel cModel : cModels){
-                        if(cModel.getNameLine() != null && cModel.getNameLine().trim().length() > 0){
-                        String fileName = cModel.getClassName();
-                        //System.out.println("### File Name: " + fileName);
-                        //System.out.println("### File Path: " + cModel.getNameLine());
-                        links += "<div onclick=\"gotomenu('" + fileName+ ".html');\">"+fileName+"</div>";
+        public String getPageLinks(Hashtable<String, ClassGroup> mapClassNameToClassGroup, ArrayList<ClassModel> cModels){
+            String links = "<td width='20%' >";
+            links += "<div class=\"sidebar\"><div class=\"navbar\"><nav role=\"navigation\"><ul id=\"mynavbar\">";
+            links += "<li id=\"idMenuindex\"><a href=\".\" onclick=\"gotomenu('index.html');return false;\" class=\"nav-item\">Home</a></li>";
+            
+            mapClassNameToClassGroup.put("Miscellaneous", new ClassGroup("Miscellaneous", null));
+            for (String strGroup : mapClassNameToClassGroup.keySet()) {
+                ClassGroup cg = mapClassNameToClassGroup.get(strGroup);
+            
+                links += "<li class=\"header\" id=\"idMenu" + strGroup + "\"><a class=\"nav-item nav-section-title\" href=\".\" onclick=\"return false;\" class=\"nav-item\">" + strGroup + "<span class=\"caret\"></span></a></li>";
+                links += "<ul>";
+                
+                for (ClassModel cModel : cModels) {
+                    if (strGroup.equals(cModel.getClassGroup()) || (cModel.getClassGroup() == null && strGroup == "Miscellaneous")) {                    
+                        if (cModel.getNameLine() != null && cModel.getNameLine().trim().length() > 0) {
+                            String fileName = cModel.getClassName();
+                            links += "<li class=\"subitem\" id=\"idMenu" + fileName + "\"><a href=\".\" onclick=\"gotomenu('" + fileName + ".html');return false;\" class=\"nav-item sub-nav-item\">" + fileName + "</a></li>";
                         }
+                    }
                 }
-                links += "</td>";
-                return links;
+                
+                links += "</ul>";
+            }
+
+            links += "</ul></nav></div></div></div>";
+
+            links += "</td>";
+            return links;
         }
         
         private void docopy(String source, String target) throws Exception{
@@ -255,6 +270,8 @@ public class FileManager {
         public  void copy(String toFileName) throws IOException,Exception {
                 docopy("apex_doc_logo.png", toFileName);
                 docopy("ApexDoc.css", toFileName);
+                docopy("ApexDoc.js", toFileName);
+                docopy("CollapsibleList.js", toFileName);
                 docopy("h2_trigger_a.gif", toFileName);
                 docopy("jquery-latest.js", toFileName);
                 docopy("toggle_block_btm.gif", toFileName);
@@ -280,8 +297,8 @@ public class FileManager {
         
         
         
-        public void createDoc(ArrayList<ClassModel> cModels, String projectDetail, String homeContents, String hostedSourceURL, IProgressMonitor monitor){
-                makeFile(cModels, projectDetail, homeContents, hostedSourceURL, monitor);
+        public void createDoc(Hashtable<String, ClassGroup> mapClassNameToClassGroup, ArrayList<ClassModel> cModels, String projectDetail, String homeContents, String hostedSourceURL, IProgressMonitor monitor){
+                makeFile(mapClassNameToClassGroup, cModels, projectDetail, homeContents, hostedSourceURL, monitor);
         }
         
         public String parseProjectDetail(String filePath){
