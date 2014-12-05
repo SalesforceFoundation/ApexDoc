@@ -125,20 +125,122 @@ h2.active {
 	height: 26px;
 }
 
-
-/* leftmenus styles for the menu of class names */
-.leftmenus{
-	vertical-align:top;
-}
-.leftmenus div{
-	font-size:.7em;
-	font-weight:bold;
-	background-color:#e6e6e6;
-	border-bottom:1px solid #ccc;
-	padding:5px;
-	cursor:pointer;
-}
-
 .hostedSourceLink {
     text-decoration: initial;	
 }
+
+.hostedSourceLink:hover {
+    text-decoration: underline;   
+}
+
+    /* SIDEBAR CSS */
+    div.navbar {
+        font-size:.8em;
+        font-weight: normal; 
+        color: red;
+    }        
+
+	div.navbar a:hover { 
+	    text-decoration: underline; 
+	}
+
+
+    .sidebar ul {
+        margin: 0; 
+        padding: 0; 
+        list-style: none;
+        background: lightgray; 
+    }
+        
+    div.navbar ul li {
+        /* font-size:.9em; */
+        /* font-weight: bold; */
+        margin-bottom: 0px;
+        margin-left: 0px;
+        padding: 2px; 
+        background: #f2f5f6;
+        border: 1px solid #dce4e7;
+        border-top-color: #fff;
+    }
+        
+    div.navbar ul li:hover {
+        background: gray; 
+    }
+    
+    div.navbar ul li.subitem:hover {
+        background: gray; 
+    }
+    
+    div.navbar ul li.subitem {
+        background: #eaeef0; 
+        border-bottom: 0;
+        border-top: 0;        
+    }
+    
+    div.navbar {
+       border-top: 1px solid #dce4e7;
+    }
+    
+    div.navbar ul li a {
+        display: block; 
+        text-decoration: none; 
+        padding: 5px 5px 5px 10px;
+        /* font-size: .9em; */ 
+        color: black;
+    }
+        
+    div.navbar ul li a:hover {
+        color: #fff; 
+        background: none; 
+    }
+    
+    div.navbar ul li.nav-selected {
+        background: LightGray;
+    }
+
+    .nav-section-title {
+        display: block; 
+        text-decoration: none; 
+        padding: 5px 5px 5px 10px;
+        /* font-size: .9em; */ 
+        /* font-weight: bold; */
+        color: black;
+    }
+        
+    li.collapsed .caret {
+        float: right;
+        width: 0;
+        height: 0;
+        display: inline-block;
+        vertical-align: top;
+        content: "";
+        margin-top: 8px;
+        margin-left: 2px;
+        border-top: 4px solid #000;
+        border-bottom: 0px;
+        border-right: 4px solid transparent;
+        border-left: 4px solid transparent;
+    }
+
+    li .caret {
+        float: right;
+        width: 0;
+        height: 0;
+        display: inline-block;
+        vertical-align: top;
+        content: "";
+        margin-top: 8px;
+        margin-left: 2px;
+        border-top: none;
+        border-bottom: 4px solid #000;
+        border-right: 4px solid transparent;
+        border-left: 4px solid transparent;
+    }
+
+    .sub-nav-item {
+        margin-left: 20px;
+    }
+    
+
+    /* END - SIDEBAR STYLES */         
+
