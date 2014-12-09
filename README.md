@@ -14,8 +14,19 @@ ApexDoc is a java app that you can use to document your Salesforce Apex classes.
 | -p *scope* | A semicolon separated list of scopes to document.  Defaults to 'global;public;webService'. Optional.|
 
 ## Documenting Class Files
-ApexDoc scans each class file, and looks for comment blocks with special keywords to identify the documentation to include for a given class, property, or method.
+ApexDoc scans each class file, and looks for comment blocks with special keywords to identify the documentation to include for a given class, property, or method.  The comment blocks must always begin with /** (or additional *'s) and can cover multiple lines.  Each line must start with * (or whitespace and then *).  The comment block ends with */.  Special tokens are called out with @token.
 ### Class Comments
+Typically located near the top of the class file.  The special tokens are all optional.
+
+| token | description |
+|-------|-------------|
+| @author | the author of the class |
+| @date | the date the class was first implemented |
+| @group | a group to display this class under, in the menu hierarchy|
+| @group-content | a relative path to a static html file that provides content about the group|
+| @description | one or more lines that provide an overview of the class|
+
+Example
 ```
 /**
 * @author Salesforce.com Foundation
