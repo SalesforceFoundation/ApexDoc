@@ -110,7 +110,7 @@ public class ApexDoc {
                 }
                 
                 // create our Groups
-                Hashtable<String, ClassGroup> mapClassNameToClassGroup = createMapClassNameToClassGroup(cModels); 
+                Hashtable<String, ClassGroup> mapClassNameToClassGroup = createMapClassNameToClassGroup(cModels, sourceDirectory); 
                                 
                 // load up optional specified file templates
                 String projectDetail = fm.parseHTMLFile(authorfilepath);
@@ -138,18 +138,20 @@ public class ApexDoc {
                 System.out.println("<scope> - Optional. Semicolon seperated list of scopes to document.  Defaults to 'global;public'. ");               
         }
         
-        private static Hashtable<String, ClassGroup> createMapClassNameToClassGroup(ArrayList<ClassModel> cModels) {
+        private static Hashtable<String, ClassGroup> createMapClassNameToClassGroup(ArrayList<ClassModel> cModels, String sourceDirectory) {
             Hashtable<String, ClassGroup> map = new Hashtable<String, ClassGroup>();
             for (ClassModel cmodel : cModels) {
                 String strGroup = cmodel.getClassGroup();
                 String strGroupContent = cmodel.getClassGroupContent();
+                if (strGroupContent != null)
+                    strGroupContent = sourceDirectory + "/" + strGroupContent;
                 ClassGroup cg;
                 if (strGroup != null) {
                     cg = map.get(strGroup);
                     if (cg == null)
                         cg = new ClassGroup(strGroup, strGroupContent);
-                    else if (cg.getContent() == null)
-                        cg.setContent(strGroupContent);
+                    else if (cg.getContentSource() == null)
+                        cg.setContentSource(strGroupContent);
                     // put the new or potentially modified ClassGroup back in the map
                     map.put(strGroup, cg);
                 }

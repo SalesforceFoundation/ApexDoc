@@ -127,6 +127,10 @@ public class FileManager {
                 String fileName = "";
                 Hashtable<String, String> classHashTable = new Hashtable<String, String>();
                 classHashTable.put("index", homeContents);
+                
+                // create our Class Group content files
+                createClassGroupContent(classHashTable, links, projectDetail, mapClassNameToClassGroup, cModels, monitor);
+                
                 for(ClassModel cModel : cModels){
                         String contents = links;
                         if(cModel.getNameLine() != null && cModel.getNameLine().length() > 0){
@@ -215,6 +219,23 @@ public class FileManager {
                 createHTML(classHashTable, monitor);
         }
         
+        // create our Class Group content files
+        private void createClassGroupContent(Hashtable<String, String> classHashTable, String links, String projectDetail, Hashtable<String, ClassGroup> mapClassNameToClassGroup, 
+            ArrayList<ClassModel> cModels, IProgressMonitor monitor) {
+            for (String strGroup : mapClassNameToClassGroup.keySet()) {
+                ClassGroup cg = mapClassNameToClassGroup.get(strGroup);
+                if (cg.getContentSource() != null) {
+                    String cgContent = parseHTMLFile(cg.getContentSource());
+                    if (cgContent != null) {
+                        String strHtml = Constants.getHeader(projectDetail) + links + "<td width='80%'>" + "<h2 class='section-title'>" + cg.getName() + "</h2>" + cgContent + "</td>";
+                        strHtml += Constants.FOOTER;
+                        classHashTable.put(cg.getContentFilename(), strHtml);
+                        if (monitor != null) monitor.worked(1);
+                    }
+                }
+            }
+        }
+
         public String getPageLinks(Hashtable<String, ClassGroup> mapClassNameToClassGroup, ArrayList<ClassModel> cModels){
             String links = "<td width='20%' >";
             links += "<div class=\"sidebar\"><div class=\"navbar\"><nav role=\"navigation\"><ul id=\"mynavbar\">";
@@ -223,10 +244,13 @@ public class FileManager {
             mapClassNameToClassGroup.put("Miscellaneous", new ClassGroup("Miscellaneous", null));
             for (String strGroup : mapClassNameToClassGroup.keySet()) {
                 ClassGroup cg = mapClassNameToClassGroup.get(strGroup);
-            
-                links += "<li class=\"header\" id=\"idMenu" + strGroup + "\"><a class=\"nav-item nav-section-title\" href=\".\" onclick=\"return false;\" class=\"nav-item\">" + strGroup + "<span class=\"caret\"></span></a></li>";
+                String strGoTo = "onclick=\"return false;\"";
+                if (cg.getContentFilename() != null)
+                    strGoTo = "onclick=\"gotomenu('" + cg.getContentFilename() + ".html" + "');return false;\"";
+                links += "<li class=\"header\" id=\"idMenu" + cg.getContentFilename() + "\"><a class=\"nav-item nav-section-title\" href=\".\" " + strGoTo +  " class=\"nav-item\">" + strGroup + "<span class=\"caret\"></span></a></li>";
                 links += "<ul>";
                 
+                // even though this algorithm is O(n^2), it was timed at just 12 milliseconds, so not an issue!
                 for (ClassModel cModel : cModels) {
                     if (strGroup.equals(cModel.getClassGroup()) || (cModel.getClassGroup() == null && strGroup == "Miscellaneous")) {                    
                         if (cModel.getNameLine() != null && cModel.getNameLine().trim().length() > 0) {

@@ -186,8 +186,14 @@
                     collapseAll: collapseAllHeaders,
                     expandAll: expandAllHeaders,
                     expandToElement: function(elem) {
+                        // expand our parent so we are visible (along with our siblings)
                         showListElements(elem.parent().children());
+                        // mark our parent as expanded
                         elem.parent().prev().removeClass('collapsed');
+                        // in case we are a parent, ensure our children are shown
+                        //showListElements(elem.children());
+                        //elem.removeClass('collapsed');
+                        expandHeader(elem);
                     },
                     
                 });

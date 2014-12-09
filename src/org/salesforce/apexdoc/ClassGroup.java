@@ -2,11 +2,11 @@ package org.salesforce.apexdoc;
 
 public class ClassGroup {
     private String strName;
-    private String strContent;
+    private String strContentSource;
 
     public ClassGroup(String strName, String strContent) {
         this.strName = strName;
-        this.strContent = strContent;
+        this.strContentSource = strContent;
     }
     
     public String getName() {
@@ -17,12 +17,22 @@ public class ClassGroup {
         this.strName = strName;
     }
     
-    public String getContent() {
-        return strContent;
+    public String getContentSource() {
+        return strContentSource;
     }
     
-    public void setContent(String strContent) {
-        this.strContent = strContent;
+    public void setContentSource(String strContent) {
+        this.strContentSource = strContent;
     }
     
+    public String getContentFilename() {
+        if (strContentSource != null) {
+            int idx1 = strContentSource.lastIndexOf("/");
+            int idx2 = strContentSource.lastIndexOf(".");
+            if (idx1 != -1 && idx2 != -1) {
+                return strContentSource.substring(idx1+1, idx2);
+            }
+        }
+        return null;
+    }
 }
