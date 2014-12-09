@@ -47,7 +47,7 @@ Located in the lines above a property.  The special tokens are all optional.
 
 | token | description |
 |-------|-------------|
-| @description | one or more lines that provide an overview of the class|
+| @description | one or more lines that describe the property|
 
 Example
 ```
@@ -64,7 +64,7 @@ Located in the lines above a method.  The special tokens are all optional.
 
 | token | description |
 |-------|-------------|
-| @description | one or more lines that provide an overview of the class|
+| @description | one or more lines that provide an overview of the method|
 | @param *param name* | a description of what the parameter does|
 | @return | a description of the return value from the method|
 Example
@@ -73,7 +73,7 @@ Example
     * @description Returns field describe data 
     * @param objectName the name of the object to look up
     * @param fieldName the name of the field to look up
-    * @return Schema.DescribeFieldResult the describe field result for the given field
+    * @return the describe field result for the given field
     */ 
     public static Schema.DescribeFieldResult getFieldDescribe(String objectName, String fieldName) {
 ```
