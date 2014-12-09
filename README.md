@@ -72,7 +72,7 @@ Example
 ```
 
 ### Method Comments
-Located in the lines above a method.  The special tokens are all optional.
+In order for ApexDoc to identify class methods, the method line must contain an explicit scope (global, public, private, testMethod, webService).  The comment block is located in the lines above a method.  The special tokens are all optional.
 
 | token | description |
 |-------|-------------|
