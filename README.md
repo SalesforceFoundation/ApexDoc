@@ -16,7 +16,7 @@ ApexDoc is a java app that you can use to document your Salesforce Apex classes.
 ## Documenting Class Files
 ApexDoc scans each class file, and looks for comment blocks with special keywords to identify the documentation to include for a given class, property, or method.  The comment blocks must always begin with /** (or additional *'s) and can cover multiple lines.  Each line must start with * (or whitespace and then *).  The comment block ends with */.  Special tokens are called out with @token.
 ### Class Comments
-Typically located near the top of the class file.  The special tokens are all optional.
+Located in the lines above the class declaration.  The special tokens are all optional.
 
 | token | description |
 |-------|-------------|
@@ -39,10 +39,11 @@ Example
 * our special accounts (Household, One-to-One), and also detects changes on Household Account that requires
 * name updating.
 */
+public with sharing class ACCT_Accounts_TDTM extends TDTM_Runnable {
 ```
 
 ### Property Comments
-Located in the line above a property.  The special tokens are all optional.
+Located in the lines above a property.  The special tokens are all optional.
 
 | token | description |
 |-------|-------------|
@@ -56,4 +57,23 @@ Example
     */ 
     public static Boolean isStateCountryPicklistsEnabled {
         get {
+```
+
+### Method Comments
+Located in the lines above a method.  The special tokens are all optional.
+
+| token | description |
+|-------|-------------|
+| @description | one or more lines that provide an overview of the class|
+| @param *param name* | a description of what the parameter does|
+| @return | a description of the return value from the method|
+Example
+```
+    /*******************************************************************************************************
+    * @description Returns field describe data 
+    * @param objectName the name of the object to look up
+    * @param fieldName the name of the field to look up
+    * @return Schema.DescribeFieldResult the describe field result for the given field
+    */ 
+    public static Schema.DescribeFieldResult getFieldDescribe(String objectName, String fieldName) {
 ```
