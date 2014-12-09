@@ -13,6 +13,18 @@ ApexDoc is a java app that you can use to document your Salesforce Apex classes.
 | -a *banner_page* | The full path to an html file that contains the content for the banner section of each generated page. Optional.|
 | -p *scope* | A semicolon separated list of scopes to document.  Defaults to 'global;public;webService'. Optional.|
 
+## Usage
+Copy apexdoc.jar file to your local machine, somewhere on your path.  Each release tag in gitHub has the matching apexdoc.jar attached to it.  Make sure that java is on your path.  Invoke ApexDoc like this example:
+```
+java -jar apexdoc.jar 
+    -s '/Users/dhabib/Workspaces/Force.com IDE/Cumulus3/src/classes' 
+    -t '/Users/dhabib/Dropbox/Cumulus/ApexDoc' 
+    -p 'global;public;private;testmethod;webService' 
+    -h '/Users/dhabib/Dropbox/Cumulus/ApexDoc/homepage.htm' 
+    -a '/Users/dhabib/Dropbox/Cumulus/ApexDoc/projectheader.htm' 
+    -g 'http://github.com/SalesforceFoundation/Cumulus/blob/dev/src/classes/'
+```
+
 ## Documenting Class Files
 ApexDoc scans each class file, and looks for comment blocks with special keywords to identify the documentation to include for a given class, property, or method.  The comment blocks must always begin with /** (or additional *'s) and can cover multiple lines.  Each line must start with * (or whitespace and then *).  The comment block ends with */.  Special tokens are called out with @token.
 ### Class Comments
