@@ -1,5 +1,6 @@
 body{
-	font-family:Verdana, Arial, Helvetica, sans-serif;
+	/* font-family:Verdana, Arial, Helvetica, sans-serif; */
+	font-family: "ProximaNovaSoft-Regular", Calibri, "Gill Sans", "Gill Sans MT", Candara, Segoe, "Segoe UI", Arial, sans-serif;
 	font-size:100%;
 	margin:0px;
 	padding:0px;
@@ -7,11 +8,10 @@ body{
 
 /* the top page banner  */
 .topsection {
-	background-color:SteelBlue;
+	background-color: rgb(98,181,229);
 	width:100%;
-	height:100px;
+	height:110px;
 	color:white;
-	border:1px solid #000;
 }
 .topsection td{
 	color:white;
@@ -20,27 +20,28 @@ body{
 
 /* section-title is the horizontal section headers that declare the classname, methods, etc. */
 .section-title {
-	background-color:SteelBlue;
-	border:1px solid #000000;
+    background-color: rgb(155,203,236);
 	color:white;
 	padding:5px;
-	font-size:.9em;
+	font-size: 100%;
 	font-weight:bold;
 	margin-bottom:2px;
+}
+.section-title a {
+    color:white;
 }
 
 /* details is used for displaying the apexdoc values like author, date, description, params, return value, etc. */
 .details {
 	border-color:lightgray;
+	font-size: .9em;
 }
 .details th{
 	background-color:whitesmoke;
-	/* border:1px solid gray; */
 	color:black;
-	font-size:.7em;
+	/* font-size:.7em; */
 	padding:3px;
 	text-align:right;
-	/* width:150px; */
 }
 .details th.paramHeader{
 	background-color:white;
@@ -53,7 +54,7 @@ body{
 	padding-left:10px;
 }
 .details td{
-	font-size:.7em;
+	/* font-size:.7em; */
 }
 
 /* properties is used to display the table of class properties */
@@ -64,41 +65,35 @@ body{
 	vertical-align: top;
 }
 .clsPropertyName {
-	font-size:.7em;
+	font-size:.8em;
 	font-weight:bold;	
 }
 .clsPropertyDeclaration {
 	font-family:Courier;
-	font-size:.7em;
+	font-size:.8em;
 	font-weight:normal;	
 	color:MediumBlue;
 }
 .clsPropertyDescription {
-	font-size:.7em;
+	font-size:.8em;
 	font-weight:normal;	
 }	
 
 /* trigger is the set of styles to provide the expand/collapse bar */
 h2.trigger {
-	/* padding: 0 0 0 10px;*/
 	margin: 0 0 2 0;
-	/* background: url(h2_trigger_a.gif) no-repeat; */
-	background-color:gray;
-	border:1px solid #000000;
-	/* height: 46px; */
-	/* line-height: 300%; */ 
-	/* width: 450px; */
-	font-size: .8em;
-	font-weight: bold;
+	background-color: rgb(239,241,246);
+	color: black;
+	font-size: 100%;
+	font-weight: normal;
 	padding:2px;
 }
 h2.trigger a {
-	color: #fff;
+	color: black;
 	text-decoration: none;
-	/* display: block; */
 }
 h2.trigger a:hover { 
-	color: #ccc; 
+	color: darkgrey; 
 }
 h2.active {
 	background-position: left bottom;
@@ -107,14 +102,6 @@ h2.active {
 
 /* toggle_container is the section that gets shown/hidden when the trigger is expanded/collapsed */
 .toggle_container {
-	/* margin: 0 0 5px; */
-	/* padding: 0; */
-	/* border-top: 1px solid #d6d6d6; */
-	/* background: #f0f0f0 url(toggle_block_stretch.gif) repeat-y left top; */
-	/* overflow: hidden; */
-	/* font-size: 1.2em; */
-	/* width: 800px; */
-	/* clear: both; */
 	padding: 10px; /*--Padding of Container--*/
 }
 .toggle_container_subtitle {
@@ -133,11 +120,15 @@ h2.active {
     text-decoration: underline;   
 }
 
+.contentTD {
+	width: 80%;
+	padding-left: 4px;
+}
+
     /* SIDEBAR CSS */
     div.navbar {
-        font-size:.8em;
+        font-size:.9em;
         font-weight: normal; 
-        color: red;
     }        
 
 	div.navbar a:hover { 
@@ -153,8 +144,6 @@ h2.active {
     }
         
     div.navbar ul li {
-        /* font-size:.9em; */
-        /* font-weight: bold; */
         margin-bottom: 0px;
         margin-left: 0px;
         padding: 2px; 
@@ -185,7 +174,6 @@ h2.active {
         display: block; 
         text-decoration: none; 
         padding: 5px 5px 5px 10px;
-        /* font-size: .9em; */ 
         color: black;
     }
         
@@ -202,8 +190,6 @@ h2.active {
         display: block; 
         text-decoration: none; 
         padding: 5px 5px 5px 10px;
-        /* font-size: .9em; */ 
-        /* font-weight: bold; */
         color: black;
     }
         

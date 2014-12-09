@@ -113,12 +113,12 @@ public class FileManager {
                 links += getPageLinks(mapClassNameToClassGroup, cModels);
                 
                 if(homeContents != null && homeContents.trim().length() > 0 ){
-                        homeContents = links + "<td width='80%'>" + "<h2 class='section-title'>Home</h2>" + homeContents + "</td>";
+                        homeContents = links + "<td class='contentTD'>" + "<h2 class='section-title'>Home</h2>" + homeContents + "</td>";
                         homeContents = Constants.getHeader(projectDetail) + homeContents + Constants.FOOTER;
                         //createHTML("index.php", homeContents);
                 }else{
                         homeContents = Constants.DEFAULT_HOME_CONTENTS;
-                        homeContents = links + "<td width='80%'>" + "<h2 class='section-title'>Home</h2>" + homeContents + "</td>";
+                        homeContents = links + "<td class='contentTD'>" + "<h2 class='section-title'>Home</h2>" + homeContents + "</td>";
                         homeContents = Constants.getHeader(projectDetail) + homeContents + Constants.FOOTER;
                         //createHTML("index.php", homeContents);
                 }
@@ -135,10 +135,10 @@ public class FileManager {
                         String contents = links;
                         if(cModel.getNameLine() != null && cModel.getNameLine().length() > 0){
                                 fileName = cModel.getClassName();
-                                contents += "<td width='80%'>";
+                                contents += "<td class='contentTD'>";
                                 contents += "<h2 class='section-title'>" + strLinkfromModel(cModel, cModel.getClassName(), hostedSourceURL) +  
                                                                 cModel.getClassName() + "</a>" +
-                                                                "<span style='float:right;margin-top:-5px;'><input type='button' value='+/- all' onclick='ToggleAll();' /></span>" +
+                                                                "<span style='float:right;vertical-align:middle;'><input type='button' value='+/- all' onclick='ToggleAll();' /></span>" +
                                                         "</h2>" +
                                                         "<table class='details' rules='all' border='1' cellpadding='6'>" +
                                                                 "<tr><th>Author</th><td>" + cModel.getAuthor() + "</td></tr>" +
@@ -227,7 +227,7 @@ public class FileManager {
                 if (cg.getContentSource() != null) {
                     String cgContent = parseHTMLFile(cg.getContentSource());
                     if (cgContent != null) {
-                        String strHtml = Constants.getHeader(projectDetail) + links + "<td width='80%'>" + "<h2 class='section-title'>" + cg.getName() + "</h2>" + cgContent + "</td>";
+                        String strHtml = Constants.getHeader(projectDetail) + links + "<td class='contentTD'>" + "<h2 class='section-title'>" + cg.getName() + "</h2>" + cgContent + "</td>";
                         strHtml += Constants.FOOTER;
                         classHashTable.put(cg.getContentFilename(), strHtml);
                         if (monitor != null) monitor.worked(1);
