@@ -40,3 +40,20 @@ Example
 * name updating.
 */
 ```
+
+### Property Comments
+Located in the line above a property.  The special tokens are all optional.
+
+| token | description |
+|-------|-------------|
+| @description | one or more lines that provide an overview of the class|
+
+Example
+```
+    /*******************************************************************************************************
+    * @description specifies whether state and country picklists are enabled in this org.
+    * returns true if enabled.
+    */ 
+    public static Boolean isStateCountryPicklistsEnabled {
+        get {
+```
