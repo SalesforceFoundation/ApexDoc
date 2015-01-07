@@ -121,12 +121,18 @@
     function ToggleScope(scope, isShow) {
     	setScopeCookie();
     	if (isShow == true) {
+	    	// show all properties of the given scope
+	    	$('.propertyscope' + scope).show();
+
 	    	// show all methods of the given scope
 	    	$('.methodscope' + scope).show();
 	    	
 			// redisplay the class list
 			expandListToClass();						
 		} else {
+	    	// hide all properties of the given scope
+	    	$('.propertyscope' + scope).hide();
+
 	    	// hide all methods of the given scope
 	    	$('.methodscope' + scope).hide();
 	    	

@@ -168,7 +168,7 @@ public class FileManager {
                                 
                                 //System.out.println("Properties::::::::::::::::::::::::");
                                 for (PropertyModel prop : cModel.getProperties()) {
-                                        contents += "<tr><td class='clsPropertyName'>" + 
+                                        contents += "<tr class='propertyscope" + prop.getScope() + "'><td class='clsPropertyName'>" + 
                                                 strLinkfromModel(prop, cModel.getClassName(), hostedSourceURL) +
                                                 prop.getPropertyName() + "</a></td>";
                                         contents += "<td><div class='clsPropertyDeclaration'>" + prop.getNameLine() + "</div>";
