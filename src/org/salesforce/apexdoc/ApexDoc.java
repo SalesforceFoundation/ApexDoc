@@ -230,7 +230,7 @@ public class ApexDoc {
                         }
 
                         // ignore lines not dealing with scope
-                        if (!strContainsScope(strLine))
+                        if (strContainsScope(strLine) == null)
                                 continue;
 
                         // look for a class
@@ -289,14 +289,14 @@ public class ApexDoc {
             return null;
         }
 
-        private static boolean strContainsScope(String str) {
+        public static String strContainsScope(String str) {
             str = str.toLowerCase();
             for (int i = 0; i < rgstrScope.length; i++) {
                 if (str.contains(rgstrScope[i].toLowerCase() + " ")) {
-                    return true;
+                    return rgstrScope[i];
                 }
             }
-            return false;
+            return null;
         }
         
         private static void fillPropertyModel(PropertyModel propertyModel, String name, ArrayList<String> lstComments, int iLine) {

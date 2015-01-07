@@ -123,6 +123,7 @@ h2.active {
 .contentTD {
 	width: 80%;
 	padding-left: 4px;
+	vertical-align: top;
 }
 
     /* SIDEBAR CSS */
@@ -225,6 +226,14 @@ h2.active {
 
     .sub-nav-item {
         margin-left: 20px;
+    }
+    
+    div.navbar ul li a.scopeglobal {
+    	color: blue;
+    }
+    
+    div.navbar ul li a.scopeprivate {
+    	color: darkgray;
     }
     
 

@@ -10,6 +10,7 @@ public class ApexModel {
     public void setNameLine(String nameLine, int iLine) {
             this.nameLine = nameLine.trim();
             this.inameLine = iLine;
+            parseScope();
     }
     public String getDescription() {
             return description == null ? "" : description;
@@ -35,6 +36,21 @@ public class ApexModel {
     public void setReturns(String returns) {
             this.returns = returns;
     }
+    public String getScope() {
+        return scope == null ? "" : scope;
+    }
+    public void setScope(String scope) {
+            this.scope = scope;
+    }
+    
+    private void parseScope() {
+        scope = null;
+        if (nameLine != null) {
+            String str = ApexDoc.strContainsScope(nameLine);
+            if (str != null)
+                scope = str;
+        }
+    }
     
     private String nameLine;
     private int inameLine;
@@ -42,5 +58,6 @@ public class ApexModel {
     private String author;
     private String date;
     private String returns;
+    private String scope;
     
 }

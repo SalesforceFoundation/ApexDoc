@@ -7,48 +7,6 @@ public class Constants {
                 "<script type='text/javascript' src='CollapsibleList.js'></script>" +                                                                
                 "<script type='text/javascript' src='ApexDoc.js'></script>" +                                                                
                 "<link rel='stylesheet' type='text/css' href='ApexDoc.css' /> " + 
-                "<script>" + 
-                        "$(document).ready(function(){" +
-                        
-                        "$('.toggle_container').hide();\n" + 
-                        
-                        "$('h2.trigger').click(function(){\n" +
-                                "$(this).toggleClass('active').next().slideToggle('fast');" +
-                                "ToggleBtnLabel(this.firstChild);" +
-                                "return false; " +
-                        "});" +
-                        "});\n" +  
-
-                        "function gotomenu(url){" +
-                                "document.location.href = url;" +
-                        "}\n" +
-                        
-                        "function ToggleBtnLabel(ctrl){" +
-                                "ctrl.value = (ctrl.value=='+' ? '-' : '+');" +
-                        "}\n" +
-                        
-                        "function IsExpanded(ctrl) {" +
-                                "return (ctrl.value == '-');" +
-                        "}\n" +
-                                
-                        "function ToggleAll() {" +
-                                "var cExpanded = 0;" +
-                                "$('h2.trigger').each(function(){" +
-                                        "if (!IsExpanded(this.firstChild)) {" +
-                                                "$(this).toggleClass('active').next().slideToggle('fast');" +
-                                                "ToggleBtnLabel(this.firstChild);" +
-                                                "cExpanded++;" +
-                                        "}" +
-                                "});" +
-                                "if (cExpanded == 0) {" +
-                                        "$('h2.trigger').each(function(){" +
-                                                "$(this).toggleClass('active').next().slideToggle('fast');" +
-                                                "ToggleBtnLabel(this.firstChild);" +
-                                        "});" +
-                                "}" +
-                        "}\n" +  
-                        
-                "</script>" +
                 "</head>" +
                 "<body>";
         

@@ -1,11 +1,28 @@
+    // global variables
+    var listScope = ["global", "public", "private", "testMethod", "webService"];
+    var listScopeOn = ["global", "private"];
+    
     // page init function
-    $(function () {        
+    $(function () {  
+    	readScopeCookie();      
+		expandListToClass();
+    });
+    
+    $(document).ready(function() {
+    
+    	$('.toggle_container').hide(); 
+    
+    	$('h2.trigger').click(function() {
+            $(this).toggleClass('active').next().slideToggle('fast');
+            ToggleBtnLabel(this.firstChild);
+            return false;
+    	});
+    });
+    
+    function expandListToClass() {
         var cl = $('#mynavbar').collapsibleList('.header', {search: false, animate: false});
-        // start with navbar all collapsed.  couldn't figure out how to call collapseAllHeaders(),
-        // but submitting the click on all li's does the trick!
-        $('li',cl).trigger('click');
         var clist = $('#mynavbar').data('collapsibleList');
-        //clist.collapseAll();  this didn't seem to set the collapsed class correctly.
+        clist.collapseAll();  
 
         // get just the filename without extension from the url
         var i = location.pathname.lastIndexOf("/");
@@ -16,7 +33,105 @@
         if (node != null) {
             node.classList.add('nav-selected');
             var li = $('#idMenu'+filename);
-            clist.expandToElement(li);
+            clist.expandToElementListScope(li, getListScope());
+        }    
+    }  
+    
+    function getListScope() {
+    	var list = [];
+    	$('input:checkbox').each(function(index, elem) {
+    		if (elem.checked) {
+    			var str = elem.id;
+    			str = str.replace('cbx', '');
+    			list.push(str);
+    		}
+    	});
+    	return list;
+    }
+    
+    function setScopeCookie() {
+    	var list = getListScope();
+    	var strScope = '';
+    	var comma = '';
+    	for (var i = 0; i < list.length; i++) {
+    		strScope += comma + list[i];
+    		comma = ',';
+    	}
+    	document.cookie = 'scope=' + strScope + '; path=/';
+    }
+    
+    function readScopeCookie() {
+    	var strScope = getCookie('scope');
+    	if (strScope != null) {
+    		
+    		// first clear all the scope checkboxes
+    		$('input:checkbox').each(function(index, elem) {
+				elem.checked = false;
+    		});
+    		
+    		// now check the appropriate scope checkboxes
+		    var list = strScope.split(',');
+		    for (var i = 0; i < list.length; i++) {
+		    	var id = 'cbx' + list[i];
+				$('#' + id).prop('checked', true);
+		    }
+		}    
+    }
+
+	function getCookie(cname) {
+	    var name = cname + "=";
+	    var ca = document.cookie.split(';');
+	    for(var i=0; i<ca.length; i++) {
+	        var c = ca[i];
+	        while (c.charAt(0)==' ') c = c.substring(1);
+	        if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+	    }
+	    return "";
+	}
+
+    function gotomenu(url) {
+		document.location.href = url;
+    }
+    
+    function ToggleBtnLabel(ctrl) {
+		ctrl.value = (ctrl.value=='+' ? '-' : '+');
+    }
+    
+    function IsExpanded(ctrl) {
+		return (ctrl.value == '-');
+    }
+            
+    function ToggleAll() {
+		var cExpanded = 0;
+        $('h2.trigger').each(function() {
+        	if (!IsExpanded(this.firstChild)) {
+				$(this).toggleClass('active').next().slideToggle('fast');
+                ToggleBtnLabel(this.firstChild);
+                cExpanded++;
+             }
+        });
+        if (cExpanded == 0) {
+        	$('h2.trigger').each(function() { 
+            	$(this).toggleClass('active').next().slideToggle('fast');
+                ToggleBtnLabel(this.firstChild);
+            });
         }
-                
-    });
+    }  
+    
+    function ToggleScope(scope, isShow) {
+    	setScopeCookie();
+    	if (isShow == true) {
+	    	// show all methods of the given scope
+	    	$('.methodscope' + scope).show();
+	    	
+			// redisplay the class list
+			expandListToClass();						
+		} else {
+	    	// hide all methods of the given scope
+	    	$('.methodscope' + scope).hide();
+	    	
+	    	// hide all classes of the given scope
+	    	$('.classscope' + scope).hide();
+		}    	
+    }                
+    

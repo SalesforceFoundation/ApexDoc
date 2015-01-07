@@ -107,9 +107,24 @@ public class FileManager {
             return "<a target=\"_blank\" class=\"hostedSourceLink\" href=\"" + hostedSourceURL + strClassName + ".cls#L" + model.getInameLine() + "\">";
         }
         
+        private String strHTMLScopingPanel() {
+            String str = "<tr><td colspan='2' style='text-align: center;' >";
+            str += "Filter for: ";
+            
+            for (int i = 0; i < ApexDoc.rgstrScope.length; i++) {
+                str += "<input type='checkbox' checked='checked' id='cbx" + ApexDoc.rgstrScope[i] + 
+                        "' onclick='ToggleScope(\"" + ApexDoc.rgstrScope[i] + "\", this.checked );'>" + 
+                        ApexDoc.rgstrScope[i] + "</input>&nbsp;&nbsp;";
+            }
+            str += "</td></tr>";
+            return str;
+        }
+        
         public void makeFile(Hashtable<String, ClassGroup> mapClassNameToClassGroup, ArrayList<ClassModel> cModels, String projectDetail, String homeContents, String hostedSourceURL, IProgressMonitor monitor){
                 //System.out.println("Class::::::::::::::::::::::::");
-                String links = "<table width='100%'><tr style='vertical-align:top;'>" ;
+                String links = "<table width='100%'>" ;
+                links += strHTMLScopingPanel();
+                links += "<tr style='vertical-align:top;' >";
                 links += getPageLinks(mapClassNameToClassGroup, cModels);
                 
                 if(homeContents != null && homeContents.trim().length() > 0 ){
@@ -166,6 +181,7 @@ public class FileManager {
                         
                                 //System.out.println("Methods::::::::::::::::::::::::");
                                 for (MethodModel method : cModel.getMethods()) {
+                                        contents += "<div class=\"methodscope" + method.getScope() + "\" >";
                                         contents += "<h2 class='trigger'><input type='button' value='+' style='width:24px' />&nbsp;&nbsp;<a href='#'>" + method.getMethodName() + "</a></h2>" +
                                                                 "<div class='toggle_container'>" +
                                                                 "<div class='toggle_container_subtitle'>" + 
@@ -206,6 +222,7 @@ public class FileManager {
                                                 
                                         }
                                         contents += "</table></div>";
+                                    contents += "</div>"; //methodscope div
                                 }
                         }else{
                                 continue;
@@ -227,7 +244,9 @@ public class FileManager {
                 if (cg.getContentSource() != null) {
                     String cgContent = parseHTMLFile(cg.getContentSource());
                     if (cgContent != null) {
-                        String strHtml = Constants.getHeader(projectDetail) + links + "<td class='contentTD'>" + "<h2 class='section-title'>" + cg.getName() + "</h2>" + cgContent + "</td>";
+                        String strHtml = Constants.getHeader(projectDetail) + links + "<td class='contentTD'>" + 
+                                "<h2 class='section-title'>" + 
+                                cg.getName() + "</h2>" + cgContent + "</td>";
                         strHtml += Constants.FOOTER;
                         classHashTable.put(cg.getContentFilename(), strHtml);
                         if (monitor != null) monitor.worked(1);
@@ -237,7 +256,7 @@ public class FileManager {
         }
 
         public String getPageLinks(Hashtable<String, ClassGroup> mapClassNameToClassGroup, ArrayList<ClassModel> cModels){
-            String links = "<td width='20%' >";
+            String links = "<td width='20%' vertical-align='top' >";
             links += "<div class=\"sidebar\"><div class=\"navbar\"><nav role=\"navigation\"><ul id=\"mynavbar\">";
             links += "<li id=\"idMenuindex\"><a href=\".\" onclick=\"gotomenu('index.html');return false;\" class=\"nav-item\">Home</a></li>";
             
@@ -255,7 +274,9 @@ public class FileManager {
                     if (strGroup.equals(cModel.getClassGroup()) || (cModel.getClassGroup() == null && strGroup == "Miscellaneous")) {                    
                         if (cModel.getNameLine() != null && cModel.getNameLine().trim().length() > 0) {
                             String fileName = cModel.getClassName();
-                            links += "<li class=\"subitem\" id=\"idMenu" + fileName + "\"><a href=\".\" onclick=\"gotomenu('" + fileName + ".html');return false;\" class=\"nav-item sub-nav-item\">" + fileName + "</a></li>";
+                            links += "<li class=\"subitem classscope" + cModel.getScope() + "\" id=\"idMenu" + fileName + 
+                                    "\"><a href=\".\" onclick=\"gotomenu('" + fileName + ".html');return false;\" class=\"nav-item sub-nav-item scope" + cModel.getScope() + "\">" + 
+                                    fileName + "</a></li>";
                         }
                     }
                 }

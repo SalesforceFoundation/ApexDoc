@@ -74,7 +74,9 @@
             }
 
             function collapseAllHeaders() {
+            	$('.header').addClass('collapsed');
                 return hideListElements(allElements);
+                
             }
 
             function expandAllHeaders() {
@@ -183,8 +185,12 @@
 
             function setApi() {
                 mainUl.data('collapsibleList', {
-                    collapseAll: collapseAllHeaders,
+                    collapseAll: function() {
+                    	collapseAllHeaders();
+                    },
+                    
                     expandAll: expandAllHeaders,
+                    
                     expandToElement: function(elem) {
                         // expand our parent so we are visible (along with our siblings)
                         showListElements(elem.parent().children());
@@ -196,6 +202,26 @@
                         expandHeader(elem);
                     },
                     
+                    expandToElementListScope: function(elem, listScope) {
+                    	var scope = '';
+                    	var i;
+                    	var comma = '';
+                    	for (i = 0; i < listScope.length; i++) {
+                    		scope += comma + '.classscope' + listScope[i];
+                    		comma = ', ';
+                    	}
+                        // expand our parent so we are visible (along with our siblings)
+                        showListElements(elem.parent().children(scope));
+                        
+                        // mark our parent as expanded
+                        elem.parent().prev().removeClass('collapsed');
+                        
+                        // in case we are a parent, ensure our children are shown                        
+                        showListElements(elem.next().children(scope));
+                        elem.removeClass('collapsed');
+                        
+                    },
+
                 });
             }
 
