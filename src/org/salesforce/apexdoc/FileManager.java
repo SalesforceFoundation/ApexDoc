@@ -155,6 +155,11 @@ public class FileManager {
                                                                 cModel.getClassName() + "</a>" +
                                                                 "<span style='float:right;vertical-align:middle;'><input type='button' value='+/- all' onclick='ToggleAll();' /></span>" +
                                                         "</h2>" +
+
+                                                        "<div class='classSignature'>" + 
+                                                        strLinkfromModel(cModel, cModel.getClassName(), hostedSourceURL) +
+                                                        cModel.getNameLine() + "</a></div>" +
+                                                        
                                                         "<table class='details' rules='all' border='1' cellpadding='6'>" +
                                                                 "<tr><th>Author</th><td>" + cModel.getAuthor() + "</td></tr>" +
                                                                 "<tr><th>Date</th><td>" + cModel.getDate() + "</td></tr>" +

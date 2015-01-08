@@ -112,6 +112,15 @@ h2.active {
 	height: 26px;
 }
 
+.classSignature {
+	font-family:Courier;
+	font-size:.9em;
+	font-weight:normal;
+	color:MediumBlue;
+	height: 30px;
+	padding-top: 10px;
+}
+
 .hostedSourceLink {
     text-decoration: initial;	
 }
