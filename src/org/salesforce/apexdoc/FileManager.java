@@ -14,7 +14,7 @@ public class FileManager {
         infoMessages = new StringBuffer();
     }
     
-    public static String escapeHTML(String s) {
+    private static String escapeHTML(String s) {
         StringBuilder out = new StringBuilder(Math.max(16, s.length()));
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
@@ -30,47 +30,15 @@ public class FileManager {
     }
     
     public FileManager(String path){
-                infoMessages = new StringBuffer();
-                
-                if(path == null || path.trim().length() == 0)
-                        this.path = ".";
-                else
-                        this.path = path;
-        }
+        infoMessages = new StringBuffer();
         
-        public boolean createHTML(String fileName, String contents){
-                try{
-                    if (fileName  == null) return false;
-                        
-                        
-                        if(path.endsWith("/") || path.endsWith("\\")){
-                                path += Constants.ROOT_DIRECTORY; // + "/" + fileName + ".html";
-                        }else{
-                                path += "/"  + Constants.ROOT_DIRECTORY; // + "/" + fileName + ".html";
-                        }
-                        
-                        (new File(path)).mkdirs();
-                        
-                        fileName = path + "/" + fileName + ".html";
-                        
-                        File file= new File(fileName);
-                        fos = new FileOutputStream(file);
-                    dos=new DataOutputStream(fos);
-                    dos.writeBytes(contents);
-                    dos.close();
-                    fos.close();
-                     
-                    //printAllFiles();
-                    copy(path);
-                    return true;
-                }catch(Exception e){
-                        e.printStackTrace();
-                }
+        if(path == null || path.trim().length() == 0)
+                this.path = ".";
+        else
+                this.path = path;
+    }
                 
-                return false;
-        }
-        
-        public boolean createHTML(Hashtable<String, String> classHashTable,  IProgressMonitor monitor){
+        private boolean createHTML(TreeMap<String, String> classTreeMap,  IProgressMonitor monitor){
                 try{
                         if(path.endsWith("/") || path.endsWith("\\")){
                                 path += Constants.ROOT_DIRECTORY; // + "/" + fileName + ".html";
@@ -80,8 +48,8 @@ public class FileManager {
                         
                         (new File(path)).mkdirs();
                         
-                        for(String fileName : classHashTable.keySet()){                         
-                                String contents = classHashTable.get(fileName);                                 
+                        for(String fileName : classTreeMap.keySet()){                         
+                                String contents = classTreeMap.get(fileName);                                 
                                 fileName = path + "/" + fileName + ".html";                             
                                 File file= new File(fileName);
                                 fos = new FileOutputStream(file);
@@ -120,7 +88,7 @@ public class FileManager {
             return str;
         }
         
-        public void makeFile(Hashtable<String, ClassGroup> mapClassNameToClassGroup, ArrayList<ClassModel> cModels, String projectDetail, String homeContents, String hostedSourceURL, IProgressMonitor monitor){
+        private void makeFile(TreeMap<String, ClassGroup> mapClassNameToClassGroup, ArrayList<ClassModel> cModels, String projectDetail, String homeContents, String hostedSourceURL, IProgressMonitor monitor){
                 //System.out.println("Class::::::::::::::::::::::::");
                 String links = "<table width='100%'>" ;
                 links += strHTMLScopingPanel();
@@ -130,21 +98,19 @@ public class FileManager {
                 if(homeContents != null && homeContents.trim().length() > 0 ){
                         homeContents = links + "<td class='contentTD'>" + "<h2 class='section-title'>Home</h2>" + homeContents + "</td>";
                         homeContents = Constants.getHeader(projectDetail) + homeContents + Constants.FOOTER;
-                        //createHTML("index.php", homeContents);
                 }else{
                         homeContents = Constants.DEFAULT_HOME_CONTENTS;
                         homeContents = links + "<td class='contentTD'>" + "<h2 class='section-title'>Home</h2>" + homeContents + "</td>";
                         homeContents = Constants.getHeader(projectDetail) + homeContents + Constants.FOOTER;
-                        //createHTML("index.php", homeContents);
                 }
                 
                 
                 String fileName = "";
-                Hashtable<String, String> classHashTable = new Hashtable<String, String>();
-                classHashTable.put("index", homeContents);
+                TreeMap<String, String> classTreeMap = new TreeMap<String, String>();
+                classTreeMap.put("index", homeContents);
                 
                 // create our Class Group content files
-                createClassGroupContent(classHashTable, links, projectDetail, mapClassNameToClassGroup, cModels, monitor);
+                createClassGroupContent(classTreeMap, links, projectDetail, mapClassNameToClassGroup, cModels, monitor);
                 
                 for(ClassModel cModel : cModels){
                         String contents = links;
@@ -235,14 +201,14 @@ public class FileManager {
                         contents += "</div>";
                 
                         contents = Constants.getHeader(projectDetail) + contents + Constants.FOOTER;
-                        classHashTable.put(fileName, contents);
+                        classTreeMap.put(fileName, contents);
                         if (monitor != null) monitor.worked(1);
                 }
-                createHTML(classHashTable, monitor);
+                createHTML(classTreeMap, monitor);
         }
         
         // create our Class Group content files
-        private void createClassGroupContent(Hashtable<String, String> classHashTable, String links, String projectDetail, Hashtable<String, ClassGroup> mapClassNameToClassGroup, 
+        private void createClassGroupContent(TreeMap<String, String> classTreeMap, String links, String projectDetail, TreeMap<String, ClassGroup> mapClassNameToClassGroup, 
             ArrayList<ClassModel> cModels, IProgressMonitor monitor) {
             for (String strGroup : mapClassNameToClassGroup.keySet()) {
                 ClassGroup cg = mapClassNameToClassGroup.get(strGroup);
@@ -253,19 +219,30 @@ public class FileManager {
                                 "<h2 class='section-title'>" + 
                                 escapeHTML(cg.getName()) + "</h2>" + cgContent + "</td>";
                         strHtml += Constants.FOOTER;
-                        classHashTable.put(cg.getContentFilename(), strHtml);
+                        classTreeMap.put(cg.getContentFilename(), strHtml);
                         if (monitor != null) monitor.worked(1);
                     }
                 }
             }
         }
 
-        public String getPageLinks(Hashtable<String, ClassGroup> mapClassNameToClassGroup, ArrayList<ClassModel> cModels){
+        /**********************************************************************************************************
+         * @description generate the HTML string for the Class Menu to display on each page.
+         * @param mapClassNameToClassGroup map that holds all the Class names, and their respective Class Group.
+         * @param cModels list of ClassModels
+         * @return String of HTML
+         */
+        private String getPageLinks(TreeMap<String, ClassGroup> mapClassNameToClassGroup, ArrayList<ClassModel> cModels){
+            
             String links = "<td width='20%' vertical-align='top' >";
             links += "<div class=\"sidebar\"><div class=\"navbar\"><nav role=\"navigation\"><ul id=\"mynavbar\">";
             links += "<li id=\"idMenuindex\"><a href=\".\" onclick=\"gotomenu('index.html');return false;\" class=\"nav-item\">Home</a></li>";
             
+            // add a bucket ClassGroup for all Classes without a ClassGroup specified
             mapClassNameToClassGroup.put("Miscellaneous", new ClassGroup("Miscellaneous", null));
+            
+            // create a sorted list of ClassGroups
+            
             for (String strGroup : mapClassNameToClassGroup.keySet()) {
                 ClassGroup cg = mapClassNameToClassGroup.get(strGroup);
                 String strGoTo = "onclick=\"return false;\"";
@@ -317,7 +294,7 @@ public class FileManager {
             is.close();
         }
         
-        public  void copy(String toFileName) throws IOException,Exception {
+        private void copy(String toFileName) throws IOException,Exception {
                 docopy("apex_doc_logo.png", toFileName);
                 docopy("ApexDoc.css", toFileName);
                 docopy("ApexDoc.js", toFileName);
@@ -347,47 +324,11 @@ public class FileManager {
         
         
         
-        public void createDoc(Hashtable<String, ClassGroup> mapClassNameToClassGroup, ArrayList<ClassModel> cModels, String projectDetail, String homeContents, String hostedSourceURL, IProgressMonitor monitor){
+        public void createDoc(TreeMap<String, ClassGroup> mapClassNameToClassGroup, ArrayList<ClassModel> cModels, String projectDetail, String homeContents, String hostedSourceURL, IProgressMonitor monitor){
                 makeFile(mapClassNameToClassGroup, cModels, projectDetail, homeContents, hostedSourceURL, monitor);
         }
-        
-        public String parseProjectDetail(String filePath){
-                try{
-                        if(filePath != null && filePath.trim().length() > 0){
-                                FileInputStream fstream = new FileInputStream(filePath);
-                            // Get the object of DataInputStream
-                            DataInputStream in = new DataInputStream(fstream);
-                            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                            String contents = "";
-                            String strLine;
-                            while ((strLine = br.readLine()) != null)   {
-                                      // Print the content on the console
-                                        strLine = strLine.trim();
-                                        if(strLine != null && strLine.trim().length() > 0 ){
-                                                String list[] = strLine.split("=");
-                                                if(list.length > 1 && list[0] != null && list[1].trim().length() > 0){
-                                                        if(list[0].equalsIgnoreCase("projectname")){
-                                                                if(list[1] != null && list[1].trim().length() > 0)
-                                                                        contents += "<h2 style='margin:0px;'>" + list[1] + "</h2>";
-                                                        }else{
-                                                                if(list[1] != null && list[1].trim().length() > 0)
-                                                                        contents += list[1] + "<br>";
-                                                        }
-                                                }
-                                        }
-                                        
-                            }
-                            br.close();
-                            return contents;
-                        }
-                }catch(Exception e){
-                        e.printStackTrace();
-                }
-            
-                return "";
-        }
-        
-        public String parseFile(String filePath){
+               
+        private String parseFile(String filePath){
                 try{
                         if(filePath != null && filePath.trim().length() > 0){
                                 FileInputStream fstream = new FileInputStream(filePath);

@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.TreeMap;
 
 public class ApexDoc {
 
@@ -110,7 +110,7 @@ public class ApexDoc {
                 }
                 
                 // create our Groups
-                Hashtable<String, ClassGroup> mapClassNameToClassGroup = createMapClassNameToClassGroup(cModels, sourceDirectory); 
+                TreeMap<String, ClassGroup> mapClassNameToClassGroup = createMapClassNameToClassGroup(cModels, sourceDirectory); 
                                 
                 // load up optional specified file templates
                 String projectDetail = fm.parseHTMLFile(authorfilepath);
@@ -138,8 +138,8 @@ public class ApexDoc {
                 System.out.println("<scope> - Optional. Semicolon seperated list of scopes to document.  Defaults to 'global;public'. ");               
         }
         
-        private static Hashtable<String, ClassGroup> createMapClassNameToClassGroup(ArrayList<ClassModel> cModels, String sourceDirectory) {
-            Hashtable<String, ClassGroup> map = new Hashtable<String, ClassGroup>();
+        private static TreeMap<String, ClassGroup> createMapClassNameToClassGroup(ArrayList<ClassModel> cModels, String sourceDirectory) {
+            TreeMap<String, ClassGroup> map = new TreeMap<String, ClassGroup>();
             for (ClassModel cmodel : cModels) {
                 String strGroup = cmodel.getClassGroup();
                 String strGroupContent = cmodel.getClassGroupContent();
