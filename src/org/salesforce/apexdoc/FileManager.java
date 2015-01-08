@@ -158,7 +158,7 @@ public class FileManager {
 
                                                         "<div class='classSignature'>" + 
                                                         strLinkfromModel(cModel, cModel.getClassName(), hostedSourceURL) +
-                                                        cModel.getNameLine() + "</a></div>" +
+                                                        escapeHTML(cModel.getNameLine()) + "</a></div>" +
                                                         
                                                         "<table class='details' rules='all' border='1' cellpadding='6'>" +
                                                                 "<tr><th>Author</th><td>" + cModel.getAuthor() + "</td></tr>" +
@@ -176,7 +176,7 @@ public class FileManager {
                                         contents += "<tr class='propertyscope" + prop.getScope() + "'><td class='clsPropertyName'>" + 
                                                 strLinkfromModel(prop, cModel.getClassName(), hostedSourceURL) +
                                                 prop.getPropertyName() + "</a></td>";
-                                        contents += "<td><div class='clsPropertyDeclaration'>" + prop.getNameLine() + "</div>";
+                                        contents += "<td><div class='clsPropertyDeclaration'>" + escapeHTML(prop.getNameLine()) + "</div>";
                                         contents += "<div class='clsPropertyDescription'>" + escapeHTML(prop.getDescription()) + "</div></tr>";
                                 }
                                 
@@ -191,12 +191,12 @@ public class FileManager {
                                                                 "<div class='toggle_container'>" +
                                                                 "<div class='toggle_container_subtitle'>" + 
                                                                     strLinkfromModel(method, cModel.getClassName(), hostedSourceURL) +
-                                                                    method.getNameLine() + "</a></div>" +
+                                                                    escapeHTML(method.getNameLine()) + "</a></div>" +
                                                                 "<table class='details' rules='all' border='1' cellpadding='6'>" + 
                                                                 (method.getAuthor() != "" ? "<tr><th>Author</th><td>" + method.getAuthor() + "</td></tr> " : "") +
                                                                 (method.getDate() != "" ? "<tr><th>Date</th><td>" + method.getDate() + "</td></tr> " : "") +
                                                                 (method.getDescription() != "" ? "<tr><th>Description</th><td>" + escapeHTML(method.getDescription()) + "</td></tr> " : "") +
-                                                                (method.getReturns() != "" ? "<tr><th>Returns</th><td>" + method.getReturns() + "</td></tr> " : "") +
+                                                                (method.getReturns() != "" ? "<tr><th>Returns</th><td>" + escapeHTML(method.getReturns()) + "</td></tr> " : "") +
                                                                 (method.getParams() != null && method.getParams().size() > 0 ? "<tr><th colspan='2' class='paramHeader'>Parameters</td></tr> " : "");
         
                                         
@@ -251,7 +251,7 @@ public class FileManager {
                     if (cgContent != null) {
                         String strHtml = Constants.getHeader(projectDetail) + links + "<td class='contentTD'>" + 
                                 "<h2 class='section-title'>" + 
-                                cg.getName() + "</h2>" + cgContent + "</td>";
+                                escapeHTML(cg.getName()) + "</h2>" + cgContent + "</td>";
                         strHtml += Constants.FOOTER;
                         classHashTable.put(cg.getContentFilename(), strHtml);
                         if (monitor != null) monitor.worked(1);
