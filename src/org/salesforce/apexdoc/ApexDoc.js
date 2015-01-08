@@ -1,22 +1,29 @@
     // global variables
-    var listScope = ["global", "public", "private", "testMethod", "webService"];
-    var listScopeOn = ["global", "private"];
+    var listAllScope = ["global", "public", "private", "testMethod", "webService"];
     
     // page init function
     $(function () {  
-    	readScopeCookie();      
-		expandListToClass();
-    });
-    
-    $(document).ready(function() {
-    
+    	readScopeCookie();
+    	
+    	hideAllScopes();
+    	
+    	showScopes();
+    	      		
+		// start with all properties and methods collapsed
     	$('.toggle_container').hide(); 
-    
+
+		// set the click handler for the methods
     	$('h2.trigger').click(function() {
             $(this).toggleClass('active').next().slideToggle('fast');
             ToggleBtnLabel(this.firstChild);
             return false;
     	});
+
+    });
+    
+    $(document).ready(function() {
+    
+    
     });
     
     function expandListToClass() {
@@ -47,6 +54,19 @@
     		}
     	});
     	return list;
+    }
+    
+    function showScopes() {
+    	var list = getListScope();
+    	for (var i = 0; i < list.length; i++) {
+    		ToggleScope(list[i], true);
+    	}
+    }
+    
+    function hideAllScopes() {
+    	for (var i = 0; i < listAllScope.length; i++) {
+    		ToggleScope(listAllScope[i], false);
+    	}    
     }
     
     function setScopeCookie() {
