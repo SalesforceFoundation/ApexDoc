@@ -35,9 +35,14 @@ public class ClassModel extends ApexModel {
                 //System.out.println("@@ File Name = " + nameLine);
                 if(nameLine != null && nameLine.trim().length() > 0 ){
                         //System.out.println("## File Name = " + nameLine.trim().lastIndexOf(" "));
-                        int fFound = nameLine.indexOf("class ");
+                        int fFound = nameLine.toLowerCase().indexOf("class ");
+                        int cch = 6;
+                        if (fFound == -1) {
+                            fFound = nameLine.toLowerCase().indexOf("interface ");
+                            cch = 10;
+                        }
                         if (fFound > -1)
-                            nameLine = nameLine.substring(fFound + 6).trim();
+                            nameLine = nameLine.substring(fFound + cch).trim();
                         int lFound = nameLine.indexOf(" ");
                         if(lFound == -1)
                                 return nameLine;

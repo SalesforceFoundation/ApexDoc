@@ -234,7 +234,7 @@ public class ApexDoc {
                                 continue;
 
                         // look for a class
-                        if (!classparsed && strLine.contains(" class ")) {
+                        if (!classparsed && (strLine.toLowerCase().contains(" class ") || strLine.toLowerCase().contains(" interface "))) {
                                 classparsed = true;
                                 fillClassModel(cModel, strLine, lstComments, iLine);
                                 lstComments.clear();
@@ -256,7 +256,7 @@ public class ApexDoc {
                         }
                         
                         // TODO: need to handle nested class.  ignore it for now!
-                        if (strLine.contains(" class "))
+                        if (strLine.toLowerCase().contains(" class "))
                                 continue;
                         
                         // handle set & get within the property
@@ -292,7 +292,7 @@ public class ApexDoc {
         public static String strContainsScope(String str) {
             str = str.toLowerCase();
             for (int i = 0; i < rgstrScope.length; i++) {
-                if (str.contains(rgstrScope[i].toLowerCase() + " ")) {
+                if (str.toLowerCase().contains(rgstrScope[i].toLowerCase() + " ")) {
                     return rgstrScope[i];
                 }
             }
