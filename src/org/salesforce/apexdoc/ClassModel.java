@@ -3,15 +3,19 @@ import java.util.ArrayList;
 
 public class ClassModel extends ApexModel {
         
-        public ClassModel(){
+        public ClassModel(ClassModel cmodelParent){
                 methods = new ArrayList<MethodModel>();
                 properties = new ArrayList<PropertyModel>();
+                this.cmodelParent = cmodelParent;
+                childClasses = new ArrayList<ClassModel>();
         }
 
         private ArrayList<MethodModel> methods;
         private ArrayList<PropertyModel> properties;
         private String strClassGroup;
         private String strClassGroupContent;
+        private ClassModel cmodelParent;
+        private ArrayList<ClassModel> childClasses;
         
         public ArrayList<PropertyModel> getProperties() {
                 return properties;
@@ -29,12 +33,19 @@ public class ClassModel extends ApexModel {
                 this.methods = methods;
         }
         
-        public String getClassName(){
+        public ArrayList<ClassModel> getChildClasses() {
+            return childClasses;
+        }
+    
+        public void addChildClass(ClassModel child) {
+            childClasses.add(child);
+        }
+    
+        public String getClassName() {
                 String nameLine = getNameLine();
+                String strParent = cmodelParent == null ? "" : cmodelParent.getClassName() + ".";
                 if (nameLine != null) nameLine = nameLine.trim();
-                //System.out.println("@@ File Name = " + nameLine);
-                if(nameLine != null && nameLine.trim().length() > 0 ){
-                        //System.out.println("## File Name = " + nameLine.trim().lastIndexOf(" "));
+                if (nameLine != null && nameLine.trim().length() > 0 ) {
                         int fFound = nameLine.toLowerCase().indexOf("class ");
                         int cch = 6;
                         if (fFound == -1) {
@@ -44,22 +55,32 @@ public class ClassModel extends ApexModel {
                         if (fFound > -1)
                             nameLine = nameLine.substring(fFound + cch).trim();
                         int lFound = nameLine.indexOf(" ");
-                        if(lFound == -1)
-                                return nameLine;
-                        try{
-                                String name = nameLine.substring(0, lFound);
-                                return name;
-                        }catch(Exception ex){
-                                return nameLine.substring(nameLine.lastIndexOf(" ") + 1);
+                        if (lFound == -1)
+                            return strParent + nameLine;
+                        try {
+                            String name = nameLine.substring(0, lFound);
+                            return strParent + name;
+                        } catch(Exception ex) {
+                            return strParent + nameLine.substring(nameLine.lastIndexOf(" ") + 1);
                         }
-                }else{
-                        return "";
+                } else {
+                    return "";
                 }
                 
         }
         
+        public String getTopmostClassName() {
+            if (cmodelParent != null)
+                return cmodelParent.getClassName();
+            else
+                return getClassName();
+        }
+        
         public String getClassGroup() {
-            return strClassGroup;
+            if (this.cmodelParent != null)
+                return cmodelParent.getClassGroup();
+            else
+                return strClassGroup;
         }
         
         public void setClassGroup(String strGroup) {

@@ -10,6 +10,7 @@ import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.TreeMap;
+import java.util.Stack;
 
 public class ApexDoc {
 
@@ -166,13 +167,12 @@ public class ApexDoc {
                     DataInputStream in = new DataInputStream(fstream);
                     BufferedReader br = new BufferedReader(new InputStreamReader(in));
                     String strLine;
-                    //Read File Line By Line
-                    boolean classparsed = false;
                     boolean commentsStarted = false;
+                    int nestedCurlyBraceDepth = 0;
                     ArrayList<String> lstComments = new ArrayList<String>();
-                    ClassModel cModel = new ClassModel();
-                    ArrayList<MethodModel> methods = new ArrayList<MethodModel>();
-                    ArrayList<PropertyModel> properties = new ArrayList<PropertyModel>();
+                    ClassModel cModel = null;
+                    ClassModel cModelParent = null;
+                    Stack<ClassModel> cModels = new Stack<ClassModel>();
                     
                     // DH: Consider using java.io.StreamTokenizer to read the file a token at a time?
                     //
@@ -199,7 +199,7 @@ public class ApexDoc {
                         }
                         
                         // gather up our comments
-                        if (strLine.startsWith("/**")) {
+                        if (strLine.startsWith("/*")) {
                                 commentsStarted = true;
                                 if (strLine.endsWith("*/"))
                                     commentsStarted = false;
@@ -215,6 +215,20 @@ public class ApexDoc {
                         if (commentsStarted) {
                                 lstComments.add(strLine);
                                 continue;
+                        }
+                        
+                        // keep track of our nesting so we know which class we are in
+                        int openCurlies = countChars(strLine, '{');
+                        int closeCurlies = countChars(strLine, '}');
+                        nestedCurlyBraceDepth += openCurlies;
+                        nestedCurlyBraceDepth -= closeCurlies;
+
+                        // if we are in a nested class, and we just got back to nesting level 1,
+                        // then we are done with the nested class, and should set its props and methods.
+                        if (nestedCurlyBraceDepth == 1 && cModels.size() > 1 && cModel != null) {
+                            cModels.pop();
+                            cModel = cModels.peek();
+                            continue;
                         }
                         
                         // ignore anything after an =.  this avoids confusing properties with methods.
@@ -234,10 +248,25 @@ public class ApexDoc {
                                 continue;
 
                         // look for a class
-                        if (!classparsed && (strLine.toLowerCase().contains(" class ") || strLine.toLowerCase().contains(" interface "))) {
-                                classparsed = true;
-                                fillClassModel(cModel, strLine, lstComments, iLine);
+                        if ((strLine.toLowerCase().contains(" class ") || strLine.toLowerCase().contains(" interface "))) {
+                                    
+                                // create the new class
+                                ClassModel cModelNew = new ClassModel(cModelParent);
+                                fillClassModel(cModelParent, cModelNew, strLine, lstComments, iLine);
                                 lstComments.clear();
+                                
+                                // keep track of the new class, as long as it wasn't a single liner {}
+                                // but handle not having any curlies on the class line!
+                                if (openCurlies == 0 || openCurlies != closeCurlies) {
+                                    cModels.push(cModelNew);
+                                    cModel = cModelNew;
+                                }
+
+                                // add it to its parent (or track the parent)
+                                if (cModelParent != null)
+                                    cModelParent.addChildClass(cModelNew);
+                                else
+                                    cModelParent = cModelNew;
                                 continue;
                         }
                         
@@ -250,15 +279,11 @@ public class ApexDoc {
                                 }
                                 MethodModel mModel = new MethodModel();
                                 fillMethodModel(mModel, strLine, lstComments, iLine);
-                                methods.add(mModel);
+                                cModel.getMethods().add(mModel);
                                 lstComments.clear();
                                 continue;                               
                         }
-                        
-                        // TODO: need to handle nested class.  ignore it for now!
-                        if (strLine.toLowerCase().contains(" class "))
-                                continue;
-                        
+                                                
                         // handle set & get within the property
                         if (strLine.contains(" get ") || 
                            strLine.contains(" set ") ||
@@ -271,18 +296,18 @@ public class ApexDoc {
                         // must be a property
                         PropertyModel propertyModel = new PropertyModel();
                         fillPropertyModel(propertyModel, strLine, lstComments, iLine);
-                        properties.add(propertyModel);
+                        cModel.getProperties().add(propertyModel);
                         lstComments.clear();
                         continue;
+                        
                     }
-                    cModel.setMethods(methods);
-                    cModel.setProperties(properties);
+
                     
-                    //debug(cModel);
-                    //Close the input stream
+                    // Close the input stream
                     in.close();
-                    return cModel;
-            }catch (Exception e){//Catch exception if any
+                    // we only want to return the parent class
+                    return cModelParent;
+            }catch (Exception e) { //Catch exception if any
               System.err.println("Error: " + e.getMessage());
             }
             
@@ -384,7 +409,7 @@ public class ApexDoc {
                         //System.out.println("#### ::" + comment);
                 }
         }
-        private static void fillClassModel(ClassModel cModel, String name, ArrayList<String> lstComments, int iLine){
+        private static void fillClassModel(ClassModel cModelParent, ClassModel cModel, String name, ArrayList<String> lstComments, int iLine){
                 //System.out.println("@@@@ " + name);
                 cModel.setNameLine(name, iLine);
                 boolean inDescription = false;
@@ -474,6 +499,21 @@ public class ApexDoc {
                         return str.substring(iStart, iEnd);
         }
         
+        /*************************************************************************
+         * @description Count the number of occurrences of character in the string
+         * @param str
+         * @param ch
+         * @return int
+         */
+        private static int countChars(String str, char ch) {
+          int count = 0;
+          for (int i = 0; i < str.length(); ++i) {
+            if (str.charAt(i) == ch) {
+              ++count;
+            }
+          }          
+          return count;
+        }        
         
         private static void debug(ClassModel cModel){
                 try{

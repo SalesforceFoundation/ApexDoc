@@ -88,8 +88,17 @@ public class FileManager {
             return str;
         }
         
-        private void makeFile(TreeMap<String, ClassGroup> mapClassNameToClassGroup, ArrayList<ClassModel> cModels, String projectDetail, String homeContents, String hostedSourceURL, IProgressMonitor monitor){
-                //System.out.println("Class::::::::::::::::::::::::");
+        /********************************************************************************************
+         * @description main routine that creates an HTML file for each class specified
+         * @param mapClassNameToClassGroup
+         * @param cModels
+         * @param projectDetail
+         * @param homeContents
+         * @param hostedSourceURL
+         * @param monitor
+         */
+        private void makeFile(TreeMap<String, ClassGroup> mapClassNameToClassGroup, ArrayList<ClassModel> cModels, 
+            String projectDetail, String homeContents, String hostedSourceURL, IProgressMonitor monitor){
                 String links = "<table width='100%'>" ;
                 links += strHTMLScopingPanel();
                 links += "<tr style='vertical-align:top;' >";
@@ -117,84 +126,15 @@ public class FileManager {
                         if(cModel.getNameLine() != null && cModel.getNameLine().length() > 0){
                                 fileName = cModel.getClassName();
                                 contents += "<td class='contentTD'>";
-                                contents += "<h2 class='section-title'>" + strLinkfromModel(cModel, cModel.getClassName(), hostedSourceURL) +  
-                                                                cModel.getClassName() + "</a>" +
-                                                                "<span style='float:right;vertical-align:middle;'><input type='button' value='+/- all' onclick='ToggleAll();' /></span>" +
-                                                        "</h2>" +
-
-                                                        "<div class='classSignature'>" + 
-                                                        strLinkfromModel(cModel, cModel.getClassName(), hostedSourceURL) +
-                                                        escapeHTML(cModel.getNameLine()) + "</a></div>" +
-                                                        
-                                                        "<table class='details' rules='all' border='1' cellpadding='6'>" +
-                                                                "<tr><th>Author</th><td>" + cModel.getAuthor() + "</td></tr>" +
-                                                                "<tr><th>Date</th><td>" + cModel.getDate() + "</td></tr>" +
-                                                                "<tr><th>Description</th><td>" + escapeHTML(cModel.getDescription()) + "</td></tr>" +
-                                                        "</table>";
                                 
-                                contents += "<p></p>" +
-                                                        "<h2 class='trigger'><input type='button' value='+' style='width:24px' />&nbsp;&nbsp;<a href='#'>Properties</a></h2>" + 
-                                                        "<div class='toggle_container'> " +
-                                                                "<table class='properties' border='1' rules='all' cellpadding='6'> ";
+                                contents += htmlForClassModel(cModel, hostedSourceURL);
                                 
-                                //System.out.println("Properties::::::::::::::::::::::::");
-                                for (PropertyModel prop : cModel.getProperties()) {
-                                        contents += "<tr class='propertyscope" + prop.getScope() + "'><td class='clsPropertyName'>" + 
-                                                strLinkfromModel(prop, cModel.getClassName(), hostedSourceURL) +
-                                                prop.getPropertyName() + "</a></td>";
-                                        contents += "<td><div class='clsPropertyDeclaration'>" + escapeHTML(prop.getNameLine()) + "</div>";
-                                        contents += "<div class='clsPropertyDescription'>" + escapeHTML(prop.getDescription()) + "</div></tr>";
+                                // deal with any nested classes
+                                for (ClassModel cmChild : cModel.getChildClasses()) {
+                                    contents += "<hr>";
+                                    contents += htmlForClassModel(cmChild, hostedSourceURL);
                                 }
                                 
-                                contents += "</table></div>" 
-                                                 + "<h2 class='section-title'>Methods</h2>";
-
-                        
-                                //System.out.println("Methods::::::::::::::::::::::::");
-                                for (MethodModel method : cModel.getMethods()) {
-                                        contents += "<div class=\"methodscope" + method.getScope() + "\" >";
-                                        contents += "<h2 class='trigger'><input type='button' value='+' style='width:24px' />&nbsp;&nbsp;<a href='#'>" + method.getMethodName() + "</a></h2>" +
-                                                                "<div class='toggle_container'>" +
-                                                                "<div class='toggle_container_subtitle'>" + 
-                                                                    strLinkfromModel(method, cModel.getClassName(), hostedSourceURL) +
-                                                                    escapeHTML(method.getNameLine()) + "</a></div>" +
-                                                                "<table class='details' rules='all' border='1' cellpadding='6'>" + 
-                                                                (method.getAuthor() != "" ? "<tr><th>Author</th><td>" + method.getAuthor() + "</td></tr> " : "") +
-                                                                (method.getDate() != "" ? "<tr><th>Date</th><td>" + method.getDate() + "</td></tr> " : "") +
-                                                                (method.getDescription() != "" ? "<tr><th>Description</th><td>" + escapeHTML(method.getDescription()) + "</td></tr> " : "") +
-                                                                (method.getReturns() != "" ? "<tr><th>Returns</th><td>" + escapeHTML(method.getReturns()) + "</td></tr> " : "") +
-                                                                (method.getParams() != null && method.getParams().size() > 0 ? "<tr><th colspan='2' class='paramHeader'>Parameters</td></tr> " : "");
-        
-                                        
-                                        /*System.out.println(method.getNameLine());
-                                        System.out.println(method.getAuthor());
-                                        System.out.println(method.getDescription());
-                                        System.out.println(method.getDate());*/
-                                        for (String param : method.getParams()) {
-                                                param = escapeHTML(param);
-                                                if(param != null && param.trim().length() > 0){
-                                                        if(param.indexOf(" ") != -1){
-                                                                String list[] = param.split(" ");
-                                                                if(list.length >= 1){
-                                                                        contents += "<tr><th class='param'>" + list[0] + "</th>";
-                                                                        String val = "";
-                                                                        if(list.length >= 2){
-                                                                                val = "";
-                                                                                for(int i = 1; i < list.length; i++){
-                                                                                        val += list[i] + " ";
-                                                                                }
-                                                                        }
-                                                                        contents += "<td>" + val + "</td></tr>";
-                                                                }
-                                                                
-                                                        }
-                                                }
-                                                //System.out.println(param);
-                                                
-                                        }
-                                        contents += "</table></div>";
-                                    contents += "</div>"; //methodscope div
-                                }
                         }else{
                                 continue;
                         }
@@ -205,6 +145,93 @@ public class FileManager {
                         if (monitor != null) monitor.worked(1);
                 }
                 createHTML(classTreeMap, monitor);
+        }
+
+        /*********************************************************************************************
+         * @description creates the HTML for the provided class, including its property and methods
+         * @param cModel
+         * @param hostedSourceURL
+         * @return html string
+         */
+        private String htmlForClassModel(ClassModel cModel, String hostedSourceURL) {
+            String contents = "";
+            contents += "<h2 class='section-title'>" + strLinkfromModel(cModel, cModel.getTopmostClassName(), hostedSourceURL) +  
+                    cModel.getClassName() + "</a>" +
+                    "<span style='float:right;vertical-align:middle;'><input type='button' value='+/- all' onclick='ToggleAll();' /></span>" +
+                    "</h2>" +
+        
+                    "<div class='classSignature'>" + 
+                    strLinkfromModel(cModel, cModel.getTopmostClassName(), hostedSourceURL) +
+                    escapeHTML(cModel.getNameLine()) + "</a></div>" +
+                    
+                    "<table class='details' rules='all' border='1' cellpadding='6'>" +
+                            "<tr><th>Author</th><td>" + cModel.getAuthor() + "</td></tr>" +
+                            "<tr><th>Date</th><td>" + cModel.getDate() + "</td></tr>" +
+                            "<tr><th>Description</th><td>" + escapeHTML(cModel.getDescription()) + "</td></tr>" +
+                    "</table>";
+            
+            // start Properties
+            contents += "<p></p>" +
+                    "<h2 class='trigger'><input type='button' value='+' style='width:24px' />&nbsp;&nbsp;<a href='#'>Properties</a></h2>" + 
+                    "<div class='toggle_container'> " +
+                    "<table class='properties' border='1' rules='all' cellpadding='6'> ";
+            
+            for (PropertyModel prop : cModel.getProperties()) {
+                    contents += "<tr class='propertyscope" + prop.getScope() + "'><td class='clsPropertyName'>" + 
+                            strLinkfromModel(prop, cModel.getTopmostClassName(), hostedSourceURL) +
+                            prop.getPropertyName() + "</a></td>";
+                    contents += "<td><div class='clsPropertyDeclaration'>" + escapeHTML(prop.getNameLine()) + "</div>";
+                    contents += "<div class='clsPropertyDescription'>" + escapeHTML(prop.getDescription()) + "</div></tr>";
+            }
+            // end Properties
+            contents += "</table></div>"; 
+                             
+            // start Methods
+            contents += "<h2 class='section-title'>Methods</h2>";
+
+            for (MethodModel method : cModel.getMethods()) {
+                    contents += "<div class=\"methodscope" + method.getScope() + "\" >";
+                    contents += "<h2 class='trigger'><input type='button' value='+' style='width:24px' />&nbsp;&nbsp;<a href='#'>" + 
+                        method.getMethodName() + "</a></h2>" +
+                        "<div class='toggle_container'>" +
+                        "<div class='toggle_container_subtitle'>" + 
+                            strLinkfromModel(method, cModel.getTopmostClassName(), hostedSourceURL) +
+                            escapeHTML(method.getNameLine()) + "</a></div>" +
+                        "<table class='details' rules='all' border='1' cellpadding='6'>" + 
+                        (method.getAuthor() != "" ? "<tr><th>Author</th><td>" + method.getAuthor() + "</td></tr> " : "") +
+                        (method.getDate() != "" ? "<tr><th>Date</th><td>" + method.getDate() + "</td></tr> " : "") +
+                        (method.getDescription() != "" ? "<tr><th>Description</th><td>" + escapeHTML(method.getDescription()) + "</td></tr> " : "") +
+                        (method.getReturns() != "" ? "<tr><th>Returns</th><td>" + escapeHTML(method.getReturns()) + "</td></tr> " : "") +
+                        (method.getParams() != null && method.getParams().size() > 0 ? "<tr><th colspan='2' class='paramHeader'>Parameters</td></tr> " : "");
+    
+                    
+                    for (String param : method.getParams()) {
+                            param = escapeHTML(param);
+                            if(param != null && param.trim().length() > 0){
+                                    if(param.indexOf(" ") != -1){
+                                            String list[] = param.split(" ");
+                                            if(list.length >= 1){
+                                                    contents += "<tr><th class='param'>" + list[0] + "</th>";
+                                                    String val = "";
+                                                    if(list.length >= 2){
+                                                            val = "";
+                                                            for(int i = 1; i < list.length; i++){
+                                                                    val += list[i] + " ";
+                                                            }
+                                                    }
+                                                    contents += "<td>" + val + "</td></tr>";
+                                            }
+                                            
+                                    }
+                            }
+                            
+                    }
+                    // end Parameters
+                    contents += "</table></div>";
+                    // end Methods
+                    contents += "</div>"; 
+            }
+            return contents;
         }
         
         // create our Class Group content files
