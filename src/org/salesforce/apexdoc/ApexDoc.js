@@ -9,22 +9,6 @@
     	
     	showScopes();
     	      		
-		// start with all properties and methods collapsed
-    	//$('.toggle_container').hide();
-    	// decided to try default expanded 
-
-		// set the click handler for the methods
-    	$('h2.trigger').click(function() {
-            $(this).toggleClass('active').next().slideToggle('fast');
-            ToggleBtnLabel(this.firstChild);
-            return false;
-    	});
-
-    });
-    
-    $(document).ready(function() {
-    
-    
     });
     
     function expandListToClass() {
@@ -113,32 +97,7 @@
     function gotomenu(url) {
 		document.location.href = url;
     }
-    
-    function ToggleBtnLabel(ctrl) {
-		ctrl.value = (ctrl.value=='+' ? '-' : '+');
-    }
-    
-    function IsExpanded(ctrl) {
-		return (ctrl.value == '-');
-    }
-            
-    function ToggleAll() {
-		var cExpanded = 0;
-        $('h2.trigger').each(function() {
-        	if (!IsExpanded(this.firstChild)) {
-				$(this).toggleClass('active').next().slideToggle('fast');
-                ToggleBtnLabel(this.firstChild);
-                cExpanded++;
-             }
-        });
-        if (cExpanded == 0) {
-        	$('h2.trigger').each(function() { 
-            	$(this).toggleClass('active').next().slideToggle('fast');
-                ToggleBtnLabel(this.firstChild);
-            });
-        }
-    }  
-    
+        
     function ToggleScope(scope, isShow) {
     	setScopeCookie();
     	if (isShow == true) {
