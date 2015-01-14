@@ -131,7 +131,7 @@ public class FileManager {
                                 
                                 // deal with any nested classes
                                 for (ClassModel cmChild : cModel.getChildClasses()) {
-                                    contents += "<hr>";
+                                    contents += "<p/>";
                                     contents += htmlForClassModel(cmChild, hostedSourceURL);
                                 }
                                 
@@ -155,82 +155,104 @@ public class FileManager {
          */
         private String htmlForClassModel(ClassModel cModel, String hostedSourceURL) {
             String contents = "";
-            contents += "<h2 class='section-title'>" + strLinkfromModel(cModel, cModel.getTopmostClassName(), hostedSourceURL) +  
-                    cModel.getClassName() + "</a>" +
-                    "<span style='float:right;vertical-align:middle;'><input type='button' value='+/- all' onclick='ToggleAll();' /></span>" +
-                    "</h2>" +
-        
-                    "<div class='classSignature'>" + 
-                    strLinkfromModel(cModel, cModel.getTopmostClassName(), hostedSourceURL) +
-                    escapeHTML(cModel.getNameLine()) + "</a></div>" +
-                    
-                    "<table class='details' rules='all' border='1' cellpadding='6'>" +
-                            "<tr><th>Author</th><td>" + cModel.getAuthor() + "</td></tr>" +
-                            "<tr><th>Date</th><td>" + cModel.getDate() + "</td></tr>" +
-                            "<tr><th>Description</th><td>" + escapeHTML(cModel.getDescription()) + "</td></tr>" +
-                    "</table>";
-            
-            // start Properties
-            contents += "<p></p>" +
-                    "<h2 class='trigger'><input type='button' value='+' style='width:24px' />&nbsp;&nbsp;<a href='#'>Properties</a></h2>" + 
-                    "<div class='toggle_container'> " +
-                    "<table class='properties' border='1' rules='all' cellpadding='6'> ";
-            
-            for (PropertyModel prop : cModel.getProperties()) {
-                    contents += "<tr class='propertyscope" + prop.getScope() + "'><td class='clsPropertyName'>" + 
-                            strLinkfromModel(prop, cModel.getTopmostClassName(), hostedSourceURL) +
-                            prop.getPropertyName() + "</a></td>";
-                    contents += "<td><div class='clsPropertyDeclaration'>" + escapeHTML(prop.getNameLine()) + "</div>";
-                    contents += "<div class='clsPropertyDescription'>" + escapeHTML(prop.getDescription()) + "</div></tr>";
-            }
-            // end Properties
-            contents += "</table></div>"; 
-                             
-            // start Methods
-            contents += "<h2 class='section-title'>Methods</h2>";
-
-            for (MethodModel method : cModel.getMethods()) {
-                    contents += "<div class=\"methodscope" + method.getScope() + "\" >";
-                    contents += "<h2 class='trigger'><input type='button' value='+' style='width:24px' />&nbsp;&nbsp;<a href='#'>" + 
-                        method.getMethodName() + "</a></h2>" +
-                        "<div class='toggle_container'>" +
-                        "<div class='toggle_container_subtitle'>" + 
-                            strLinkfromModel(method, cModel.getTopmostClassName(), hostedSourceURL) +
-                            escapeHTML(method.getNameLine()) + "</a></div>" +
-                        "<table class='details' rules='all' border='1' cellpadding='6'>" + 
-                        (method.getAuthor() != "" ? "<tr><th>Author</th><td>" + method.getAuthor() + "</td></tr> " : "") +
-                        (method.getDate() != "" ? "<tr><th>Date</th><td>" + method.getDate() + "</td></tr> " : "") +
-                        (method.getDescription() != "" ? "<tr><th>Description</th><td>" + escapeHTML(method.getDescription()) + "</td></tr> " : "") +
-                        (method.getReturns() != "" ? "<tr><th>Returns</th><td>" + escapeHTML(method.getReturns()) + "</td></tr> " : "") +
-                        (method.getParams() != null && method.getParams().size() > 0 ? "<tr><th colspan='2' class='paramHeader'>Parameters</td></tr> " : "");
+            contents += "<h2 class='section-title'>" + 
+                strLinkfromModel(cModel, cModel.getTopmostClassName(), hostedSourceURL) +  
+                cModel.getClassName() + "</a>" +
+                "</h2>";
     
-                    
-                    for (String param : method.getParams()) {
-                            param = escapeHTML(param);
-                            if(param != null && param.trim().length() > 0){
-                                    if(param.indexOf(" ") != -1){
-                                            String list[] = param.split(" ");
-                                            if(list.length >= 1){
-                                                    contents += "<tr><th class='param'>" + list[0] + "</th>";
-                                                    String val = "";
-                                                    if(list.length >= 2){
-                                                            val = "";
-                                                            for(int i = 1; i < list.length; i++){
-                                                                    val += list[i] + " ";
-                                                            }
-                                                    }
-                                                    contents += "<td>" + val + "</td></tr>";
-                                            }
-                                            
-                                    }
-                            }
-                            
-                    }
-                    // end Parameters
-                    contents += "</table></div>";
-                    // end Methods
-                    contents += "</div>"; 
+            contents += "<div class='classSignature'>" + 
+                strLinkfromModel(cModel, cModel.getTopmostClassName(), hostedSourceURL) +
+                escapeHTML(cModel.getNameLine()) + "</a></div>";
+            
+            if (cModel.getDescription() != "")                
+                contents += "<div class='classDetails'>" + escapeHTML(cModel.getDescription());
+            if (cModel.getAuthor() != "")
+                contents += "<br/><br/>" + cModel.getAuthor();
+            if (cModel.getDate() != "")
+                contents += "<br/>" + cModel.getDate();
+            contents += "</div><p/>";
+            
+
+            if (cModel.getProperties().size() > 0) {
+                // start Properties
+                contents += 
+                    "<h2 class='subsection-title'>Properties</h2>" + 
+                    "<div class='subsection-container'> " +
+                    "<table class='properties' > ";
+                
+                for (PropertyModel prop : cModel.getProperties()) {
+                    contents += "<tr class='propertyscope" + prop.getScope() + "'><td class='clsPropertyName'>" + 
+                        prop.getPropertyName() + "</td>";
+                    contents += "<td><div class='clsPropertyDeclaration'>" + 
+                        strLinkfromModel(prop, cModel.getTopmostClassName(), hostedSourceURL) +
+                        escapeHTML(prop.getNameLine()) + "</a></div>";
+                    contents += "<div class='clsPropertyDescription'>" + escapeHTML(prop.getDescription()) + "</div></tr>";
+                }
+                // end Properties
+                contents += "</table></div><p/>"; 
             }
+            
+            if (cModel.getMethods().size() > 0) {
+                // start Methods
+                contents += 
+                    "<h2 class='subsection-title'>Methods</h2>" + 
+                    "<div class='subsection-container'> ";    
+                for (MethodModel method : cModel.getMethods()) {
+                    contents += "<div class=\"methodscope" + method.getScope() + "\" >";
+                    contents += "<h2 class='methodHeader'>" + method.getMethodName() + "</h2>" +
+                        "<div class='methodSignature'>" + 
+                            strLinkfromModel(method, cModel.getTopmostClassName(), hostedSourceURL) +
+                            escapeHTML(method.getNameLine()) + "</a></div>";
+                    
+                    if (method.getDescription() != "")
+                        contents += "<div class='methodDescription'>" + escapeHTML(method.getDescription()) + "</div>";
+
+                    if (method.getParams().size() > 0) {
+                        contents += "<div class='methodSubTitle'>Parameters</div>";                            
+                        for (String param : method.getParams()) {
+                            param = escapeHTML(param);
+                            if (param != null && param.trim().length() > 0) {
+                                int ich = param.indexOf(" ");
+                                String paramName;
+                                String paramDescription;
+                                if (ich != -1) {
+                                    paramName = param.substring(0, ich);
+                                    paramDescription = param.substring(ich+1);
+                                } else {
+                                    paramName = param;
+                                    paramDescription = null;
+                                }
+                                contents += "<div class='paramName'>" + paramName + "</div>";
+                                
+                                if (paramDescription != null)
+                                    contents += "<div class='paramDescription'>" + paramDescription + "</div>";
+                            }                                
+                        }
+                    // end Parameters
+                    }
+                    
+                    if (method.getReturns() != "") {
+                        contents += "<div class='methodSubTitle'>Return Value</div>";
+                        contents += "<div class='methodReturns'>" + escapeHTML(method.getReturns()) + "</div>";
+                    }
+                    
+                    if (method.getAuthor() != "") {
+                        contents += "<div class='methodSubTitle'>Author</div>";
+                        contents += "<div class='methodReturns'>" + escapeHTML(method.getAuthor()) + "</div>";
+                    }
+
+                    if (method.getDate() != "") {
+                        contents += "<div class='methodSubTitle'>Date</div>";
+                        contents += "<div class='methodReturns'>" + escapeHTML(method.getDate()) + "</div>";
+                    }
+                                                                    
+                    // end current method
+                    contents += "</div>"; 
+                }
+                //end all methods
+                contents += "</div>";
+            }
+            
             return contents;
         }
         
@@ -241,7 +263,7 @@ public class FileManager {
                 ClassGroup cg = mapClassNameToClassGroup.get(strGroup);
                 if (cg.getContentSource() != null) {
                     String cgContent = parseHTMLFile(cg.getContentSource());
-                    if (cgContent != null) {
+                    if (cgContent != "") {
                         String strHtml = Constants.getHeader(projectDetail) + links + "<td class='contentTD'>" + 
                                 "<h2 class='section-title'>" + 
                                 escapeHTML(cg.getName()) + "</h2>" + cgContent + "</td>";
@@ -326,7 +348,6 @@ public class FileManager {
                 docopy("ApexDoc.css", toFileName);
                 docopy("ApexDoc.js", toFileName);
                 docopy("CollapsibleList.js", toFileName);
-                docopy("h2_trigger_a.gif", toFileName);
                 docopy("jquery-latest.js", toFileName);
                 docopy("toggle_block_btm.gif", toFileName);
                 docopy("toggle_block_stretch.gif", toFileName);

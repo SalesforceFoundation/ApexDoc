@@ -10,7 +10,8 @@
     	showScopes();
     	      		
 		// start with all properties and methods collapsed
-    	$('.toggle_container').hide(); 
+    	//$('.toggle_container').hide();
+    	// decided to try default expanded 
 
 		// set the click handler for the methods
     	$('h2.trigger').click(function() {

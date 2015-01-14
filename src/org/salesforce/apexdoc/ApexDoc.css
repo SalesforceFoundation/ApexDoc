@@ -1,5 +1,4 @@
-body{
-	/* font-family:Verdana, Arial, Helvetica, sans-serif; */
+body {
 	font-family: "ProximaNovaSoft-Regular", Calibri, "Gill Sans", "Gill Sans MT", Candara, Segoe, "Segoe UI", Arial, sans-serif;
 	font-size:100%;
 	margin:0px;
@@ -8,132 +7,144 @@ body{
 
 /* the top page banner  */
 .topsection {
-	background-color: rgb(98,181,229);
+	background-color: #003672; 
 	width:100%;
 	height:110px;
 	color:white;
 }
-.topsection td{
+.topsection td {
 	color:white;
 	padding:8px;
 }
+.topsection a {
+	color: white;
+}
 
-/* section-title is the horizontal section headers that declare the classname, methods, etc. */
+/* the area that holds the documentation on the right of the page */
+.contentTD {
+	font-size: 100%;
+	width: 80%;
+	padding-left: 12px;
+	vertical-align: top;
+}
+
+/* the horizontal section headers that declares the Class name */
 .section-title {
-    background-color: rgb(155,203,236);
+    background-color: #003672; /* rgb(155,203,236); */
 	color:white;
-	padding:5px;
 	font-size: 100%;
 	font-weight:bold;
-	margin-bottom:2px;
+	padding:5px 5px 5px 14px;
+	margin: 0 0 2px -12px;
 }
 .section-title a {
     color:white;
 }
 
-/* details is used for displaying the apexdoc values like author, date, description, params, return value, etc. */
-.details {
-	border-color:lightgray;
-	font-size: .9em;
+/* the horizontal section headers that declares the Methods & Properties subsections */
+.subsection-title {
+	color: #51638A;
+	border-top: 1px solid #51638A;
+	font-size: 100%;
+	padding:2px;
+	margin: 0 0 12px 0;
 }
-.details th{
-	background-color:whitesmoke;
-	color:black;
-	/* font-size:.7em; */
-	padding:3px;
-	text-align:right;
+.subsection-container {
+	padding: 0 0 0 14px;
 }
-.details th.paramHeader{
-	background-color:white;
-	color:black;
-	text-align:center;
-}
-.details th.param{
-	background-color:whitesmoke;
-	color:black;
-	padding-left:10px;
-}
-.details td{
-	/* font-size:.7em; */
+
+/* the horizontal header for each Method */
+.methodHeader {
+	font-size: 1em;
+	color: #51638A;
+	border-top: 1px solid #51638A;
+	margin: 20px 0 0 0;
+	padding: 4px 0 2px 0;
 }
 
 /* properties is used to display the table of class properties */
 .properties {
-	border-color:lightgray;
 }
-.properties td{
+.properties td {
 	vertical-align: top;
+	padding-right: 10px;
 }
 .clsPropertyName {
-	font-size:.8em;
-	font-weight:bold;	
+	font-size:.9em;
+	font-weight: bold;
 }
-.clsPropertyDeclaration {
+.clsPropertyDeclaration a {
 	font-family:Courier;
 	font-size:.8em;
 	font-weight:normal;	
 	color:MediumBlue;
 }
 .clsPropertyDescription {
-	font-size:.8em;
+	font-size:.9em;
 	font-weight:normal;	
 }	
 
-/* trigger is the set of styles to provide the expand/collapse bar */
-h2.trigger {
-	margin: 0 0 2 0;
-	background-color: rgb(239,241,246);
-	color: black;
-	font-size: 100%;
-	font-weight: normal;
-	padding:2px;
-}
-h2.trigger a {
-	color: black;
-	text-decoration: none;
-}
-h2.trigger a:hover { 
-	color: darkgrey; 
-}
-h2.active {
-	background-position: left bottom;
-} /*--When toggle is triggered, it will shift the image to the bottom to show its "opened" state--*/
-
-
-/* toggle_container is the section that gets shown/hidden when the trigger is expanded/collapsed */
-.toggle_container {
-	padding: 10px; /*--Padding of Container--*/
-}
-.toggle_container_subtitle {
-	font-family:Courier;
-	font-size:.8em;
-	font-weight:normal;
-	color:MediumBlue;
-	height: 26px;
-}
-
+/* the class's signature line */
 .classSignature {
 	font-family:Courier;
 	font-size:.9em;
 	font-weight:normal;
-	color:MediumBlue;
-	height: 30px;
-	padding-top: 10px;
+	text-indent: -15px;
+	padding: 6px 0 4px 15px;
+}
+.classSignature a {
+	color: mediumblue;
+}
+
+/* the description, author, date for the class */
+.classDetails {
+	font-size: .9em;
+	padding-left: 2px;
 }
 
 .hostedSourceLink {
-    text-decoration: initial;	
+    text-decoration: initial;
+    color: mediumblue;	
 }
-
 .hostedSourceLink:hover {
     text-decoration: underline;   
 }
 
-.contentTD {
-	width: 80%;
-	padding-left: 4px;
-	vertical-align: top;
+/* method related classes */
+.methodSignature {
+	font-family: Courier;
+	font-size: .8em;
+	font-weight: normal;
+	color: MediumBlue;
+	text-indent: -15px;
+	padding-left: 15px;	
 }
+.methodDescription {
+	font-size: .9em;
+	margin: .5em 0 0 0;
+}
+.methodSubTitle {
+	font-size: .9em;
+	color: #51638A;
+	font-weight: bold;
+	margin: .7em 0 0 0;
+}
+.paramName {
+	font-size: .9em;
+	font-weight: bold;
+	font-style: italic;
+	margin: 0 0 0 .5em;
+}
+.paramDescription {
+	font-size: .9em;
+	margin: 0 0 0 1em;
+}
+.methodReturns {
+	font-size: .9em;
+	margin: 0 0 0 1em;
+}
+
+
 
     /* SIDEBAR CSS */
     div.navbar {
