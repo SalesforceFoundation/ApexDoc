@@ -180,7 +180,7 @@ public class FileManager {
                     "<div class='subsection-container'> " +
                     "<table class='properties' > ";
                 
-                for (PropertyModel prop : cModel.getProperties()) {
+                for (PropertyModel prop : cModel.getPropertiesSorted()) {
                     contents += "<tr class='propertyscope" + prop.getScope() + "'><td class='clsPropertyName'>" + 
                         prop.getPropertyName() + "</td>";
                     contents += "<td><div class='clsPropertyDeclaration'>" + 
@@ -197,7 +197,7 @@ public class FileManager {
                 contents += 
                     "<h2 class='subsection-title'>Methods</h2>" + 
                     "<div class='subsection-container'> ";    
-                for (MethodModel method : cModel.getMethods()) {
+                for (MethodModel method : cModel.getMethodsSorted()) {
                     contents += "<div class=\"methodscope" + method.getScope() + "\" >";
                     contents += "<h2 class='methodHeader'>" + method.getMethodName() + "</h2>" +
                         "<div class='methodSignature'>" + 

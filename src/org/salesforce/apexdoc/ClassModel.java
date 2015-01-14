@@ -1,5 +1,6 @@
 package org.salesforce.apexdoc;
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 public class ClassModel extends ApexModel {
         
@@ -20,6 +21,13 @@ public class ClassModel extends ApexModel {
         public ArrayList<PropertyModel> getProperties() {
                 return properties;
         }
+        
+        public ArrayList<PropertyModel> getPropertiesSorted() {
+            TreeMap<String, PropertyModel> tm = new TreeMap<String, PropertyModel>();
+            for (PropertyModel prop : properties)
+                tm.put(prop.getPropertyName().toLowerCase(), prop);
+            return new ArrayList<PropertyModel>(tm.values());
+        }
 
         public void setProperties(ArrayList<PropertyModel> properties) {
                 this.properties = properties;
@@ -27,6 +35,13 @@ public class ClassModel extends ApexModel {
 
         public ArrayList<MethodModel> getMethods() {
                 return methods;
+        }
+
+        public ArrayList<MethodModel> getMethodsSorted() {
+            TreeMap<String, MethodModel> tm = new TreeMap<String, MethodModel>();
+            for (MethodModel method : methods)
+                tm.put(method.getMethodName().toLowerCase(), method);
+            return new ArrayList<MethodModel>(tm.values());
         }
 
         public void setMethods(ArrayList<MethodModel> methods) {
