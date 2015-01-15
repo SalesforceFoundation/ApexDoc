@@ -48,6 +48,12 @@
     	}
     }
     
+    function showAllScopes() {
+    	for (var i = 0; i < listAllScope.length; i++) {
+    		ToggleScope(listAllScope[i], true);
+    	}    
+    }
+
     function hideAllScopes() {
     	for (var i = 0; i < listAllScope.length; i++) {
     		ToggleScope(listAllScope[i], false);
@@ -67,7 +73,7 @@
     
     function readScopeCookie() {
     	var strScope = getCookie('scope');
-    	if (strScope != null) {
+    	if (strScope != null && strScope != '') {
     		
     		// first clear all the scope checkboxes
     		$('input:checkbox').each(function(index, elem) {
@@ -80,6 +86,8 @@
 		    	var id = 'cbx' + list[i];
 				$('#' + id).prop('checked', true);
 		    }
+		} else {
+			showAllScopes();
 		}    
     }
 

@@ -244,7 +244,9 @@ public class ApexDoc {
                         }
 
                         // ignore lines not dealing with scope
-                        if (strContainsScope(strLine) == null)
+                        if (strContainsScope(strLine) == null &&
+                                // interface methods don't have scope
+                                !(cModel != null && cModel.getIsInterface() && strLine.contains("(")))
                                 continue;
 
                         // look for a class
@@ -410,8 +412,9 @@ public class ApexDoc {
                 }
         }
         private static void fillClassModel(ClassModel cModelParent, ClassModel cModel, String name, ArrayList<String> lstComments, int iLine){
-                //System.out.println("@@@@ " + name);
                 cModel.setNameLine(name, iLine);
+                if (name.toLowerCase().contains(" interface "))
+                    cModel.setIsInterface(true);
                 boolean inDescription = false;
                 for (String comment : lstComments) {
                         comment = comment.trim();
@@ -515,6 +518,7 @@ public class ApexDoc {
           return count;
         }        
         
+        /*
         private static void debug(ClassModel cModel){
                 try{
                         System.out.println("Class::::::::::::::::::::::::");
@@ -546,5 +550,6 @@ public class ApexDoc {
                         e.printStackTrace();
                 }
         }
+        */
 
 }

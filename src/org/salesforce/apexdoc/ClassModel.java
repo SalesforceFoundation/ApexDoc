@@ -17,6 +17,7 @@ public class ClassModel extends ApexModel {
         private String strClassGroupContent;
         private ClassModel cmodelParent;
         private ArrayList<ClassModel> childClasses;
+        private boolean isInterface;
         
         public ArrayList<PropertyModel> getProperties() {
                 return properties;
@@ -108,5 +109,13 @@ public class ClassModel extends ApexModel {
         
         public void setClassGroupContent(String strGroupContent) {
             strClassGroupContent = strGroupContent;
+        }
+        
+        public boolean getIsInterface() {
+            return isInterface;
+        }
+        
+        public void setIsInterface(boolean isInterface) {
+            this.isInterface = isInterface;
         }
 }
