@@ -110,6 +110,23 @@ body {
     text-decoration: underline;   
 }
 
+/* method table of contents related classes */
+.methodTOCEntry {
+	font-size: .9em;
+	color: mediumblue;
+}
+.methodTOCEntry:visited {
+	font-size: .9em;
+	color: purple;
+}
+.methodTOCDescription {
+	font-size: .9em;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	line-height: .9em;
+	height: .9em;	
+}
+
 /* method related classes */
 .methodSignature {
 	font-family: Courier;

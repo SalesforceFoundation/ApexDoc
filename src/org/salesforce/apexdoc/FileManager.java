@@ -72,7 +72,7 @@ public class FileManager {
         }
         
         private String strLinkfromModel(ApexModel model, String strClassName, String hostedSourceURL) {
-            return "<a target=\"_blank\" class=\"hostedSourceLink\" href=\"" + hostedSourceURL + strClassName + ".cls#L" + model.getInameLine() + "\">";
+            return "<a target='_blank' class='hostedSourceLink' href='" + hostedSourceURL + strClassName + ".cls#L" + model.getInameLine() + "'>";
         }
         
         private String strHTMLScopingPanel() {
@@ -196,10 +196,23 @@ public class FileManager {
                 // start Methods
                 contents += 
                     "<h2 class='subsection-title'>Methods</h2>" + 
-                    "<div class='subsection-container'> ";    
+                    "<div class='subsection-container'> ";  
+
+                // method Table of Contents (TOC)
+                contents += "<ul class='methodTOC'>";
                 for (MethodModel method : cModel.getMethodsSorted()) {
-                    contents += "<div class=\"methodscope" + method.getScope() + "\" >";
-                    contents += "<h2 class='methodHeader'>" + method.getMethodName() + "</h2>" +
+                    contents += "<li class='methodscope" + method.getScope() + "' >";
+                    contents += "<a class='methodTOCEntry' href='#" + method.getMethodName() + "'>" + method.getMethodName() + "</a>";
+                    if (method.getDescription() != "")
+                        contents += "<div class='methodTOCDescription'>" + method.getDescription() + "</div>";
+                    contents += "</li>";                    
+                }
+                contents += "</ul>";
+                
+                // full method display
+                for (MethodModel method : cModel.getMethodsSorted()) {
+                    contents += "<div class='methodscope" + method.getScope() + "' >";
+                    contents += "<h2 class='methodHeader'><a id='" + method.getMethodName() + "'/>" + method.getMethodName() + "</h2>" +
                         "<div class='methodSignature'>" + 
                             strLinkfromModel(method, cModel.getTopmostClassName(), hostedSourceURL) +
                             escapeHTML(method.getNameLine()) + "</a></div>";
@@ -284,8 +297,8 @@ public class FileManager {
         private String getPageLinks(TreeMap<String, ClassGroup> mapClassNameToClassGroup, ArrayList<ClassModel> cModels){
             
             String links = "<td width='20%' vertical-align='top' >";
-            links += "<div class=\"sidebar\"><div class=\"navbar\"><nav role=\"navigation\"><ul id=\"mynavbar\">";
-            links += "<li id=\"idMenuindex\"><a href=\".\" onclick=\"gotomenu('index.html');return false;\" class=\"nav-item\">Home</a></li>";
+            links += "<div class='sidebar'><div class='navbar'><nav role='navigation'><ul id='mynavbar'>";
+            links += "<li id='idMenuindex'><a href='.' onclick=\"gotomenu('index.html');return false;\" class='nav-item'>Home</a></li>";
             
             // add a bucket ClassGroup for all Classes without a ClassGroup specified
             mapClassNameToClassGroup.put("Miscellaneous", new ClassGroup("Miscellaneous", null));
@@ -297,7 +310,7 @@ public class FileManager {
                 String strGoTo = "onclick=\"return false;\"";
                 if (cg.getContentFilename() != null)
                     strGoTo = "onclick=\"gotomenu('" + cg.getContentFilename() + ".html" + "');return false;\"";
-                links += "<li class=\"header\" id=\"idMenu" + cg.getContentFilename() + "\"><a class=\"nav-item nav-section-title\" href=\".\" " + strGoTo +  " class=\"nav-item\">" + strGroup + "<span class=\"caret\"></span></a></li>";
+                links += "<li class='header' id='idMenu" + cg.getContentFilename() + "'><a class='nav-item nav-section-title' href='.' " + strGoTo +  " class='nav-item'>" + strGroup + "<span class='caret'></span></a></li>";
                 links += "<ul>";
                 
                 // even though this algorithm is O(n^2), it was timed at just 12 milliseconds, so not an issue!
@@ -305,8 +318,8 @@ public class FileManager {
                     if (strGroup.equals(cModel.getClassGroup()) || (cModel.getClassGroup() == null && strGroup == "Miscellaneous")) {                    
                         if (cModel.getNameLine() != null && cModel.getNameLine().trim().length() > 0) {
                             String fileName = cModel.getClassName();
-                            links += "<li class=\"subitem classscope" + cModel.getScope() + "\" id=\"idMenu" + fileName + 
-                                    "\"><a href=\".\" onclick=\"gotomenu('" + fileName + ".html');return false;\" class=\"nav-item sub-nav-item scope" + cModel.getScope() + "\">" + 
+                            links += "<li class='subitem classscope" + cModel.getScope() + "' id='idMenu" + fileName + 
+                                    "'><a href='.' onclick=\"gotomenu('" + fileName + ".html');return false;\" class='nav-item sub-nav-item scope" + cModel.getScope() + "'>" + 
                                     fileName + "</a></li>";
                         }
                     }
