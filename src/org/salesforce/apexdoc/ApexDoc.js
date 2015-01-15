@@ -103,7 +103,8 @@
 	}
 
     function gotomenu(url) {
-		document.location.href = url;
+    	if (document.location.href.toLowerCase().indexOf(url.toLowerCase()) == -1)
+			document.location.href = url;
     }
         
     function ToggleScope(scope, isShow) {
