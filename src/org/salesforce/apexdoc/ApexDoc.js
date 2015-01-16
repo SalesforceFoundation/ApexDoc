@@ -102,9 +102,22 @@
 	    return "";
 	}
 
-    function gotomenu(url) {
+    function gotomenu(url, event) {
     	if (document.location.href.toLowerCase().indexOf(url.toLowerCase()) == -1)
 			document.location.href = url;
+		else {
+	        var clist = $('#mynavbar').data('collapsibleList');
+			var filename = url.replace('.html', '');
+            var li = $('#idMenu'+filename);
+            var isCollapsed = li.hasClass('collapsed');
+            if (isCollapsed) {
+        	    expandListToClass();
+        	    event.stopImmediatePropagation();
+			} else {
+				clist.collapseElement(li);
+				event.stopImmediatePropagation();		
+			}
+		}
     }
         
     function ToggleScope(scope, isShow) {

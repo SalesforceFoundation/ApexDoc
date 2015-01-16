@@ -298,7 +298,7 @@ public class FileManager {
             
             String links = "<td width='20%' vertical-align='top' >";
             links += "<div class='sidebar'><div class='navbar'><nav role='navigation'><ul id='mynavbar'>";
-            links += "<li id='idMenuindex'><a href='.' onclick=\"gotomenu('index.html');return false;\" class='nav-item'>Home</a></li>";
+            links += "<li id='idMenuindex'><a href='.' onclick=\"gotomenu('index.html', event);return false;\" class='nav-item'>Home</a></li>";
             
             // add a bucket ClassGroup for all Classes without a ClassGroup specified
             mapClassNameToClassGroup.put("Miscellaneous", new ClassGroup("Miscellaneous", null));
@@ -309,8 +309,9 @@ public class FileManager {
                 ClassGroup cg = mapClassNameToClassGroup.get(strGroup);
                 String strGoTo = "onclick=\"return false;\"";
                 if (cg.getContentFilename() != null)
-                    strGoTo = "onclick=\"gotomenu('" + cg.getContentFilename() + ".html" + "');return false;\"";
-                links += "<li class='header' id='idMenu" + cg.getContentFilename() + "'><a class='nav-item nav-section-title' href='.' " + strGoTo +  " class='nav-item'>" + strGroup + "<span class='caret'></span></a></li>";
+                    strGoTo = "onclick=\"gotomenu('" + cg.getContentFilename() + ".html" + "', event);return false;\"";
+                links += "<li class='header' id='idMenu" + cg.getContentFilename() + "'><a class='nav-item nav-section-title' href='.' " + 
+                    strGoTo +  " class='nav-item'>" + strGroup + "<span class='caret'></span></a></li>";
                 links += "<ul>";
                 
                 // even though this algorithm is O(n^2), it was timed at just 12 milliseconds, so not an issue!
@@ -319,7 +320,8 @@ public class FileManager {
                         if (cModel.getNameLine() != null && cModel.getNameLine().trim().length() > 0) {
                             String fileName = cModel.getClassName();
                             links += "<li class='subitem classscope" + cModel.getScope() + "' id='idMenu" + fileName + 
-                                    "'><a href='.' onclick=\"gotomenu('" + fileName + ".html');return false;\" class='nav-item sub-nav-item scope" + cModel.getScope() + "'>" + 
+                                    "'><a href='.' onclick=\"gotomenu('" + fileName + ".html', event);return false;\" class='nav-item sub-nav-item scope" + 
+                                    cModel.getScope() + "'>" + 
                                     fileName + "</a></li>";
                         }
                     }

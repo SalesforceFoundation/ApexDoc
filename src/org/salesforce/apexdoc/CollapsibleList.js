@@ -221,7 +221,11 @@
                         elem.removeClass('collapsed');
                         
                     },
-
+                    
+                    collapseElement: function(elem) {
+                    	collapseHeader(elem);
+					},
+					
                 });
             }
 

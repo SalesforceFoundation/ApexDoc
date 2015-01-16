@@ -102,6 +102,7 @@ body {
 	padding-left: 2px;
 }
 
+/* signatures of methods and properties */
 .hostedSourceLink {
     text-decoration: initial;
     color: mediumblue;	
@@ -127,7 +128,7 @@ body {
 	height: .9em;	
 }
 
-/* method related classes */
+/* method listing related classes */
 .methodSignature {
 	font-family: Courier;
 	font-size: .8em;
@@ -266,11 +267,9 @@ body {
     }
     
     div.navbar ul li a.scopeglobal {
-    	color: blue;
     }
     
     div.navbar ul li a.scopeprivate {
-    	color: darkgray;
     }
     
 
