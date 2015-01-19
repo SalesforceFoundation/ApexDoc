@@ -1,7 +1,7 @@
     // global variables
     var listAllScope = ["global", "public", "private", "testMethod", "webService"];
     
-    // page init function
+    // document ready function
     $(function () {  
     	readScopeCookie();
     	
@@ -11,22 +11,28 @@
     	      		
     });
     
-    function expandListToClass() {
+    function expandListToClass(liClass) {
         var cl = $('#mynavbar').collapsibleList('.header', {search: false, animate: false});
         var clist = $('#mynavbar').data('collapsibleList');
         clist.collapseAll();  
+        $('.nav-selected').each(function() { $(this).removeClass('nav-selected'); });
 
-        // get just the filename without extension from the url
-        var i = location.pathname.lastIndexOf("/");
-        var filename = location.pathname.substring(i + 1, location.pathname.length - 5);
-
-        // select the filename in the list
-        node = document.getElementById('idMenu' + filename);
-        if (node != null) {
-            node.classList.add('nav-selected');
-            var li = $('#idMenu'+filename);
-            clist.expandToElementListScope(li, getListScope());
-        }    
+        if (liClass != null) {
+        	// liClass is a jquery object.
+            liClass.addClass('nav-selected');
+            clist.expandToElementListScope(liClass, getListScope());        
+        } else {
+	        // get just the filename without extension from the url
+	        var i = location.pathname.lastIndexOf("/");
+	        var filename = location.pathname.substring(i + 1, location.pathname.length - 5);
+	        // select the filename in the list
+	        node = document.getElementById('idMenu' + filename);
+	        if (node != null) {
+	            node.classList.add('nav-selected');
+	            var li = $('#idMenu'+filename);
+	            clist.expandToElementListScope(li, getListScope());
+	        }
+	    }    
     }  
     
     function getListScope() {
@@ -108,10 +114,11 @@
 		else {
 	        var clist = $('#mynavbar').data('collapsibleList');
 			var filename = url.replace('.html', '');
-            var li = $('#idMenu'+filename);
+            //var li = $('#idMenu'+filename);
+            var li = $(event.currentTarget.parentNode);
             var isCollapsed = li.hasClass('collapsed');
             if (isCollapsed) {
-        	    expandListToClass();
+        	    expandListToClass(li);
         	    event.stopImmediatePropagation();
 			} else {
 				clist.collapseElement(li);

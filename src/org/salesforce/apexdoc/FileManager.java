@@ -307,7 +307,7 @@ public class FileManager {
             
             for (String strGroup : mapClassNameToClassGroup.keySet()) {
                 ClassGroup cg = mapClassNameToClassGroup.get(strGroup);
-                String strGoTo = "onclick=\"return false;\"";
+                String strGoTo = "onclick=\"gotomenu(document.location.href, event);return false;\"";
                 if (cg.getContentFilename() != null)
                     strGoTo = "onclick=\"gotomenu('" + cg.getContentFilename() + ".html" + "', event);return false;\"";
                 links += "<li class='header' id='idMenu" + cg.getContentFilename() + "'><a class='nav-item nav-section-title' href='.' " + 
