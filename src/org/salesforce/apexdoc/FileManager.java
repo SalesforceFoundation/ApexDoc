@@ -167,9 +167,9 @@ public class FileManager {
             if (cModel.getDescription() != "")                
                 contents += "<div class='classDetails'>" + escapeHTML(cModel.getDescription());
             if (cModel.getAuthor() != "")
-                contents += "<br/><br/>" + cModel.getAuthor();
+                contents += "<br/><br/>" + escapeHTML(cModel.getAuthor());
             if (cModel.getDate() != "")
-                contents += "<br/>" + cModel.getDate();
+                contents += "<br/>" + escapeHTML(cModel.getDate());
             contents += "</div><p/>";
             
 
