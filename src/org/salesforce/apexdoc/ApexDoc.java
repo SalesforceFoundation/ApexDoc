@@ -251,9 +251,6 @@ public class ApexDoc {
                         if (strContainsScope(strLine) == null &&
                             // interface methods don't have scope
                             !(cModel != null && cModel.getIsInterface() && strLine.contains("("))) {
-                            
-                            // the comments we've been caching are just code comments.
-                            lstComments.clear();
                             continue;
                         }
 
@@ -365,7 +362,6 @@ public class ApexDoc {
         private static void fillMethodModel(MethodModel mModel, String name, ArrayList<String> lstComments, int iLine){
                 mModel.setNameLine(name, iLine);
                 boolean inDescription = false;
-                boolean tagsFound = false;
                 for (String comment : lstComments) {
                         comment = comment.trim();
                         int idxStart = comment.toLowerCase().indexOf("@description");
@@ -373,7 +369,6 @@ public class ApexDoc {
                                 if (comment.length() > idxStart + 13)
                                     mModel.setDescription(comment.substring(idxStart + 13).trim());
                                 inDescription = true;
-                                tagsFound = true;
                                 continue;
                         }
                         
@@ -381,7 +376,6 @@ public class ApexDoc {
                         if(idxStart != -1){
                                 mModel.setAuthor(comment.substring(idxStart + 8).trim());
                                 inDescription = false;
-                                tagsFound = true;
                                 continue;
                         }
                         
@@ -389,7 +383,6 @@ public class ApexDoc {
                         if(idxStart != -1){
                                 mModel.setDate(comment.substring(idxStart + 5).trim());
                                 inDescription = false;
-                                tagsFound = true;
                                 continue;
                         }
                         
@@ -397,7 +390,6 @@ public class ApexDoc {
                         if(idxStart != -1){
                                 mModel.setReturns(comment.substring(idxStart + 8).trim());
                                 inDescription = false;
-                                tagsFound = true;
                                 continue;
                         }
                         
@@ -405,7 +397,6 @@ public class ApexDoc {
                         if(idxStart != -1){
                                 mModel.getParams().add(comment.substring(idxStart + 6).trim());
                                 inDescription = false;
-                                tagsFound = true;
                                 continue;
                         }
 
@@ -423,39 +414,19 @@ public class ApexDoc {
                                 continue;
                         }
                 }
-                // if we didn't find any tags, then treat all the comments as @description
-                if (!tagsFound) {
-                    String strComments = "";
-                    for (String comment : lstComments) {
-                        int i;
-                        for (i = 0; i < comment.length(); i++) {
-                            char ch = comment.charAt(i);
-                            if (ch != '/' && ch != '*' && ch != ' ')
-                                    break;                          
-                        }
-                        if (i < comment.length()) {
-                            strComments += comment.substring(i) + " ";
-                        }                        
-                    }
-                    if (strComments != "")
-                        mModel.setDescription(strComments.trim());
-                }
         }
 
         private static void fillClassModel(ClassModel cModelParent, ClassModel cModel, String name, ArrayList<String> lstComments, int iLine){
                 cModel.setNameLine(name, iLine);
                 if (name.toLowerCase().contains(" interface "))
                     cModel.setIsInterface(true);
-                boolean inDescription = false;
-                boolean tagsFound = false;
-                
+                boolean inDescription = false;                
                 for (String comment : lstComments) {
                         comment = comment.trim();
                         int idxStart = comment.toLowerCase().indexOf("@description");
                         if(idxStart != -1){
                                 cModel.setDescription(comment.substring(idxStart + 12).trim());
                                 inDescription = true;
-                                tagsFound = true;
                                 continue;
                         }
                         
@@ -463,7 +434,6 @@ public class ApexDoc {
                         if(idxStart != -1){
                                 cModel.setAuthor(comment.substring(idxStart + 7).trim());
                                 inDescription = false;
-                                tagsFound = true;
                                 continue;
                         }
                         
@@ -471,7 +441,6 @@ public class ApexDoc {
                         if(idxStart != -1){
                                 cModel.setDate(comment.substring(idxStart + 5).trim());
                                 inDescription = false;
-                                tagsFound = true;
                                 continue;
                         }
                         
@@ -479,7 +448,6 @@ public class ApexDoc {
                         if(idxStart != -1){
                                 cModel.setClassGroup(comment.substring(idxStart + 6).trim());
                                 inDescription = false;
-                                tagsFound = true;
                                 continue;
                         }
                         
@@ -487,7 +455,6 @@ public class ApexDoc {
                         if(idxStart != -1){
                                 cModel.setClassGroupContent(comment.substring(idxStart + 14).trim());
                                 inDescription = false;
-                                tagsFound = true;
                                 continue;
                         }
                         
@@ -504,23 +471,6 @@ public class ApexDoc {
                                 }
                                 continue;
                         }
-                }
-                // if we didn't find any tags, then treat all the comments as @description
-                if (!tagsFound) {
-                    String strComments = "";
-                    for (String comment : lstComments) {
-                        int i;
-                        for (i = 0; i < comment.length(); i++) {
-                            char ch = comment.charAt(i);
-                            if (ch != '/' && ch != '*' && ch != ' ')
-                                    break;                          
-                        }
-                        if (i < comment.length()) {
-                            strComments += comment.substring(i) + " ";
-                        }                        
-                    }
-                    if (strComments != "")
-                        cModel.setDescription(strComments.trim());
                 }
         }
 
