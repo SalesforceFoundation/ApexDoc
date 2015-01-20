@@ -77,7 +77,7 @@ public class FileManager {
         
         private String strHTMLScopingPanel() {
             String str = "<tr><td colspan='2' style='text-align: center;' >";
-            str += "Filter for: ";
+            str += "Show: ";
             
             for (int i = 0; i < ApexDoc.rgstrScope.length; i++) {
                 str += "<input type='checkbox' checked='checked' id='cbx" + ApexDoc.rgstrScope[i] + 
