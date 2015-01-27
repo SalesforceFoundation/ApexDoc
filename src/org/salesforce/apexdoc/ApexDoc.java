@@ -84,7 +84,7 @@ public class ApexDoc {
             rgstrScope = new String[3];
             rgstrScope[0] = "global";
             rgstrScope[1] = "public";
-            rgstrScope[3] = "webService";
+            rgstrScope[2] = "webService";
         }
 
         // find all the files to parse
@@ -238,7 +238,7 @@ public class ApexDoc {
 
                 // if we are in a nested class, and we just got back to nesting level 1,
                 // then we are done with the nested class, and should set its props and methods.
-                if (nestedCurlyBraceDepth == 1 && cModels.size() > 1 && cModel != null) {
+                if (nestedCurlyBraceDepth == 1 && openCurlies != closeCurlies && cModels.size() > 1 && cModel != null) {
                     cModels.pop();
                     cModel = cModels.peek();
                     continue;
@@ -397,7 +397,7 @@ public class ApexDoc {
 
             idxStart = comment.toLowerCase().indexOf("@return");
             if (idxStart != -1) {
-                mModel.setReturns(comment.substring(idxStart + 8).trim());
+                mModel.setReturns(comment.substring(idxStart + 7).trim());
                 inDescription = false;
                 continue;
             }
