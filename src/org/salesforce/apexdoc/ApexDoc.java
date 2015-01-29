@@ -112,7 +112,7 @@ public class ApexDoc {
         }
 
         // create our Groups
-        TreeMap<String, ClassGroup> mapClassNameToClassGroup = createMapClassNameToClassGroup(cModels, sourceDirectory);
+        TreeMap<String, ClassGroup> mapGroupNameToClassGroup = createMapGroupNameToClassGroup(cModels, sourceDirectory);
 
         // load up optional specified file templates
         String projectDetail = fm.parseHTMLFile(authorfilepath);
@@ -123,7 +123,7 @@ public class ApexDoc {
             monitor.worked(1);
 
         // create our set of HTML files
-        fm.createDoc(mapClassNameToClassGroup, cModels, projectDetail, homeContents, hostedSourceURL, monitor);
+        fm.createDoc(mapGroupNameToClassGroup, cModels, projectDetail, homeContents, hostedSourceURL, monitor);
         if (monitor != null)
             monitor.done();
 
@@ -143,7 +143,7 @@ public class ApexDoc {
         System.out.println("<scope> - Optional. Semicolon seperated list of scopes to document.  Defaults to 'global;public'. ");
     }
 
-    private static TreeMap<String, ClassGroup> createMapClassNameToClassGroup(ArrayList<ClassModel> cModels,
+    private static TreeMap<String, ClassGroup> createMapGroupNameToClassGroup(ArrayList<ClassModel> cModels,
             String sourceDirectory) {
         TreeMap<String, ClassGroup> map = new TreeMap<String, ClassGroup>();
         for (ClassModel cmodel : cModels) {

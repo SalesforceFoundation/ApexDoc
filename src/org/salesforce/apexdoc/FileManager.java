@@ -48,7 +48,7 @@ public class FileManager {
             this.path = path;
     }
 
-    private boolean createHTML(TreeMap<String, String> classTreeMap, IProgressMonitor monitor) {
+    private boolean createHTML(TreeMap<String, String> mapFNameToContent, IProgressMonitor monitor) {
         try {
             if (path.endsWith("/") || path.endsWith("\\")) {
                 path += Constants.ROOT_DIRECTORY; // + "/" + fileName + ".html";
@@ -58,8 +58,8 @@ public class FileManager {
 
             (new File(path)).mkdirs();
 
-            for (String fileName : classTreeMap.keySet()) {
-                String contents = classTreeMap.get(fileName);
+            for (String fileName : mapFNameToContent.keySet()) {
+                String contents = mapFNameToContent.get(fileName);
                 fileName = path + "/" + fileName + ".html";
                 File file = new File(fileName);
                 fos = new FileOutputStream(file);
@@ -101,21 +101,20 @@ public class FileManager {
     }
 
     /********************************************************************************************
-     * @description main routine that creates an HTML file for each class
-     *              specified
-     * @param mapClassNameToClassGroup
+     * @description main routine that creates an HTML file for each class specified
+     * @param mapGroupNameToClassGroup
      * @param cModels
      * @param projectDetail
      * @param homeContents
      * @param hostedSourceURL
      * @param monitor
      */
-    private void makeFile(TreeMap<String, ClassGroup> mapClassNameToClassGroup, ArrayList<ClassModel> cModels,
+    private void makeFile(TreeMap<String, ClassGroup> mapGroupNameToClassGroup, ArrayList<ClassModel> cModels,
             String projectDetail, String homeContents, String hostedSourceURL, IProgressMonitor monitor) {
         String links = "<table width='100%'>";
         links += strHTMLScopingPanel();
         links += "<tr style='vertical-align:top;' >";
-        links += getPageLinks(mapClassNameToClassGroup, cModels);
+        links += getPageLinks(mapGroupNameToClassGroup, cModels);
 
         if (homeContents != null && homeContents.trim().length() > 0) {
             homeContents = links + "<td class='contentTD'>" + "<h2 class='section-title'>Home</h2>" + homeContents + "</td>";
@@ -127,11 +126,11 @@ public class FileManager {
         }
 
         String fileName = "";
-        TreeMap<String, String> classTreeMap = new TreeMap<String, String>();
-        classTreeMap.put("index", homeContents);
+        TreeMap<String, String> mapFNameToContent = new TreeMap<String, String>();
+        mapFNameToContent.put("index", homeContents);
 
         // create our Class Group content files
-        createClassGroupContent(classTreeMap, links, projectDetail, mapClassNameToClassGroup, cModels, monitor);
+        createClassGroupContent(mapFNameToContent, links, projectDetail, mapGroupNameToClassGroup, cModels, monitor);
 
         for (ClassModel cModel : cModels) {
             String contents = links;
@@ -142,7 +141,7 @@ public class FileManager {
                 contents += htmlForClassModel(cModel, hostedSourceURL);
 
                 // deal with any nested classes
-                for (ClassModel cmChild : cModel.getChildClasses()) {
+                for (ClassModel cmChild : cModel.getChildClassesSorted()) {
                     contents += "<p/>";
                     contents += htmlForClassModel(cmChild, hostedSourceURL);
                 }
@@ -153,11 +152,11 @@ public class FileManager {
             contents += "</div>";
 
             contents = Constants.getHeader(projectDetail) + contents + Constants.FOOTER;
-            classTreeMap.put(fileName, contents);
+            mapFNameToContent.put(fileName, contents);
             if (monitor != null)
                 monitor.worked(1);
         }
-        createHTML(classTreeMap, monitor);
+        createHTML(mapFNameToContent, monitor);
     }
 
     /*********************************************************************************************
@@ -285,11 +284,12 @@ public class FileManager {
     }
 
     // create our Class Group content files
-    private void createClassGroupContent(TreeMap<String, String> classTreeMap, String links, String projectDetail,
-            TreeMap<String, ClassGroup> mapClassNameToClassGroup,
+    private void createClassGroupContent(TreeMap<String, String> mapFNameToContent, String links, String projectDetail,
+            TreeMap<String, ClassGroup> mapGroupNameToClassGroup,
             ArrayList<ClassModel> cModels, IProgressMonitor monitor) {
-        for (String strGroup : mapClassNameToClassGroup.keySet()) {
-            ClassGroup cg = mapClassNameToClassGroup.get(strGroup);
+
+        for (String strGroup : mapGroupNameToClassGroup.keySet()) {
+            ClassGroup cg = mapGroupNameToClassGroup.get(strGroup);
             if (cg.getContentSource() != null) {
                 String cgContent = parseHTMLFile(cg.getContentSource());
                 if (cgContent != "") {
@@ -297,7 +297,7 @@ public class FileManager {
                             "<h2 class='section-title'>" +
                             escapeHTML(cg.getName()) + "</h2>" + cgContent + "</td>";
                     strHtml += Constants.FOOTER;
-                    classTreeMap.put(cg.getContentFilename(), strHtml);
+                    mapFNameToContent.put(cg.getContentFilename(), strHtml);
                     if (monitor != null)
                         monitor.worked(1);
                 }
@@ -308,26 +308,32 @@ public class FileManager {
     /**********************************************************************************************************
      * @description generate the HTML string for the Class Menu to display on
      *              each page.
-     * @param mapClassNameToClassGroup
+     * @param mapGroupNameToClassGroup
      *            map that holds all the Class names, and their respective Class
      *            Group.
      * @param cModels
      *            list of ClassModels
      * @return String of HTML
      */
-    private String getPageLinks(TreeMap<String, ClassGroup> mapClassNameToClassGroup, ArrayList<ClassModel> cModels) {
-
+    private String getPageLinks(TreeMap<String, ClassGroup> mapGroupNameToClassGroup, ArrayList<ClassModel> cModels) {
+        
+        // this is the only place we need the list of class models sorted by name.
+        TreeMap<String, ClassModel> tm = new TreeMap<String, ClassModel>();
+        for (ClassModel cm : cModels)
+            tm.put(cm.getClassName().toLowerCase(), cm);
+        cModels = new ArrayList<ClassModel>(tm.values());
+        
         String links = "<td width='20%' vertical-align='top' >";
         links += "<div class='sidebar'><div class='navbar'><nav role='navigation'><ul id='mynavbar'>";
         links += "<li id='idMenuindex'><a href='.' onclick=\"gotomenu('index.html', event);return false;\" class='nav-item'>Home</a></li>";
 
         // add a bucket ClassGroup for all Classes without a ClassGroup specified
-        mapClassNameToClassGroup.put("Miscellaneous", new ClassGroup("Miscellaneous", null));
+        mapGroupNameToClassGroup.put("Miscellaneous", new ClassGroup("Miscellaneous", null));
 
         // create a sorted list of ClassGroups
 
-        for (String strGroup : mapClassNameToClassGroup.keySet()) {
-            ClassGroup cg = mapClassNameToClassGroup.get(strGroup);
+        for (String strGroup : mapGroupNameToClassGroup.keySet()) {
+            ClassGroup cg = mapGroupNameToClassGroup.get(strGroup);
             String strGoTo = "onclick=\"gotomenu(document.location.href, event);return false;\"";
             if (cg.getContentFilename() != null)
                 strGoTo = "onclick=\"gotomenu('" + cg.getContentFilename() + ".html" + "', event);return false;\"";
@@ -406,9 +412,9 @@ public class FileManager {
         return listOfFilesToCopy;
     }
 
-    public void createDoc(TreeMap<String, ClassGroup> mapClassNameToClassGroup, ArrayList<ClassModel> cModels,
+    public void createDoc(TreeMap<String, ClassGroup> mapGroupNameToClassGroup, ArrayList<ClassModel> cModels,
             String projectDetail, String homeContents, String hostedSourceURL, IProgressMonitor monitor) {
-        makeFile(mapClassNameToClassGroup, cModels, projectDetail, homeContents, hostedSourceURL, monitor);
+        makeFile(mapGroupNameToClassGroup, cModels, projectDetail, homeContents, hostedSourceURL, monitor);
     }
 
     private String parseFile(String filePath) {

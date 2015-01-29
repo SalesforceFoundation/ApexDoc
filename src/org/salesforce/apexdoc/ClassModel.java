@@ -50,8 +50,11 @@ public class ClassModel extends ApexModel {
         this.methods = methods;
     }
 
-    public ArrayList<ClassModel> getChildClasses() {
-        return childClasses;
+    public ArrayList<ClassModel> getChildClassesSorted() {
+        TreeMap<String, ClassModel> tm = new TreeMap<String, ClassModel>();
+        for (ClassModel cm : childClasses)
+            tm.put(cm.getClassName().toLowerCase(), cm);
+        return new ArrayList<ClassModel>(tm.values());
     }
 
     public void addChildClass(ClassModel child) {
