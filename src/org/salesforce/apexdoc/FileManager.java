@@ -11,6 +11,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FileManager {
     FileOutputStream fos;
@@ -239,10 +241,13 @@ public class FileManager {
                     for (String param : method.getParams()) {
                         param = escapeHTML(param);
                         if (param != null && param.trim().length() > 0) {
-                            int ich = param.indexOf(" ");
+                            Pattern p = Pattern.compile("\\s");
+                            Matcher m = p.matcher(param);
+                            
                             String paramName;
                             String paramDescription;
-                            if (ich != -1) {
+                            if (m.find()) {
+                            	int ich = m.start();
                                 paramName = param.substring(0, ich);
                                 paramDescription = param.substring(ich + 1);
                             } else {

@@ -1,7 +1,10 @@
 package org.salesforce.apexdoc;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.TreeMap;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class ClassModel extends ApexModel {
 
@@ -40,10 +43,16 @@ public class ClassModel extends ApexModel {
     }
 
     public ArrayList<MethodModel> getMethodsSorted() {
-        TreeMap<String, MethodModel> tm = new TreeMap<String, MethodModel>();
-        for (MethodModel method : methods)
-            tm.put(method.getMethodName().toLowerCase(), method);
-        return new ArrayList<MethodModel>(tm.values());
+        List<MethodModel> sorted = ( List<MethodModel>)methods.clone();
+        Collections.sort(sorted, new Comparator(){
+            @Override
+            public int compare(Object o1, Object o2) {
+                String methodName1 = ((MethodModel)o1).getMethodName().toLowerCase();
+                String methodName2 = ((MethodModel)o2).getMethodName().toLowerCase();
+                return (methodName1.compareTo(methodName2));
+            }
+        });
+        return new ArrayList<MethodModel>(sorted);
     }
 
     public void setMethods(ArrayList<MethodModel> methods) {
