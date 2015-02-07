@@ -175,6 +175,7 @@ public class ApexDoc {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             String strLine;
             boolean commentsStarted = false;
+            boolean docBlockStarted = false;
             int nestedCurlyBraceDepth = 0;
             ArrayList<String> lstComments = new ArrayList<String>();
             ClassModel cModel = null;
@@ -210,25 +211,34 @@ public class ApexDoc {
                 }
 
                 // gather up our comments
-                if (strLine.startsWith("/**")) {
+                if (strLine.startsWith("/*")) {
                     commentsStarted = true;
+                    if(strLine.startsWith("/**")){
+                    	lstComments.add(strLine);
+                    	docBlockStarted = true;
+                    }
                     if (strLine.endsWith("*/")) {
                         strLine = strLine.replace("*/", "");
                         commentsStarted = false;
+                        docBlockStarted = false;
                     }
-                    lstComments.add(strLine);
                     continue;
                 }
 
                 if (commentsStarted && strLine.endsWith("*/")) {
                     strLine = strLine.replace("*/", "");
-                    lstComments.add(strLine);
+                    if(docBlockStarted){
+                    	lstComments.add(strLine);
+                    	docBlockStarted = false;
+                    }
                     commentsStarted = false;
                     continue;
                 }
 
                 if (commentsStarted) {
-                    lstComments.add(strLine);
+                	if(docBlockStarted){
+                		lstComments.add(strLine);
+                	}
                     continue;
                 }
 
