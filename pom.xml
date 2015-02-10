@@ -1,0 +1,48 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>ApexDoc</groupId>
+  <artifactId>ApexDoc</artifactId>
+  <version>1.1.5-SNAPSHOT</version>
+  <name>ApexDoc</name>
+  <description>A documentation generator for Apex using JavaDoc style comment blocks</description>
+  
+  <packaging>jar</packaging>
+  
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>src</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source/>
+          <target/>
+        </configuration>
+      </plugin>
+      <plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-jar-plugin</artifactId>
+		<configuration>
+		  <!-- DO NOT include log4j.properties file in your Jar -->
+		  <excludes>
+			<exclude>**/log4j.properties</exclude>
+		  </excludes>
+		  <archive>
+			<manifest>
+				<!-- Jar file entry point -->
+				<mainClass>org.salesforce.apexdoc.ApexDoc</mainClass>
+			</manifest>
+		  </archive>
+		</configuration>
+	  </plugin>
+    </plugins>
+  </build>
+</project>
