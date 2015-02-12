@@ -213,12 +213,16 @@ public class ApexDoc {
                 // gather up our comments
                 if (strLine.startsWith("/*")) {
                     commentsStarted = true;
+                    boolean commentEnded = false;
                     if(strLine.startsWith("/**")){
+                    	if (strLine.endsWith("*/")) {
+                            strLine = strLine.replace("*/", "");
+                            commentEnded = true;
+                    	}
                     	lstComments.add(strLine);
                     	docBlockStarted = true;
                     }
-                    if (strLine.endsWith("*/")) {
-                        strLine = strLine.replace("*/", "");
+                    if (strLine.endsWith("*/") || commentEnded) {
                         commentsStarted = false;
                         docBlockStarted = false;
                     }
