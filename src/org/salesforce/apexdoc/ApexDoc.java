@@ -11,6 +11,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ApexDoc {
 
@@ -173,6 +175,7 @@ public class ApexDoc {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             String strLine;
             boolean commentsStarted = false;
+            boolean docBlockStarted = false;
             int nestedCurlyBraceDepth = 0;
             ArrayList<String> lstComments = new ArrayList<String>();
             ClassModel cModel = null;
@@ -210,23 +213,36 @@ public class ApexDoc {
                 // gather up our comments
                 if (strLine.startsWith("/*")) {
                     commentsStarted = true;
-                    if (strLine.endsWith("*/")) {
-                        strLine = strLine.replace("*/", "");
-                        commentsStarted = false;
+                    boolean commentEnded = false;
+                    if(strLine.startsWith("/**")){
+                    	if (strLine.endsWith("*/")) {
+                            strLine = strLine.replace("*/", "");
+                            commentEnded = true;
+                    	}
+                    	lstComments.add(strLine);
+                    	docBlockStarted = true;
                     }
-                    lstComments.add(strLine);
+                    if (strLine.endsWith("*/") || commentEnded) {
+                        commentsStarted = false;
+                        docBlockStarted = false;
+                    }
                     continue;
                 }
 
                 if (commentsStarted && strLine.endsWith("*/")) {
                     strLine = strLine.replace("*/", "");
-                    lstComments.add(strLine);
+                    if(docBlockStarted){
+                    	lstComments.add(strLine);
+                    	docBlockStarted = false;
+                    }
                     commentsStarted = false;
                     continue;
                 }
 
                 if (commentsStarted) {
-                    lstComments.add(strLine);
+                	if(docBlockStarted){
+                		lstComments.add(strLine);
+                	}
                     continue;
                 }
 
@@ -343,25 +359,35 @@ public class ApexDoc {
             int iLine) {
         propertyModel.setNameLine(name, iLine);
         boolean inDescription = false;
+        int i = 0;
         for (String comment : lstComments) {
+        	i++;
             comment = comment.trim();
             int idxStart = comment.toLowerCase().indexOf("@description");
-            if (idxStart != -1) {
-                propertyModel.setDescription(comment.substring(idxStart + 13).trim());
+            if (idxStart != -1 || i == 1) {
+            	if (idxStart != -1 && comment.length() > idxStart + 13)
+            		propertyModel.setDescription(comment.substring(idxStart + 13).trim());
+            	else{
+                	Pattern p = Pattern.compile("\\s");
+                	Matcher m = p.matcher(comment);
+                	if (m.find()) {
+                		propertyModel.setDescription(comment.substring(m.start()).trim());
+                	}
+                }
                 inDescription = true;
                 continue;
             }
 
             // handle multiple lines for description.
             if (inDescription) {
-                int i;
-                for (i = 0; i < comment.length(); i++) {
-                    char ch = comment.charAt(i);
+                int j;
+                for (j = 0; j < comment.length(); j++) {
+                    char ch = comment.charAt(j);
                     if (ch != '*' && ch != ' ')
                         break;
                 }
-                if (i < comment.length()) {
-                    propertyModel.setDescription(propertyModel.getDescription() + ' ' + comment.substring(i));
+                if (j < comment.length()) {
+                    propertyModel.setDescription(propertyModel.getDescription() + ' ' + comment.substring(j));
                 }
                 continue;
             }
@@ -371,17 +397,12 @@ public class ApexDoc {
     private static void fillMethodModel(MethodModel mModel, String name, ArrayList<String> lstComments, int iLine) {
         mModel.setNameLine(name, iLine);
         boolean inDescription = false;
+        int i = 0;
         for (String comment : lstComments) {
+        	i++;
             comment = comment.trim();
-            int idxStart = comment.toLowerCase().indexOf("@description");
-            if (idxStart != -1) {
-                if (comment.length() > idxStart + 13)
-                    mModel.setDescription(comment.substring(idxStart + 13).trim());
-                inDescription = true;
-                continue;
-            }
 
-            idxStart = comment.toLowerCase().indexOf("@author");
+            int idxStart = comment.toLowerCase().indexOf("@author");
             if (idxStart != -1) {
                 mModel.setAuthor(comment.substring(idxStart + 8).trim());
                 inDescription = false;
@@ -408,17 +429,32 @@ public class ApexDoc {
                 inDescription = false;
                 continue;
             }
+            
+            idxStart = comment.toLowerCase().indexOf("@description");
+            if (idxStart != -1 || i == 1) {
+                if (idxStart != -1 && comment.length() > idxStart + 13)
+                    mModel.setDescription(comment.substring(idxStart + 13).trim());
+                else{
+                	Pattern p = Pattern.compile("\\s");
+                	Matcher m = p.matcher(comment);
+                	if (m.find()) {
+                		mModel.setDescription(comment.substring(m.start()).trim());
+                	}
+                }
+                inDescription = true;
+                continue;
+            }
 
             // handle multiple lines for description.
             if (inDescription) {
-                int i;
-                for (i = 0; i < comment.length(); i++) {
-                    char ch = comment.charAt(i);
+                int j;
+                for (j = 0; j < comment.length(); j++) {
+                    char ch = comment.charAt(j);
                     if (ch != '*' && ch != ' ')
                         break;
                 }
-                if (i < comment.length()) {
-                    mModel.setDescription(mModel.getDescription() + ' ' + comment.substring(i));
+                if (j < comment.length()) {
+                    mModel.setDescription(mModel.getDescription() + ' ' + comment.substring(j));
                 }
                 continue;
             }
@@ -431,16 +467,12 @@ public class ApexDoc {
         if (name.toLowerCase().contains(" interface "))
             cModel.setIsInterface(true);
         boolean inDescription = false;
+        int i = 0;
         for (String comment : lstComments) {
+        	i++;
             comment = comment.trim();
-            int idxStart = comment.toLowerCase().indexOf("@description");
-            if (idxStart != -1) {
-                cModel.setDescription(comment.substring(idxStart + 12).trim());
-                inDescription = true;
-                continue;
-            }
 
-            idxStart = comment.toLowerCase().indexOf("@author");
+            int idxStart = comment.toLowerCase().indexOf("@author");
             if (idxStart != -1) {
                 cModel.setAuthor(comment.substring(idxStart + 7).trim());
                 inDescription = false;
@@ -467,17 +499,32 @@ public class ApexDoc {
                 inDescription = false;
                 continue;
             }
+            
+            idxStart = comment.toLowerCase().indexOf("@description");
+            if (idxStart != -1 || i == 1) {
+            	if (idxStart != -1 && comment.length() > idxStart + 13)
+            		cModel.setDescription(comment.substring(idxStart + 12).trim());
+            	else{
+                	Pattern p = Pattern.compile("\\s");
+                	Matcher m = p.matcher(comment);
+                	if (m.find()) {
+                		cModel.setDescription(comment.substring(m.start()).trim());
+                	}
+                }
+                inDescription = true;
+                continue;
+            }
 
             // handle multiple lines for description.
             if (inDescription) {
-                int i;
-                for (i = 0; i < comment.length(); i++) {
-                    char ch = comment.charAt(i);
+                int j;
+                for (j = 0; j < comment.length(); j++) {
+                    char ch = comment.charAt(j);
                     if (ch != '*' && ch != ' ')
                         break;
                 }
-                if (i < comment.length()) {
-                    cModel.setDescription(cModel.getDescription() + ' ' + comment.substring(i));
+                if (j < comment.length()) {
+                    cModel.setDescription(cModel.getDescription() + ' ' + comment.substring(j));
                 }
                 continue;
             }
