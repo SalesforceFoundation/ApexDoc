@@ -432,8 +432,8 @@ public class ApexDoc {
             
             idxStart = comment.toLowerCase().indexOf("@description");
             if (idxStart != -1 || i == 1) {
-                if (idxStart != -1 && comment.length() > idxStart + 13)
-                    mModel.setDescription(comment.substring(idxStart + 13).trim());
+                if (idxStart != -1 && comment.length() >= idxStart + 12)
+                    mModel.setDescription(comment.substring(idxStart + 12).trim());
                 else{
                 	Pattern p = Pattern.compile("\\s");
                 	Matcher m = p.matcher(comment);
