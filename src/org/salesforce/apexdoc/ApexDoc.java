@@ -397,6 +397,7 @@ public class ApexDoc {
     private static void fillMethodModel(MethodModel mModel, String name, ArrayList<String> lstComments, int iLine) {
         mModel.setNameLine(name, iLine);
         boolean inDescription = false;
+        boolean inExample = false;
         int i = 0;
         for (String comment : lstComments) {
         	i++;
@@ -429,7 +430,7 @@ public class ApexDoc {
                 inDescription = false;
                 continue;
             }
-            
+
             idxStart = comment.toLowerCase().indexOf("@description");
             if (idxStart != -1 || i == 1) {
                 if (idxStart != -1 && comment.length() >= idxStart + 12)
@@ -445,8 +446,25 @@ public class ApexDoc {
                 continue;
             }
 
-            // handle multiple lines for description.
-            if (inDescription) {
+            idxStart = comment.toLowerCase().indexOf("@example");
+            if (idxStart != -1 || i == 1) {
+                if (idxStart != -1 && comment.length() >= idxStart + 10) {
+                    mModel.setExample(comment.substring(idxStart + 8).trim());
+                } else {
+                	Pattern p = Pattern.compile("\\s");
+                	Matcher m = p.matcher(comment.substring(8));
+
+                	if (m.find()) {
+                		mModel.setExample(comment.substring(m.start()).trim());
+                	}
+                }
+                inDescription = false;
+                inExample = true;
+                continue;
+            }
+
+            // handle multiple lines for @description and @example.
+            if (inDescription || inExample) {
                 int j;
                 for (j = 0; j < comment.length(); j++) {
                     char ch = comment.charAt(j);
@@ -454,7 +472,18 @@ public class ApexDoc {
                         break;
                 }
                 if (j < comment.length()) {
-                    mModel.setDescription(mModel.getDescription() + ' ' + comment.substring(j));
+                    if (inDescription) {
+                        mModel.setDescription(mModel.getDescription() + ' ' + comment.substring(j));
+                    } else if (inExample) {
+                        // Lets's not include the tag
+                        if (j == 0 && comment.substring(2, 10) == "* @example") {
+                            comment = comment.substring(10);
+                        }
+
+                        mModel.setExample(mModel.getExample()
+                            + (mModel.getExample().trim().length() == 0 ? "" : "\n")
+                            + comment.substring(2));
+                    }
                 }
                 continue;
             }
@@ -499,7 +528,7 @@ public class ApexDoc {
                 inDescription = false;
                 continue;
             }
-            
+
             idxStart = comment.toLowerCase().indexOf("@description");
             if (idxStart != -1 || i == 1) {
             	if (idxStart != -1 && comment.length() > idxStart + 13)
@@ -533,7 +562,7 @@ public class ApexDoc {
 
     /*************************************************************************
      * strPrevWord
-     * 
+     *
      * @param str
      *            - string to search
      * @param iSearch
@@ -590,12 +619,12 @@ public class ApexDoc {
      * System.out.println(cModel.getAuthor());
      * System.out.println(cModel.getDescription());
      * System.out.println(cModel.getDate());
-     * 
+     *
      * System.out.println("Properties::::::::::::::::::::::::"); for
      * (PropertyModel property : cModel.getProperties()) {
      * System.out.println(property.getNameLine());
      * System.out.println(property.getDescription()); }
-     * 
+     *
      * System.out.println("Methods::::::::::::::::::::::::"); for (MethodModel
      * method : cModel.getMethods()) {
      * System.out.println(method.getMethodName());
@@ -603,9 +632,9 @@ public class ApexDoc {
      * System.out.println(method.getDescription());
      * System.out.println(method.getDate()); for (String param :
      * method.getParams()) { System.out.println(param); }
-     * 
+     *
      * }
-     * 
+     *
      * }catch (Exception e){ e.printStackTrace(); } }
      */
 

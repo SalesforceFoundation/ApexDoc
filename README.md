@@ -19,12 +19,12 @@ ApexDoc was originally created by Aslam Bari (http://techsahre.blogspot.com/2011
 ## Usage
 Copy apexdoc.jar file to your local machine, somewhere on your path.  Each release tag in gitHub has the matching apexdoc.jar attached to it.  Make sure that java is on your path.  Invoke ApexDoc like this example:
 ```
-java -jar apexdoc.jar 
-    -s '/Users/dhabib/Workspaces/Force.com IDE/Cumulus3/src/classes' 
-    -t '/Users/dhabib/Dropbox/Cumulus/ApexDoc' 
-    -p 'global;public;private;testmethod;webService' 
-    -h '/Users/dhabib/Dropbox/Cumulus/ApexDoc/homepage.htm' 
-    -a '/Users/dhabib/Dropbox/Cumulus/ApexDoc/projectheader.htm' 
+java -jar apexdoc.jar
+    -s '/Users/dhabib/Workspaces/Force.com IDE/Cumulus3/src/classes'
+    -t '/Users/dhabib/Dropbox/Cumulus/ApexDoc'
+    -p 'global;public;private;testmethod;webService'
+    -h '/Users/dhabib/Dropbox/Cumulus/ApexDoc/homepage.htm'
+    -a '/Users/dhabib/Dropbox/Cumulus/ApexDoc/projectheader.htm'
     -g 'http://github.com/SalesforceFoundation/Cumulus/blob/dev/src/classes/'
 ```
 
@@ -69,7 +69,7 @@ Example
     /*******************************************************************************************************
     * @description specifies whether state and country picklists are enabled in this org.
     * returns true if enabled.
-    */ 
+    */
     public static Boolean isStateCountryPicklistsEnabled {
         get {
 ```
@@ -82,13 +82,16 @@ In order for ApexDoc to identify class methods, the method line must contain an 
 | @description | one or more lines that provide an overview of the method|
 | @param *param name* | a description of what the parameter does|
 | @return | a description of the return value from the method|
+| @example | Example code usage. This will be wrapped in <code> tags to preserve whistespace|
 Example
 ```
     /*******************************************************************************************************
-    * @description Returns field describe data 
+    * @description Returns field describe data
     * @param objectName the name of the object to look up
     * @param fieldName the name of the field to look up
     * @return the describe field result for the given field
-    */ 
+    * @example
+    * Account a = new Account();
+    */
     public static Schema.DescribeFieldResult getFieldDescribe(String objectName, String fieldName) {
 ```
