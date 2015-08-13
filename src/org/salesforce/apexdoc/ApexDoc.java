@@ -407,6 +407,7 @@ public class ApexDoc {
             if (idxStart != -1) {
                 mModel.setAuthor(comment.substring(idxStart + 8).trim());
                 inDescription = false;
+                inExample = false;
                 continue;
             }
 
@@ -414,6 +415,7 @@ public class ApexDoc {
             if (idxStart != -1) {
                 mModel.setDate(comment.substring(idxStart + 5).trim());
                 inDescription = false;
+                inExample = false;
                 continue;
             }
 
@@ -421,6 +423,7 @@ public class ApexDoc {
             if (idxStart != -1) {
                 mModel.setReturns(comment.substring(idxStart + 7).trim());
                 inDescription = false;
+                inExample = false;
                 continue;
             }
 
@@ -428,6 +431,7 @@ public class ApexDoc {
             if (idxStart != -1) {
                 mModel.getParams().add(comment.substring(idxStart + 6).trim());
                 inDescription = false;
+                inExample = false;
                 continue;
             }
 
@@ -443,6 +447,7 @@ public class ApexDoc {
                 	}
                 }
                 inDescription = true;
+                inExample = false;
                 continue;
             }
 
