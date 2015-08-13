@@ -453,7 +453,7 @@ public class ApexDoc {
 
             idxStart = comment.toLowerCase().indexOf("@example");
             if (idxStart != -1 || i == 1) {
-                if (idxStart != -1 && comment.length() >= idxStart + 10) {
+                if (idxStart != -1 && comment.length() >= idxStart + 8) {
                     mModel.setExample(comment.substring(idxStart + 8).trim());
                 } else {
                 	Pattern p = Pattern.compile("\\s");
