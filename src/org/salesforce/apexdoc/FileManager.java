@@ -417,6 +417,8 @@ public class FileManager {
                         listOfFilesToCopy.add(listOfFiles[i]);
                     }
                 }
+            } else {
+                System.out.println("WARNING: No files found in directory: " + path);
             }
         }
         return listOfFilesToCopy;
