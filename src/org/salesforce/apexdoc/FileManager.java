@@ -243,7 +243,7 @@ public class FileManager {
                         if (param != null && param.trim().length() > 0) {
                             Pattern p = Pattern.compile("\\s");
                             Matcher m = p.matcher(param);
-                            
+
                             String paramName;
                             String paramDescription;
                             if (m.find()) {
@@ -266,6 +266,11 @@ public class FileManager {
                 if (method.getReturns() != "") {
                     contents += "<div class='methodSubTitle'>Return Value</div>";
                     contents += "<div class='methodReturns'>" + escapeHTML(method.getReturns()) + "</div>";
+                }
+
+                if (method.getExample() != "") {
+                    contents += "<div class='methodSubTitle'>Example</div>";
+                    contents += "<code class='methodExample'>" + escapeHTML(method.getExample()) + "</code>";
                 }
 
                 if (method.getAuthor() != "") {
@@ -321,13 +326,13 @@ public class FileManager {
      * @return String of HTML
      */
     private String getPageLinks(TreeMap<String, ClassGroup> mapGroupNameToClassGroup, ArrayList<ClassModel> cModels) {
-        
+
         // this is the only place we need the list of class models sorted by name.
         TreeMap<String, ClassModel> tm = new TreeMap<String, ClassModel>();
         for (ClassModel cm : cModels)
             tm.put(cm.getClassName().toLowerCase(), cm);
         cModels = new ArrayList<ClassModel>(tm.values());
-        
+
         String links = "<td width='20%' vertical-align='top' >";
         links += "<div class='sidebar'><div class='navbar'><nav role='navigation'><ul id='mynavbar'>";
         links += "<li id='idMenuindex'><a href='.' onclick=\"gotomenu('index.html', event);return false;\" class='nav-item'>Home</a></li>";
@@ -342,7 +347,7 @@ public class FileManager {
             String strGoTo = "onclick=\"gotomenu(document.location.href, event);return false;\"";
             if (cg.getContentFilename() != null)
                 strGoTo = "onclick=\"gotomenu('" + cg.getContentFilename() + ".html" + "', event);return false;\"";
-            links += "<li class='header' id='idMenu" + cg.getContentFilename() + 
+            links += "<li class='header' id='idMenu" + cg.getContentFilename() +
                     "'><a class='nav-item nav-section-title' href='.' " +
                     strGoTo + " class='nav-item'>" + strGroup + "<span class='caret'></span></a></li>";
             links += "<ul>";

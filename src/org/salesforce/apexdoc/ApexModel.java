@@ -47,6 +47,14 @@ public class ApexModel {
         this.returns = returns;
     }
 
+    public String getExample() {
+        return example == null ? "" : example;
+    }
+
+    public void setExample(String example) {
+        this.example = example;
+    }
+
     public String getScope() {
         return scope == null ? "" : scope;
     }
@@ -71,5 +79,6 @@ public class ApexModel {
     private String date;
     private String returns;
     private String scope;
+    private String example;
 
 }
