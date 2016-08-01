@@ -326,11 +326,15 @@ public class FileManager {
      * @return String of HTML
      */
     private String getPageLinks(TreeMap<String, ClassGroup> mapGroupNameToClassGroup, ArrayList<ClassModel> cModels) {
+        boolean createMiscellaneousGroup = false;
 
         // this is the only place we need the list of class models sorted by name.
         TreeMap<String, ClassModel> tm = new TreeMap<String, ClassModel>();
-        for (ClassModel cm : cModels)
+        for (ClassModel cm : cModels) {
             tm.put(cm.getClassName().toLowerCase(), cm);
+            if (!createMiscellaneousGroup && cm.getClassGroup() == null)
+                createMiscellaneousGroup = true;
+        }
         cModels = new ArrayList<ClassModel>(tm.values());
 
         String links = "<td width='20%' vertical-align='top' >";
@@ -338,7 +342,8 @@ public class FileManager {
         links += "<li id='idMenuindex'><a href='.' onclick=\"gotomenu('index.html', event);return false;\" class='nav-item'>Home</a></li>";
 
         // add a bucket ClassGroup for all Classes without a ClassGroup specified
-        mapGroupNameToClassGroup.put("Miscellaneous", new ClassGroup("Miscellaneous", null));
+        if (createMiscellaneousGroup)
+            mapGroupNameToClassGroup.put("Miscellaneous", new ClassGroup("Miscellaneous", null));
 
         // create a sorted list of ClassGroups
 
