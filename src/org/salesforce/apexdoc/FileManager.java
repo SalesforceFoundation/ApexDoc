@@ -66,7 +66,7 @@ public class FileManager {
                 File file = new File(fileName);
                 fos = new FileOutputStream(file);
                 dos = new DataOutputStream(fos);
-                dos.writeBytes(contents);
+                dos.write(contents.getBytes());
                 dos.close();
                 fos.close();
                 infoMessages.append(fileName + " Processed...\n");
