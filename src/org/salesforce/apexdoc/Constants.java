@@ -2,8 +2,8 @@ package org.salesforce.apexdoc;
 
 public class Constants {
         
-    public static final String HEADER_OPEN = "<html><head>" + 
-        "<script type='text/javascript' src='https://code.jquery.com/jquery-1.11.1.js'></script>" +
+    public static final String HEADER_OPEN = "<html><head>" +
+        "<script type='text/javascript' src='jquery-1.11.1.js'></script>" +
         "<script type='text/javascript' src='CollapsibleList.js'></script>" +                                                                
         "<script type='text/javascript' src='ApexDoc.js'></script>" +                                                                
         "<link rel='stylesheet' type='text/css' href='ApexDoc.css' /> " + 

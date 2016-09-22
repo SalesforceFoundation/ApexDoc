@@ -66,7 +66,7 @@ public class FileManager {
                 File file = new File(fileName);
                 fos = new FileOutputStream(file);
                 dos = new DataOutputStream(fos);
-                dos.writeBytes(contents);
+                dos.write(contents.getBytes());
                 dos.close();
                 fos.close();
                 infoMessages.append(fileName + " Processed...\n");
@@ -405,7 +405,7 @@ public class FileManager {
         docopy("ApexDoc.css", toFileName);
         docopy("ApexDoc.js", toFileName);
         docopy("CollapsibleList.js", toFileName);
-        docopy("jquery-latest.js", toFileName);
+        docopy("jquery-1.11.1.js", toFileName);
         docopy("toggle_block_btm.gif", toFileName);
         docopy("toggle_block_stretch.gif", toFileName);
 
