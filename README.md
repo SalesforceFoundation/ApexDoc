@@ -4,7 +4,7 @@ ApexDoc
 ApexDoc is a java app that you can use to document your Salesforce Apex classes.  You tell ApexDoc where your class files are, and it will generate a set of static HTML pages that fully document each class, including its properties and methods.  Each static HTML page will include an expandable menu on its left hand side, that shows a 2-level tree structure of all of your classes.  Command line parameters allow you to control many aspects of ApexDoc, such as providing your own banner HTML for the pages to use.
 
 ## Credits
-ApexDoc was originally created by Aslam Bari (http://techsahre.blogspot.com/2011/01/apexdoc-salesforce-code-documentation.html).  It was then taken and extended by David Habib, at Groundwire, in 2011.  It has subsequently been enhanced by David Habib of the Salesforce Foundation in late 2014 for use with Nonprofit Starter Pack (https://github.com/SalesforceFoundation/Cumulus). We are unable to offer direct support of reported issues or incorporate enhancement requests at this time, however pull requests are welcome.
+ApexDoc was originally created by Aslam Bari (http://techsahre.blogspot.com/2011/01/apexdoc-salesforce-code-documentation.html).  It was then taken and extended by David Habib, at Groundwire, in 2011.  It has subsequently been enhanced by David Habib of the Salesforce Foundation in late 2014 for use with Nonprofit Success Pack (https://github.com/SalesforceFoundation/Cumulus). We are unable to offer direct support of reported issues or incorporate enhancement requests at this time, however pull requests are welcome.
 
 ## Command Line Parameters
 | parameter | description |
