@@ -5,21 +5,47 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+/*
+ * @description Main class
+ * @updated BillKrat.2016.11.24 GwnV1.1  
+ *  - Support for event handling added
+ *  - Simplified tag processing (moved code into ApexModel base class)
+ *  - Added support for default ./ApexDocContent folder and header/home files
+ *  - Display help information if invalid parameter is sent, i.e., source has no files  
+ */
 public class ApexDoc {
+
+	// Avoid magic strings for default locations, files, and version
+	static final String Version = "GwnV1.1";
+
+	// Default settings if the folder/files exist
+	static boolean isApexDocContent = false;
+	static final String apexDocContent = "./ApexDocContent";
+	static final String classes = "./src/classes";
+	static final String header = "./ApexDocContent/.header.html";
+	static final String home = "./ApexDocContent/.home.html";
 
 	public static FileManager fm;
 	public static String[] rgstrScope;
 	public static String[] rgstrArgs;
 
+	public static Boolean IsExitOnWarning = false;
+
+	/*
+	 * @description Redirects output to the apex_doc_log.txt file. The
+	 * constructor will not fire unless explicitly instantiated
+	 * 
+	 * @example // Activates output to text file ApexDoc apexDoc = new
+	 * ApexDoc();
+	 */
 	public ApexDoc() {
 		try {
 			File file = new File("apex_doc_log.txt");
@@ -29,10 +55,13 @@ public class ApexDoc {
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
 		}
-
 	}
 
-	// public entry point when called from the command line.
+	/*
+	 * @description public entry point when called from the command line.
+	 * 
+	 * @param args containing switches
+	 */
 	public static void main(String[] args) {
 		try {
 			RunApexDoc(args, null);
@@ -44,22 +73,48 @@ public class ApexDoc {
 		}
 	}
 
-	// public entry point when called from the Eclipse PlugIn.
-	// assumes PlugIn previously sets rgstrArgs before calling run.
+	/*
+	 * @description public entry point when called from the Eclipse PlugIn.
+	 * assumes PlugIn previously sets rgstrArgs before calling run.
+	 */
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		RunApexDoc(rgstrArgs, monitor);
 	}
 
-	// public main routine which is used by both command line invocation and
-	// Eclipse PlugIn invocation
+	/*
+	 * @description public main routine which is used by both command line
+	 * invocation and Eclipse PlugIn invocation
+	 */
 	public static void RunApexDoc(String[] args, IProgressMonitor monitor) {
-		String targetDirectory = ".";
-		String sourceDirectory = "./src/classes";
-		String homefilepath =    "./ApexDocContent/.home.html";
-		String authorfilepath =  "./ApexDocContent/.header.html";
+		String targetDirectory = "."; // Default to folder application resides
+		String sourceDirectory = "";
+		String homefilepath = "";
+		String authorfilepath = "";
 		String hostedSourceURL = "";
 
-		// parse command line parameters
+		// Check to see if folder/files are available from relative
+		// location of application, i.e., project folder
+		fm = new FileManager(targetDirectory);
+
+		// if there is a classes folder available then
+		// default to it - can still be overridden by
+		// using switches (below)
+		if (fm.exists(classes))
+			sourceDirectory = classes;
+
+		// if the apexDocContent folder exists then we'll
+		// set the following paths (if html files exist)
+		if (fm.exists(apexDocContent)) {
+			isApexDocContent = true;
+			targetDirectory = ".";
+			if (fm.exists(home))
+				homefilepath = home;
+			if (fm.exists(header))
+				authorfilepath = header;
+		}
+
+		// parse command line parameters, these can override
+		// any default settings established above
 		for (int i = 0; i < args.length; i++) {
 
 			if (args[i] == null) {
@@ -91,17 +146,33 @@ public class ApexDoc {
 			rgstrScope[2] = "webService";
 		}
 
-		// find all the files to parse
+		// find all the files to parse for the configured
+		// target directory
 		fm = new FileManager(targetDirectory);
-		ArrayList<File> files = fm.getFiles(sourceDirectory);
-		ArrayList<ClassModel> cModels = new ArrayList<ClassModel>();
 
+		// Subscribe to the FileManager events. We'll attach the
+		// ApexDocEventListener which is tightly coupled to this class
+		// so that the FileManager does not have to be (the listener
+		// calls the printHelp method and accesses fields)
+		ApexDocEventListener listener = new ApexDocEventListener();
+		fm.FileManagerEvent.addListener(listener);
+
+		// Get list of files from source directory.
+		ArrayList<File> files = fm.getFiles(sourceDirectory);
+
+		// If we experienced a warning from the FileManager via event
+		// notification and this flag is set then we're done
+		if (ApexDoc.IsExitOnWarning)
+			return;
+
+		ArrayList<ClassModel> cModels = new ArrayList<ClassModel>();
 		if (monitor != null) {
 			// each file is parsed, html created, written to disk.
 			// but for each class file, there is an xml file we'll ignore.
 			// plus we add 2 for the author file and home file loading.
 			monitor.beginTask("ApexDoc - documenting your Apex Class files.", (files.size() / 2) * 3 + 2);
 		}
+
 		// parse each file, creating a class model for it
 		for (File fromFile : files) {
 			String fromFileName = fromFile.getAbsolutePath();
@@ -122,21 +193,57 @@ public class ApexDoc {
 		String projectDetail = fm.parseHTMLFile(authorfilepath);
 		if (monitor != null)
 			monitor.worked(1);
+
 		String homeContents = fm.parseHTMLFile(homefilepath);
 		if (monitor != null)
 			monitor.worked(1);
 
-		// create our set of HTML files
+		// Create our set of HTML files
 		fm.createDoc(mapGroupNameToClassGroup, cModels, projectDetail, homeContents, hostedSourceURL, monitor);
+
+		// If there is an "ApexDocContent" folder then we want to ensure that any
+		// images and modified css/js files make it into the final ApexDocumentation
+		// folder, particularly since the logo.png file is pulled from embedded resource
+		// (this provides a hook to overwrite).
+		if (isApexDocContent) {
+			// Get a list of files within the ApexDocContent folder
+			files = fm.getFiles(apexDocContent);
+			
+			// Iterate through each file
+			for (File file : files) {
+
+				//Construct a destination folder using the root and current filename 
+				File destination = new File(Constants.ROOT_DIRECTORY + "/"+ file.getName());
+				try {
+					// Do not overwrite any html files as they have been processed; we're 
+					// interested in in images and modified css/js files that may be in folder
+					if(file.getName().toLowerCase().contains("html"))
+						continue;
+					
+					// Copy the file to the destination - if it exists it will be deleted first
+					fm.copyFile(file, destination);
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
+			}
+		}
+
 		if (monitor != null)
 			monitor.done();
 
 		// we are done!
-		System.out.println("ApexDoc has completed!");
+		System.out.println("ApexDoc (" + Version + ") has completed!  Documentation at https://github.com/BillKrat/ApexDoc");
 	}
 
-	private static void printHelp() {
-		System.out.println("ApexDoc - a tool for generating documentation from Salesforce Apex code class files.\n");
+	/*
+	 * @description display the help screen
+	 */
+	public static void printHelp() {
+		System.out.println("");
+		System.out.println("ApexDoc (" + Version + ") "+
+				"- a tool for generating documentation from Salesforce Apex code class files.\n");
 		System.out.println("    Invalid Arguments detected.  The correct syntax is:\n");
 		System.out.println(
 				"apexdoc -s <source_directory> [-t <target_directory>] [-g <source_url>] [-h <homefile>] [-a <authorfile>] [-p <scope>]\n");
@@ -151,6 +258,9 @@ public class ApexDoc {
 				"<authorfile> - Optional. Specifies the text file that contains project information for the documentation header.");
 		System.out.println(
 				"<scope> - Optional. Semicolon seperated list of scopes to document.  Defaults to 'global;public'. ");
+		System.out.println("");
+		System.out.println("Documentation at https://github.com/BillKrat/ApexDoc");
+		
 	}
 
 	private static TreeMap<String, ClassGroup> createMapGroupNameToClassGroup(ArrayList<ClassModel> cModels,
@@ -176,6 +286,9 @@ public class ApexDoc {
 		return map;
 	}
 
+	/*
+	 * @description Parse comments from provided filename
+	 */
 	public static ClassModel parseFileContents(String filePath) {
 		try {
 			FileInputStream fstream = new FileInputStream(filePath);
@@ -191,20 +304,7 @@ public class ApexDoc {
 			ClassModel cModelParent = null;
 			Stack<ClassModel> cModels = new Stack<ClassModel>();
 
-			// DH: Consider using java.io.StreamTokenizer to read the file a
-			// token at a time?
-			//
-			// new strategy notes:
-			// any line with " class " is a class definition
-			// any line with scope (global, public, private) is a class, method,
-			// or property definition.
-			// you can detect a method vs. a property by the presence of ( )'s
-			// you can also detect properties by get; or set;, though they may
-			// not be on the first line.
-			// in apex, methods that start with get and take no params, or set
-			// with 1 param, are actually properties.
-			//
-
+			// Read in each line and process it
 			int iLine = 0;
 			while ((strLine = br.readLine()) != null) {
 				iLine++;
@@ -356,6 +456,9 @@ public class ApexDoc {
 		return null;
 	}
 
+	/*
+	 * @description
+	 */
 	public static String strContainsScope(String str) {
 		str = str.toLowerCase();
 		for (int i = 0; i < rgstrScope.length; i++) {
@@ -366,6 +469,12 @@ public class ApexDoc {
 		return null;
 	}
 
+	/*
+	 * @description Property only supports description tag
+	 * 
+	 * @updated BillKrat.2016.11.24 GwnV1.1 - Moved processing logic for tag
+	 * into ApexModel
+	 */
 	private static void fillPropertyModel(PropertyModel propertyModel, String name, ArrayList<String> lstComments,
 			int iLine) {
 		propertyModel.setNameLine(name, iLine);
@@ -373,38 +482,24 @@ public class ApexDoc {
 		int i = 0;
 		for (String comment : lstComments) {
 			i++;
-			comment = comment.trim();
-			int idxStart = comment.toLowerCase().indexOf("@description");
-			if (idxStart != -1 || i == 1) {
-				if (idxStart != -1 && comment.length() > idxStart + 13)
-					propertyModel.setDescription(comment.substring(idxStart + 13).trim());
-				else {
-					Pattern p = Pattern.compile("\\s");
-					Matcher m = p.matcher(comment);
-					if (m.find()) {
-						propertyModel.setDescription(comment.substring(m.start()).trim());
-					}
-				}
+			if (propertyModel.SetField("@description", comment, i)) {
 				inDescription = true;
 				continue;
 			}
-
-			// handle multiple lines for description.
-			if (inDescription) {
-				int j;
-				for (j = 0; j < comment.length(); j++) {
-					char ch = comment.charAt(j);
-					if (ch != '*' && ch != ' ')
-						break;
-				}
-				if (j < comment.length()) {
-					propertyModel.setDescription(propertyModel.getDescription() + ' ' + comment.substring(j));
-				}
+			// handle multiple lines for @description (example does not
+			// apply-false)
+			if (propertyModel.AppendContent(inDescription, false, comment))
 				continue;
-			}
 		}
 	}
 
+	/*
+	 * @description Method supports author, date, return, description, and param
+	 * tags
+	 * 
+	 * @updated BillKrat.2016.11.24 GwnV1.1 - Moved processing logic for tag
+	 * into ApexModel
+	 */
 	private static void fillMethodModel(MethodModel mModel, String name, ArrayList<String> lstComments, int iLine) {
 		mModel.setNameLine(name, iLine);
 		boolean inDescription = false;
@@ -412,99 +507,37 @@ public class ApexDoc {
 		int i = 0;
 		for (String comment : lstComments) {
 			i++;
-			comment = comment.trim();
-
-			int idxStart = comment.toLowerCase().indexOf("@author");
-			if (idxStart != -1) {
-				mModel.setAuthor(comment.substring(idxStart + 8).trim());
+			if (mModel.SetField("@author", comment, i) || mModel.SetField("@date", comment, i)
+					|| mModel.SetField("@return", comment, i) || mModel.SetField("@param", comment, i)) {
 				inDescription = false;
 				inExample = false;
 				continue;
 			}
-
-			idxStart = comment.toLowerCase().indexOf("@date");
-			if (idxStart != -1) {
-				mModel.setDate(comment.substring(idxStart + 5).trim());
-				inDescription = false;
-				inExample = false;
-				continue;
-			}
-
-			idxStart = comment.toLowerCase().indexOf("@return");
-			if (idxStart != -1) {
-				mModel.setReturns(comment.substring(idxStart + 7).trim());
-				inDescription = false;
-				inExample = false;
-				continue;
-			}
-
-			idxStart = comment.toLowerCase().indexOf("@param");
-			if (idxStart != -1) {
-				mModel.getParams().add(comment.substring(idxStart + 6).trim());
-				inDescription = false;
-				inExample = false;
-				continue;
-			}
-
-			idxStart = comment.toLowerCase().indexOf("@description");
-			if (idxStart != -1 || i == 1) {
-				if (idxStart != -1 && comment.length() >= idxStart + 12)
-					mModel.setDescription(comment.substring(idxStart + 12).trim());
-				else {
-					Pattern p = Pattern.compile("\\s");
-					Matcher m = p.matcher(comment);
-					if (m.find()) {
-						mModel.setDescription(comment.substring(m.start()).trim());
-					}
-				}
+			if (mModel.SetField("@description", comment, i)) {
 				inDescription = true;
 				inExample = false;
 				continue;
 			}
-
-			idxStart = comment.toLowerCase().indexOf("@example");
-			if (idxStart != -1 || i == 1) {
-				if (idxStart != -1 && comment.length() >= idxStart + 8) {
-					mModel.setExample(comment.substring(idxStart + 8).trim());
-				} else {
-					Pattern p = Pattern.compile("\\s");
-					Matcher m = p.matcher(comment.substring(8));
-
-					if (m.find()) {
-						mModel.setExample(comment.substring(m.start()).trim());
-					}
-				}
+			if (mModel.SetField("@example", comment, i)) {
 				inDescription = false;
 				inExample = true;
 				continue;
 			}
 
 			// handle multiple lines for @description and @example.
-			if (inDescription || inExample) {
-				int j;
-				for (j = 0; j < comment.length(); j++) {
-					char ch = comment.charAt(j);
-					if (ch != '*' && ch != ' ')
-						break;
-				}
-				if (j < comment.length()) {
-					if (inDescription) {
-						mModel.setDescription(mModel.getDescription() + ' ' + comment.substring(j));
-					} else if (inExample) {
-						// Lets's not include the tag
-						if (j == 0 && comment.substring(2, 10) == "* @example") {
-							comment = comment.substring(10);
-						}
-
-						mModel.setExample(mModel.getExample() + (mModel.getExample().trim().length() == 0 ? "" : "\n")
-								+ comment.substring(2));
-					}
-				}
+			if (mModel.AppendContent(inDescription, inExample, comment))
 				continue;
-			}
+
 		}
 	}
 
+	/*
+	 * @description Classes support author, date, group, group-content, and
+	 * description tags
+	 * 
+	 * @updated BillKrat.2016.11.24 GwnV1.1 - Moved processing logic for tag
+	 * into ApexModel
+	 */
 	private static void fillClassModel(ClassModel cModelParent, ClassModel cModel, String name,
 			ArrayList<String> lstComments, int iLine) {
 		cModel.setNameLine(name, iLine);
@@ -516,66 +549,20 @@ public class ApexDoc {
 			i++;
 			comment = comment.trim();
 
-			int idxStart = comment.toLowerCase().indexOf("@author");
-			if (idxStart != -1) {
-				cModel.setAuthor(comment.substring(idxStart + 7).trim());
+			if (cModel.SetField("@author", comment, i) || cModel.SetField("@date", comment, i)
+					|| cModel.SetField("@group ", comment, i) || cModel.SetField("@group-content", comment, i)) {
 				inDescription = false;
 				continue;
 			}
 
-			idxStart = comment.toLowerCase().indexOf("@date");
-			if (idxStart != -1) {
-				cModel.setDate(comment.substring(idxStart + 5).trim());
-				inDescription = false;
-				continue;
-			}
-
-			idxStart = comment.toLowerCase().indexOf("@group "); // needed to
-																	// include
-																	// space to
-																	// not match
-																	// group-content.
-			if (idxStart != -1) {
-				cModel.setClassGroup(comment.substring(idxStart + 6).trim());
-				inDescription = false;
-				continue;
-			}
-
-			idxStart = comment.toLowerCase().indexOf("@group-content");
-			if (idxStart != -1) {
-				cModel.setClassGroupContent(comment.substring(idxStart + 14).trim());
-				inDescription = false;
-				continue;
-			}
-
-			idxStart = comment.toLowerCase().indexOf("@description");
-			if (idxStart != -1 || i == 1) {
-				if (idxStart != -1 && comment.length() > idxStart + 13)
-					cModel.setDescription(comment.substring(idxStart + 12).trim());
-				else {
-					Pattern p = Pattern.compile("\\s");
-					Matcher m = p.matcher(comment);
-					if (m.find()) {
-						cModel.setDescription(comment.substring(m.start()).trim());
-					}
-				}
+			if (cModel.SetField("@description", comment, i)) {
 				inDescription = true;
 				continue;
 			}
 
-			// handle multiple lines for description.
-			if (inDescription) {
-				int j;
-				for (j = 0; j < comment.length(); j++) {
-					char ch = comment.charAt(j);
-					if (ch != '*' && ch != ' ')
-						break;
-				}
-				if (j < comment.length()) {
-					cModel.setDescription(cModel.getDescription() + ' ' + comment.substring(j));
-				}
+			// handle multiple lines for @description (no example - false)
+			if (cModel.AppendContent(inDescription, false, comment))
 				continue;
-			}
 		}
 	}
 

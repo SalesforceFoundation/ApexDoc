@@ -1,5 +1,9 @@
 package org.salesforce.apexdoc;
 
+import org.salesforce.apexdoc.GenericEventSource;
+import org.salesforce.apexdoc.GenericEventArgs;
+
+import java.nio.file.Files;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -22,9 +26,26 @@ public class FileManager {
     public String APEX_DOC_PATH = "";
     public StringBuffer infoMessages;
 
+    public static final String NO_FILES = "No files";
+
+    // Raise file manager event - prevents us from having to tightly
+    // couple the FileManager to invoking processes.  They can receive
+    // notifications (raised events) if this is subscribed to.
+    public GenericEventSource<GenericEventArgs> FileManagerEvent = 
+    		new	GenericEventSource<GenericEventArgs>();
+    
     public FileManager() {
         infoMessages = new StringBuffer();
+        
     }
+    
+    public void copyFile( File from, File to ) throws IOException {
+    	if(this.exists(to.toString()))
+    		to.delete();
+    	
+        Files.copy( from.toPath(), to.toPath() );
+    }
+    
 
     private static String escapeHTML(String s) {
         StringBuilder out = new StringBuilder(Math.max(16, s.length()));
@@ -50,6 +71,17 @@ public class FileManager {
             this.path = path;
     }
 
+    
+    public boolean exists(String path){
+    	File file = new File(path);
+    	boolean isDirectory = file.isDirectory();
+    	if(isDirectory)
+    		return true;
+    	
+    	boolean retValue = file.exists();
+    	return retValue;
+    }
+    
     private boolean createHTML(TreeMap<String, String> mapFNameToContent, IProgressMonitor monitor) {
         try {
             if (path.endsWith("/") || path.endsWith("\\")) {
@@ -57,7 +89,8 @@ public class FileManager {
             } else {
                 path += "/" + Constants.ROOT_DIRECTORY; // + "/" + fileName + ".html";
             }
-
+            
+           
             (new File(path)).mkdirs();
 
             for (String fileName : mapFNameToContent.keySet()) {
@@ -424,6 +457,8 @@ public class FileManager {
                 }
             } else {
                 System.out.println("WARNING: No files found in directory: " + path);
+
+                FileManagerEvent.raise(new GenericEventArgs(FileManagerEvent,NO_FILES));
             }
         }
         return listOfFilesToCopy;
@@ -462,6 +497,9 @@ public class FileManager {
         return "";
     }
 
+    /*
+     * @description parses the content between the body tags
+     */
     public String parseHTMLFile(String filePath) {
 
         String contents = (parseFile(filePath)).trim();

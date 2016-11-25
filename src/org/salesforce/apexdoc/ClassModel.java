@@ -6,6 +6,10 @@ import java.util.TreeMap;
 import java.util.Collections;
 import java.util.Comparator;
 
+/*
+ * @updated BillKrat.2016.11.24 GwnV1.1
+ *  - Moved strClassGroupContent private field into ApexModel as protected field
+ */
 public class ClassModel extends ApexModel {
 
     public ClassModel(ClassModel cmodelParent) {
@@ -17,8 +21,6 @@ public class ClassModel extends ApexModel {
 
     private ArrayList<MethodModel> methods;
     private ArrayList<PropertyModel> properties;
-    private String strClassGroup;
-    private String strClassGroupContent;
     private ClassModel cmodelParent;
     private ArrayList<ClassModel> childClasses;
     private boolean isInterface;
