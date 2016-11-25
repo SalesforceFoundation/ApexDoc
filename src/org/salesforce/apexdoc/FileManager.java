@@ -401,13 +401,13 @@ public class FileManager {
     }
 
     private void copy(String toFileName) throws IOException, Exception {
-        docopy("apex_doc_logo.png", toFileName);
-        docopy("ApexDoc.css", toFileName);
-        docopy("ApexDoc.js", toFileName);
-        docopy("CollapsibleList.js", toFileName);
-        docopy("jquery-1.11.1.js", toFileName);
-        docopy("toggle_block_btm.gif", toFileName);
-        docopy("toggle_block_stretch.gif", toFileName);
+        docopy( "apex_doc_logo.png", toFileName);
+        docopy( "ApexDoc.css", toFileName);
+        docopy( "ApexDoc.js", toFileName);
+        docopy( "CollapsibleList.js", toFileName);
+        docopy( "jquery-1.11.1.js", toFileName);
+        docopy( "toggle_block_btm.gif", toFileName);
+        docopy( "toggle_block_stretch.gif", toFileName);
 
     }
 

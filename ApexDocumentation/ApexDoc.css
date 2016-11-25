@@ -1,0 +1,300 @@
+body {
+    font-family: "ProximaNovaSoft-Regular", Calibri, "Gill Sans",
+        "Gill Sans MT", Candara, Segoe, "Segoe UI", Arial, sans-serif;
+    font-size: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+/* the top page banner  */
+.topsection {
+    background-color: #003672;
+    width: 100%;
+    height: 110px;
+    color: white;
+}
+
+.topsection td {
+    color: white;
+    padding: 8px;
+}
+
+.topsection a {
+    color: white;
+}
+
+/* the area that holds the documentation on the right of the page */
+.contentTD {
+    font-size: 100%;
+    width: 80%;
+    padding-left: 12px;
+    vertical-align: top;
+}
+
+/* the horizontal section headers that declares the Class name */
+.section-title {
+    background-color: #003672; /* rgb(155,203,236); */
+    color: white;
+    font-size: 100%;
+    font-weight: bold;
+    padding: 5px 5px 5px 14px;
+    margin: 0 0 2px -12px;
+}
+
+.section-title a {
+    color: white;
+}
+
+/* the horizontal section headers that declares the Methods & Properties subsections */
+.subsection-title {
+    color: #51638A;
+    border-top: 1px solid #51638A;
+    font-size: 100%;
+    padding: 2px;
+    margin: 0 0 12px 0;
+}
+
+.subsection-container {
+    padding: 0 0 0 14px;
+}
+
+/* the horizontal header for each Method */
+.methodHeader {
+    font-size: 1em;
+    color: #51638A;
+    border-top: 1px solid #51638A;
+    margin: 20px 0 0 0;
+    padding: 4px 0 2px 0;
+}
+
+/* properties is used to display the table of class properties */
+.properties {
+
+}
+
+.properties td {
+    vertical-align: top;
+    padding-right: 10px;
+}
+
+.clsPropertyName {
+    font-size: .9em;
+    font-weight: bold;
+}
+
+.clsPropertyDeclaration a {
+    font-family: Courier;
+    font-size: .8em;
+    font-weight: normal;
+    color: MediumBlue;
+}
+
+.clsPropertyDescription {
+    font-size: .9em;
+    font-weight: normal;
+}
+
+/* the class's signature line */
+.classSignature {
+    font-family: Courier;
+    font-size: .9em;
+    font-weight: normal;
+    text-indent: -15px;
+    padding: 6px 0 4px 15px;
+}
+
+.classSignature a {
+    color: mediumblue;
+}
+
+/* the description, author, date for the class */
+.classDetails {
+    font-size: .9em;
+    padding-left: 2px;
+}
+
+/* signatures of methods and properties */
+.hostedSourceLink {
+    text-decoration: initial;
+    color: mediumblue;
+}
+
+.hostedSourceLink:hover {
+    text-decoration: underline;
+}
+
+/* method table of contents related classes */
+.methodTOCEntry {
+    font-size: .9em;
+    color: mediumblue;
+}
+
+.methodTOCEntry:visited {
+    font-size: .9em;
+    color: purple;
+}
+
+.methodTOCDescription {
+    font-size: .9em;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    line-height: .9em;
+    height: .9em;
+}
+
+/* method listing related classes */
+.methodSignature {
+    font-family: Courier;
+    font-size: .8em;
+    font-weight: normal;
+    color: MediumBlue;
+    text-indent: -15px;
+    padding-left: 15px;
+}
+
+.methodDescription {
+    font-size: .9em;
+    margin: .5em 0 0 0;
+}
+
+.methodSubTitle {
+    font-size: .9em;
+    color: #51638A;
+    font-weight: bold;
+    margin: .7em 0 0 0;
+}
+
+.paramName {
+    font-size: .9em;
+    font-weight: bold;
+    font-style: italic;
+    margin: 0 0 0 .5em;
+}
+
+.paramDescription {
+    font-size: .9em;
+    margin: 0 0 0 1em;
+}
+
+.methodReturns {
+    font-size: .9em;
+    margin: 0 0 0 1em;
+}
+
+.methodExample {
+    background-color: #f7f7f7;
+    display: block;
+    padding: 1em;
+    white-space: pre;
+}
+
+/* SIDEBAR CSS */
+div.navbar {
+    font-size: .9em;
+    font-weight: normal;
+}
+
+div.navbar a:hover {
+    text-decoration: underline;
+}
+
+.sidebar ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background: lightgray;
+}
+
+div.navbar ul li {
+    margin-bottom: 0px;
+    margin-left: 0px;
+    padding: 2px;
+    background: #f2f5f6;
+    border: 1px solid #dce4e7;
+    border-top-color: #fff;
+}
+
+div.navbar ul li:hover {
+    background: gray;
+}
+
+div.navbar ul li.subitem:hover {
+    background: gray;
+}
+
+div.navbar ul li.subitem {
+    background: #eaeef0;
+    border-bottom: 0;
+    border-top: 0;
+}
+
+div.navbar {
+    border-top: 1px solid #dce4e7;
+}
+
+div.navbar ul li a {
+    display: block;
+    text-decoration: none;
+    padding: 5px 5px 5px 10px;
+    color: black;
+}
+
+div.navbar ul li a:hover {
+    color: #fff;
+    background: none;
+}
+
+div.navbar ul li.nav-selected {
+    background: LightGray;
+}
+
+.nav-section-title {
+    display: block;
+    text-decoration: none;
+    padding: 5px 5px 5px 10px;
+    color: black;
+}
+
+li.collapsed .caret {
+    float: right;
+    width: 0;
+    height: 0;
+    display: inline-block;
+    vertical-align: top;
+    content: "";
+    margin-top: 8px;
+    margin-left: 2px;
+    border-top: 4px solid #000;
+    border-bottom: 0px;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+}
+
+li .caret {
+    float: right;
+    width: 0;
+    height: 0;
+    display: inline-block;
+    vertical-align: top;
+    content: "";
+    margin-top: 8px;
+    margin-left: 2px;
+    border-top: none;
+    border-bottom: 4px solid #000;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+}
+
+.sub-nav-item {
+    margin-left: 20px;
+}
+
+div.navbar ul li a.scopeglobal {
+
+}
+
+div.navbar ul li a.scopeprivate {
+
+}
+
+/* END - SIDEBAR STYLES */

@@ -17,7 +17,7 @@ public class Constants {
         "</div>";
     
     public static final String FOOTER = "</div></div></td></tr></table><hr/>" + 
-        "<center style='font-size:.8em;'><a href='http://github.com/SalesforceFoundation/ApexDoc' target='_blank'>Powered By ApexDoc</a>" + 
+        "<center style='font-size:.8em;'><a href='https://github.com/BillKrat/ApexDoc' target='_blank'>Powered By ApexDoc</a>" + 
         "</center></body></html>";
     
     public static final String ROOT_DIRECTORY = "ApexDocumentation";
@@ -31,7 +31,7 @@ public class Constants {
         "<td>" +                
         "<h2 style='margin:0px;'>Project Demo</h2>" +
         "Check out the gitHub project at:<br/>" + 
-        "<a href='http://github.com/SalesforceFoundation/ApexDoc'>http://github.com/SalesforceFoundation/ApexDoc</a><br/>";
+        "<a href='https://github.com/BillKrat/ApexDoc'>http://https://github.com/BillKrat/ApexDoc</a><br/>";
 
     public static String getHeader(String projectDetail) {
         String header;
