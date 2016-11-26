@@ -1,7 +1,12 @@
+
 package org.salesforce.apexdoc;
 
 import java.util.ArrayList;
 
+/*
+ * @updated BillKrat.2016.11.24 GwnV1.1
+ *  - Moved params private field into ApexModel as protected field
+ */
 public class MethodModel extends ApexModel {
 
     public MethodModel() {
@@ -46,6 +51,5 @@ public class MethodModel extends ApexModel {
         return "";
     }
 
-    private ArrayList<String> params;
     private String returnType;
 }

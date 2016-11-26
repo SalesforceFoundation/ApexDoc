@@ -1,5 +1,9 @@
 package org.salesforce.apexdoc;
 
+/*
+ * @updated BillKrat.2016.11.24 GwnV1.1
+ *  - Moved strContentSource private field into ApexModel as protected field
+ */
 public class ClassGroup {
     private String strName;
     private String strContentSource;
