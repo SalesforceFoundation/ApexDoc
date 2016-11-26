@@ -46,7 +46,7 @@ The ApexDocContent folder will be searched for the following files:
 1. .header.html - this will be used to satisfy the -a switch
 2. .home.html - this will be used to satify the -h switch.
 
-All files, with the exception of html files, will be copied over to the ApexDocumentation folder.  Existing files with the same name will be replaced.  This provides the ability to easily update css, js, and png files for use by your documentation.  The html files are not replaced because their content has already been extracted (from between the body tags) to generate new html files of the same name in the ApexDocumentation folder.
+All files, with the exception of html files, will be copied over to the ApexDocumentation folder; existing files with the same name will be replaced.  This provides the ability to easily update css, js, and png files for use by your documentation.  The html files are not replaced because their content has already been extracted (from between the body tags) to generate new html files of the same name in the ApexDocumentation folder.
 
 ![](http://www.global-webnet.com/Adventures/image.axd?picture=ApexDocContent.png)
 
