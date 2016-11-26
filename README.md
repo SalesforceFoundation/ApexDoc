@@ -12,7 +12,7 @@ ApexDoc
 - **Originally created** by Aslam Bari ([http://techsahre.blogspot.com/2011/01/apexdoc-salesforce-code-documentation.html](http://techsahre.blogspot.com/2011/01/apexdoc-salesforce-code-documentation.html)).  
 - **2011**: Extended by David Habib, at Groundwire.  
 - **2014**: Enhanced by David Habib of the Salesforce Foundation for use with Nonprofit Success Pack ([https://github.com/SalesforceFoundation/Cumulus](https://github.com/SalesforceFoundation/Cumulus)). They noted that they are unable to offer direct support of reported issues or incorporate enhancement requests at this time, however pull requests are welcome.
-- **2016**: Updated by Bill kratochvil, Global Webnet, LLC for use with the [Welkin Suite](http://https://welkinsuite.com/).
+- **2016**: Updated by Bill kratochvil, Global Webnet, LLC for use with the [Welkin Suite](https://welkinsuite.com/).
  
 
 ## Command Line Parameters
