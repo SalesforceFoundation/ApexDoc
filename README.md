@@ -49,7 +49,7 @@ The ApexDocContent folder will be searched for the following files:
 All files, with the exception of html files, will be copied over to the ApexDocumentation folder; existing files with the same name will be replaced.  This provides the ability to easily update css, js, and png files for use by your documentation.  The html files are not replaced because their content has already been extracted (from between the body tags) to generate new html files of the same name in the ApexDocumentation folder.
 
 ![](http://www.global-webnet.com/Adventures/image.axd?picture=ApexDocContent.png)
-Note: a ApexDocContent.zip file is available with files shown above at the following blog link. 
+*Note: a ApexDocContent.zip file is available with files shown above at the following blog link.*
 
 If you are using the Welkin Suite for Salesforce development you will want to review the blog [Using ApexDoc with Welkin Suite](http://www.global-webnet.com/Adventures/post/2016/11/25/Using-ApexDoc-with-Welkin-Suite) as it provides details on how to create documentation seamlessly with ApexDoc (GwnV1.1)
 
