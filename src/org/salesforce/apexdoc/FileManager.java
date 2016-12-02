@@ -302,7 +302,7 @@ public class FileManager {
             ClassGroup cg = mapGroupNameToClassGroup.get(strGroup);
             if (cg.getContentSource() != null) {
                 String cgContent = parseHTMLFile(cg.getContentSource());
-                if (cgContent != "") {
+                if (!cgContent.equals("")) {
                     String strHtml = Constants.getHeader(projectDetail) + links + "<td class='contentTD'>" +
                             "<h2 class='section-title'>" +
                             escapeHTML(cg.getName()) + "</h2>" + cgContent + "</td>";
@@ -414,10 +414,11 @@ public class FileManager {
     public ArrayList<File> getFiles(String path) {
         File folder = new File(path);
         ArrayList<File> listOfFilesToCopy = new ArrayList<File>();
-        if (folder != null) {
+        try {
             File[] listOfFiles = folder.listFiles();
             if (listOfFiles != null && listOfFiles.length > 0) {
                 for (int i = 0; i < listOfFiles.length; i++) {
+                    System.out.print(listOfFiles[i].getName() + ", ");
                     if (listOfFiles[i].isFile()) {
                         listOfFilesToCopy.add(listOfFiles[i]);
                     }
@@ -425,6 +426,8 @@ public class FileManager {
             } else {
                 System.out.println("WARNING: No files found in directory: " + path);
             }
+        } catch (SecurityException e) {
+            e.printStackTrace();
         }
         return listOfFilesToCopy;
     }
@@ -456,7 +459,7 @@ public class FileManager {
                 return contents;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Skipped " + filePath + ", doesn't exist.");
         }
 
         return "";

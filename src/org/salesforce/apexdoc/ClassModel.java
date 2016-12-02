@@ -52,9 +52,9 @@ public class ClassModel extends ApexModel {
                 String methodName2 = o2.getMethodName();
                 String className = getClassName();
                 
-                if(methodName1.equals(className)){
+                if(methodName1 != null && methodName1.equals(className)){
                     return Integer.MIN_VALUE;
-                } else if(methodName2.equals(className)){
+                } else if(methodName2 != null && methodName2.equals(className)){
                     return Integer.MAX_VALUE;
                 }
                 return (methodName1.toLowerCase().compareTo(methodName2.toLowerCase()));

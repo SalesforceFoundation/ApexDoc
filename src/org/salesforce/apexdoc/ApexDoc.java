@@ -27,6 +27,7 @@ public class ApexDoc {
             PrintStream ps = new PrintStream(fos);
             System.setOut(ps);
         } catch (Exception ex) {
+            System.out.println("Error: " + ex.getMessage());
         }
     }
 
@@ -80,7 +81,6 @@ public class ApexDoc {
                 System.exit(-1);
             }
         }
-
         // default scope to global and public if not specified
         if (rgstrScope == null || rgstrScope.length == 0) {
             rgstrScope = new String[3];
