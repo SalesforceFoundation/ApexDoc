@@ -529,7 +529,11 @@ public class ApexDoc {
 
             idxStart = comment.toLowerCase().indexOf("@group-content");
             if (idxStart != -1) {
-                cModel.setClassGroupContent(comment.substring(idxStart + 14).trim());
+                String path = comment.substring(idxStart + 14).trim();
+                File f = new File(path);
+                if (f.exists()) {
+                    cModel.setClassGroupContent(path);
+                }
                 inDescription = false;
                 continue;
             }
