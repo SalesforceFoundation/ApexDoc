@@ -52,12 +52,6 @@ public class FileManager {
 
     private boolean createHTML(TreeMap<String, String> mapFNameToContent, IProgressMonitor monitor) {
         try {
-            if (path.endsWith("/") || path.endsWith("\\")) {
-                path += Constants.ROOT_DIRECTORY; // + "/" + fileName + ".html";
-            } else {
-                path += "/" + Constants.ROOT_DIRECTORY; // + "/" + fileName + ".html";
-            }
-
             (new File(path)).mkdirs();
 
             for (String fileName : mapFNameToContent.keySet()) {
@@ -382,7 +376,6 @@ public class FileManager {
     }
 
     private void docopy(String source, String target) throws Exception {
-
         InputStream is = this.getClass().getResourceAsStream(source);
         // InputStreamReader isr = new InputStreamReader(is);
         // BufferedReader reader = new BufferedReader(isr);

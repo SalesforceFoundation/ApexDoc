@@ -52,7 +52,7 @@ public class ApexDoc {
     // Eclipse PlugIn invocation
     public static void RunApexDoc(String[] args, IProgressMonitor monitor) {
         String sourceDirectory = "";
-        String targetDirectory = "";
+        String targetDirectory = "ApexDocumentation";
         String homefilepath = "";
         String authorfilepath = "";
         String hostedSourceURL = "";
@@ -138,7 +138,7 @@ public class ApexDoc {
         System.out.println("    Invalid Arguments detected.  The correct syntax is:\n");
         System.out.println("apexdoc -s <source_directory> [-t <target_directory>] [-g <source_url>] [-h <homefile>] [-a <authorfile>] [-p <scope>]\n");
         System.out.println("<source_directory> - The folder location which contains your apex .cls classes");
-        System.out.println("<target_directory> - Optional. Specifies your target folder where documentation will be generated.");
+        System.out.println("<target_directory> - Optional. Specifies your target folder where documentation will be generated. Defaults to ApexDocumentation.");
         System.out.println("<source_url> - Optional. Specifies a URL where the source is hosted (so ApexDoc can provide links to your source).");
         System.out.println("<homefile> - Optional. Specifies the html file that contains the contents for the home page\'s content area.");
         System.out.println("<authorfile> - Optional. Specifies the text file that contains project information for the documentation header.");
