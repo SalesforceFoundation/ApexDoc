@@ -100,7 +100,7 @@ public class FileManager {
     }
 
     private String strLinkfromModel(ApexModel model, String strClassName, String hostedSourceURL) {
-        return "<a target='_blank' class='hostedSourceLink' href='" + hostedSourceURL + strClassName + ".cls#L"
+        return "<a target='_blank' class='hostedSourceLink' href='" + hostedSourceURL + strClassName + ".html#L"
                 + model.getInameLine() + "'>";
     }
 
