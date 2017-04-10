@@ -212,6 +212,8 @@ public class FileManager {
                     "<h2 class='subsection-title'>Methods</h2>" +
                             "<div class='subsection-container'> ";
 
+            
+            
             // method Table of Contents (TOC)
             contents += "<ul class='methodTOC'>";
             for (MethodModel method : cModel.getMethodsSorted()) {
