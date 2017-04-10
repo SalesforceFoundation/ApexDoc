@@ -1,6 +1,9 @@
 package org.salesforce.apexdoc;
 
 public class Constants {
+    
+    public static final String newLinePlaceHolder = "[BR]";
+    public static final String newLineHTML = "<br />";
         
     public static final String HEADER_OPEN = "<html><head>" +
         "<script type='text/javascript' src='jquery-1.11.1.js'></script>" +
