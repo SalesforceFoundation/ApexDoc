@@ -85,8 +85,16 @@ public class FileManager {
     }
 
     private String strLinkfromModel(ApexModel model, String strClassName, String hostedSourceURL) {
-        return "<a target='_blank' class='hostedSourceLink' href='" + hostedSourceURL + strClassName + ".cls#L"
-                + model.getInameLine() + "'>";
+        String fileName = strClassName + ".cls";
+        String lineParam;
+        if (hostedSourceURL.startsWith("https://bitbucket.org/")) {
+            // for Bitbucket
+            lineParam = "?#" + fileName + '-' + model.getInameLine();
+        } else {
+            lineParam = "#L" + model.getInameLine();
+        }
+        return "<a target='_blank' class='hostedSourceLink' href='" + hostedSourceURL + fileName
+                + lineParam + "'>";
     }
 
     private String strHTMLScopingPanel() {
