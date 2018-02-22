@@ -348,7 +348,8 @@ public class ApexDoc {
     public static String strContainsScope(String str) {
         str = str.toLowerCase();
         for (int i = 0; i < rgstrScope.length; i++) {
-            if (str.toLowerCase().contains(rgstrScope[i].toLowerCase() + " ")) {
+            // prevent matching strings containing scope keywords that aren't class, method, or property definitions
+            if (str.toLowerCase().startsWith(rgstrScope[i].toLowerCase() + " ")) {
                 return rgstrScope[i];
             }
         }
