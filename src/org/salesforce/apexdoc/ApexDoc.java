@@ -20,6 +20,8 @@ public class ApexDoc {
     public static String[] rgstrScope;
     public static String[] rgstrArgs;
 
+    public static final String[] KEYWORDS = {"static ","final ","public ","private ","void ",""};
+
     public ApexDoc() {
         try {
             File file = new File("apex_doc_log.txt");
@@ -349,8 +351,10 @@ public class ApexDoc {
         str = str.toLowerCase();
         for (int i = 0; i < rgstrScope.length; i++) {
             // prevent matching strings containing scope keywords that aren't class, method, or property definitions
-            if (str.toLowerCase().startsWith(rgstrScope[i].toLowerCase() + " ")) {
-                return rgstrScope[i];
+            for (String kw : KEYWORDS) {
+                if (str.toLowerCase().startsWith(kw + rgstrScope[i].toLowerCase() + " ")) {
+                    return rgstrScope[i];
+                }
             }
         }
         return null;
