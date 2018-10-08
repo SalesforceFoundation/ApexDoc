@@ -1,3 +1,5 @@
+### This project and repository are no longer maintained by Salesforce.org
+
 ApexDoc
 =======
 
