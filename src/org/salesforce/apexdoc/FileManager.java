@@ -302,7 +302,7 @@ public class FileManager {
             ClassGroup cg = mapGroupNameToClassGroup.get(strGroup);
             if (cg.getContentSource() != null) {
                 String cgContent = parseHTMLFile(cg.getContentSource());
-                if (cgContent != "") {
+                if (!cgContent.equals("")) {
                     String strHtml = Constants.getHeader(projectDetail) + links + "<td class='contentTD'>" +
                             "<h2 class='section-title'>" +
                             escapeHTML(cg.getName()) + "</h2>" + cgContent + "</td>";
@@ -337,9 +337,10 @@ public class FileManager {
         }
         cModels = new ArrayList<ClassModel>(tm.values());
 
-        String links = "<td width='20%' vertical-align='top' >";
-        links += "<div class='sidebar'><div class='navbar'><nav role='navigation'><ul id='mynavbar'>";
-        links += "<li id='idMenuindex'><a href='.' onclick=\"gotomenu('index.html', event);return false;\" class='nav-item'>Home</a></li>";
+        StringBuilder links = new StringBuilder();
+        links.append("<td width='20%' vertical-align='top' >");
+        links.append("<div class='sidebar'><div class='navbar'><nav role='navigation'><ul id='mynavbar'>");
+        links.append("<li id='idMenuindex'><a href='.' onclick=\"gotomenu('index.html', event);return false;\" class='nav-item'>Home</a></li>");
 
         // add a bucket ClassGroup for all Classes without a ClassGroup specified
         if (createMiscellaneousGroup)
@@ -350,12 +351,17 @@ public class FileManager {
         for (String strGroup : mapGroupNameToClassGroup.keySet()) {
             ClassGroup cg = mapGroupNameToClassGroup.get(strGroup);
             String strGoTo = "onclick=\"gotomenu(document.location.href, event);return false;\"";
-            if (cg.getContentFilename() != null)
+            if (cg.getContentFilename() != null) {
                 strGoTo = "onclick=\"gotomenu('" + cg.getContentFilename() + ".html" + "', event);return false;\"";
-            links += "<li class='header' id='idMenu" + cg.getContentFilename() +
-                    "'><a class='nav-item nav-section-title' href='.' " +
-                    strGoTo + " class='nav-item'>" + strGroup + "<span class='caret'></span></a></li>";
-            links += "<ul>";
+            }
+            links.append("<li class='header' id='idMenu");
+            links.append(cg.getContentFilename());
+            links.append("'><a class='nav-item nav-section-title' href='.' ");
+            links.append(strGoTo);
+            links.append(" class='nav-item'>");
+            links.append(strGroup);
+            links.append("<span class='caret'></span></a></li>");
+            links.append("<ul>");
 
             // even though this algorithm is O(n^2), it was timed at just 12
             // milliseconds, so not an issue!
@@ -364,21 +370,21 @@ public class FileManager {
                         || (cModel.getClassGroup() == null && strGroup == "Miscellaneous")) {
                     if (cModel.getNameLine() != null && cModel.getNameLine().trim().length() > 0) {
                         String fileName = cModel.getClassName();
-                        links += "<li class='subitem classscope" + cModel.getScope() + "' id='idMenu" + fileName +
+                        links.append("<li class='subitem classscope" + cModel.getScope() + "' id='idMenu" + fileName +
                                 "'><a href='.' onclick=\"gotomenu('" + fileName + ".html', event);return false;\" class='nav-item sub-nav-item scope" +
                                 cModel.getScope() + "'>" +
-                                fileName + "</a></li>";
+                                fileName + "</a></li>");
                     }
                 }
             }
 
-            links += "</ul>";
+            links.append("</ul>");
         }
 
-        links += "</ul></nav></div></div></div>";
+        links.append("</ul></nav></div></div></div>");
 
-        links += "</td>";
-        return links;
+        links.append("</td>");
+        return links.toString();
     }
 
     private void docopy(String source, String target) throws Exception {
@@ -414,10 +420,11 @@ public class FileManager {
     public ArrayList<File> getFiles(String path) {
         File folder = new File(path);
         ArrayList<File> listOfFilesToCopy = new ArrayList<File>();
-        if (folder != null) {
+        try {
             File[] listOfFiles = folder.listFiles();
             if (listOfFiles != null && listOfFiles.length > 0) {
                 for (int i = 0; i < listOfFiles.length; i++) {
+                    System.out.print(listOfFiles[i].getName() + ", ");
                     if (listOfFiles[i].isFile()) {
                         listOfFilesToCopy.add(listOfFiles[i]);
                     }
@@ -425,6 +432,8 @@ public class FileManager {
             } else {
                 System.out.println("WARNING: No files found in directory: " + path);
             }
+        } catch (SecurityException e) {
+            e.printStackTrace();
         }
         return listOfFilesToCopy;
     }
@@ -441,22 +450,21 @@ public class FileManager {
                 // Get the object of DataInputStream
                 DataInputStream in = new DataInputStream(fstream);
                 BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                String contents = "";
+                StringBuilder contents = new StringBuilder();
                 String strLine;
 
                 while ((strLine = br.readLine()) != null) {
                     // Print the content on the console
                     strLine = strLine.trim();
                     if (strLine != null && strLine.length() > 0) {
-                        contents += strLine;
+                        contents.append(strLine);
                     }
                 }
-                // System.out.println("Contents = " + contents);
                 br.close();
-                return contents;
+                return contents.toString();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Skipped " + filePath + ", doesn't exist.");
         }
 
         return "";

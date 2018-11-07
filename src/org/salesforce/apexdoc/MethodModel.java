@@ -35,12 +35,13 @@ public class MethodModel extends ApexModel {
     }
 
     public String getMethodName() {
-        String nameLine = getNameLine().trim();
-        if (nameLine != null && nameLine.length() > 0) {
+        String nameLine = getNameLine();
+        if (nameLine != null && nameLine.trim().length() > 0) {
+            nameLine = nameLine.trim();
             int lastindex = nameLine.indexOf("(");
             if (lastindex >= 0) {
                 String methodName = ApexDoc.strPrevWord(nameLine, lastindex);
-                return methodName;
+                return methodName == null ? "" : methodName;
             }
         }
         return "";
