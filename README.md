@@ -42,6 +42,7 @@ Located in the lines above the class declaration.  The special tokens are all op
 | @group | a group to display this class under, in the menu hierarchy|
 | @group-content | a relative path to a static html file that provides content about the group|
 | @description | one or more lines that provide an overview of the class|
+| @exceptions | a comma separated list of Exceptions that might be thrown|
 
 Example
 ```
