@@ -112,7 +112,7 @@ public class FileManager {
      * @param monitor
      */
     private void makeFile(TreeMap<String, ClassGroup> mapGroupNameToClassGroup, ArrayList<ClassModel> cModels,
-            String projectDetail, String homeContents, String hostedSourceURL, IProgressMonitor monitor) {
+                          String projectDetail, String homeContents, String hostedSourceURL, IProgressMonitor monitor) {
         String links = "<table width='100%'>";
         links += strHTMLScopingPanel();
         links += "<tr style='vertical-align:top;' >";
@@ -247,7 +247,7 @@ public class FileManager {
                             String paramName;
                             String paramDescription;
                             if (m.find()) {
-                            	int ich = m.start();
+                                int ich = m.start();
                                 paramName = param.substring(0, ich);
                                 paramDescription = param.substring(ich + 1);
                             } else {
@@ -278,6 +278,11 @@ public class FileManager {
                     contents += "<div class='methodReturns'>" + escapeHTML(method.getAuthor()) + "</div>";
                 }
 
+                if (method.getExceptions() != "") {
+                    contents += "<div class='methodSubTitle'>Exceptions</div>";
+                    contents += "<div class='methodReturns'>" + escapeHTML(method.getExceptions()) + "</div>";
+                }
+
                 if (method.getDate() != "") {
                     contents += "<div class='methodSubTitle'>Date</div>";
                     contents += "<div class='methodReturns'>" + escapeHTML(method.getDate()) + "</div>";
@@ -295,8 +300,8 @@ public class FileManager {
 
     // create our Class Group content files
     private void createClassGroupContent(TreeMap<String, String> mapFNameToContent, String links, String projectDetail,
-            TreeMap<String, ClassGroup> mapGroupNameToClassGroup,
-            ArrayList<ClassModel> cModels, IProgressMonitor monitor) {
+                                         TreeMap<String, ClassGroup> mapGroupNameToClassGroup,
+                                         ArrayList<ClassModel> cModels, IProgressMonitor monitor) {
 
         for (String strGroup : mapGroupNameToClassGroup.keySet()) {
             ClassGroup cg = mapGroupNameToClassGroup.get(strGroup);
@@ -430,7 +435,7 @@ public class FileManager {
     }
 
     public void createDoc(TreeMap<String, ClassGroup> mapGroupNameToClassGroup, ArrayList<ClassModel> cModels,
-            String projectDetail, String homeContents, String hostedSourceURL, IProgressMonitor monitor) {
+                          String projectDetail, String homeContents, String hostedSourceURL, IProgressMonitor monitor) {
         makeFile(mapGroupNameToClassGroup, cModels, projectDetail, homeContents, hostedSourceURL, monitor);
     }
 

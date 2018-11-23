@@ -146,7 +146,7 @@ public class ApexDoc {
     }
 
     private static TreeMap<String, ClassGroup> createMapGroupNameToClassGroup(ArrayList<ClassModel> cModels,
-            String sourceDirectory) {
+                                                                              String sourceDirectory) {
         TreeMap<String, ClassGroup> map = new TreeMap<String, ClassGroup>();
         for (ClassModel cmodel : cModels) {
             String strGroup = cmodel.getClassGroup();
@@ -215,12 +215,12 @@ public class ApexDoc {
                     commentsStarted = true;
                     boolean commentEnded = false;
                     if(strLine.startsWith("/**")){
-                    	if (strLine.endsWith("*/")) {
+                        if (strLine.endsWith("*/")) {
                             strLine = strLine.replace("*/", "");
                             commentEnded = true;
-                    	}
-                    	lstComments.add(strLine);
-                    	docBlockStarted = true;
+                        }
+                        lstComments.add(strLine);
+                        docBlockStarted = true;
                     }
                     if (strLine.endsWith("*/") || commentEnded) {
                         commentsStarted = false;
@@ -232,17 +232,17 @@ public class ApexDoc {
                 if (commentsStarted && strLine.endsWith("*/")) {
                     strLine = strLine.replace("*/", "");
                     if(docBlockStarted){
-                    	lstComments.add(strLine);
-                    	docBlockStarted = false;
+                        lstComments.add(strLine);
+                        docBlockStarted = false;
                     }
                     commentsStarted = false;
                     continue;
                 }
 
                 if (commentsStarted) {
-                	if(docBlockStarted){
-                		lstComments.add(strLine);
-                	}
+                    if(docBlockStarted){
+                        lstComments.add(strLine);
+                    }
                     continue;
                 }
 
@@ -356,23 +356,23 @@ public class ApexDoc {
     }
 
     private static void fillPropertyModel(PropertyModel propertyModel, String name, ArrayList<String> lstComments,
-            int iLine) {
+                                          int iLine) {
         propertyModel.setNameLine(name, iLine);
         boolean inDescription = false;
         int i = 0;
         for (String comment : lstComments) {
-        	i++;
+            i++;
             comment = comment.trim();
             int idxStart = comment.toLowerCase().indexOf("@description");
             if (idxStart != -1 || i == 1) {
-            	if (idxStart != -1 && comment.length() > idxStart + 13)
-            		propertyModel.setDescription(comment.substring(idxStart + 13).trim());
-            	else{
-                	Pattern p = Pattern.compile("\\s");
-                	Matcher m = p.matcher(comment);
-                	if (m.find()) {
-                		propertyModel.setDescription(comment.substring(m.start()).trim());
-                	}
+                if (idxStart != -1 && comment.length() > idxStart + 13)
+                    propertyModel.setDescription(comment.substring(idxStart + 13).trim());
+                else{
+                    Pattern p = Pattern.compile("\\s");
+                    Matcher m = p.matcher(comment);
+                    if (m.find()) {
+                        propertyModel.setDescription(comment.substring(m.start()).trim());
+                    }
                 }
                 inDescription = true;
                 continue;
@@ -400,12 +400,20 @@ public class ApexDoc {
         boolean inExample = false;
         int i = 0;
         for (String comment : lstComments) {
-        	i++;
+            i++;
             comment = comment.trim();
 
             int idxStart = comment.toLowerCase().indexOf("@author");
             if (idxStart != -1) {
                 mModel.setAuthor(comment.substring(idxStart + 8).trim());
+                inDescription = false;
+                inExample = false;
+                continue;
+            }
+
+            idxStart = comment.toLowerCase().indexOf("@exceptions");
+            if (idxStart != -1) {
+                mModel.setExceptions(comment.substring(idxStart +11).trim());
                 inDescription = false;
                 inExample = false;
                 continue;
@@ -440,11 +448,11 @@ public class ApexDoc {
                 if (idxStart != -1 && comment.length() >= idxStart + 12)
                     mModel.setDescription(comment.substring(idxStart + 12).trim());
                 else{
-                	Pattern p = Pattern.compile("\\s");
-                	Matcher m = p.matcher(comment);
-                	if (m.find()) {
-                		mModel.setDescription(comment.substring(m.start()).trim());
-                	}
+                    Pattern p = Pattern.compile("\\s");
+                    Matcher m = p.matcher(comment);
+                    if (m.find()) {
+                        mModel.setDescription(comment.substring(m.start()).trim());
+                    }
                 }
                 inDescription = true;
                 inExample = false;
@@ -456,12 +464,12 @@ public class ApexDoc {
                 if (idxStart != -1 && comment.length() >= idxStart + 8) {
                     mModel.setExample(comment.substring(idxStart + 8).trim());
                 } else {
-                	Pattern p = Pattern.compile("\\s");
-                	Matcher m = p.matcher(comment.substring(8));
+                    Pattern p = Pattern.compile("\\s");
+                    Matcher m = p.matcher(comment.substring(8));
 
-                	if (m.find()) {
-                		mModel.setExample(comment.substring(m.start()).trim());
-                	}
+                    if (m.find()) {
+                        mModel.setExample(comment.substring(m.start()).trim());
+                    }
                 }
                 inDescription = false;
                 inExample = true;
@@ -486,8 +494,8 @@ public class ApexDoc {
                         }
 
                         mModel.setExample(mModel.getExample()
-                            + (mModel.getExample().trim().length() == 0 ? "" : "\n")
-                            + comment.substring(2));
+                                + (mModel.getExample().trim().length() == 0 ? "" : "\n")
+                                + comment.substring(2));
                     }
                 }
                 continue;
@@ -496,14 +504,14 @@ public class ApexDoc {
     }
 
     private static void fillClassModel(ClassModel cModelParent, ClassModel cModel, String name,
-            ArrayList<String> lstComments, int iLine) {
+                                       ArrayList<String> lstComments, int iLine) {
         cModel.setNameLine(name, iLine);
         if (name.toLowerCase().contains(" interface "))
             cModel.setIsInterface(true);
         boolean inDescription = false;
         int i = 0;
         for (String comment : lstComments) {
-        	i++;
+            i++;
             comment = comment.trim();
 
             int idxStart = comment.toLowerCase().indexOf("@author");
@@ -536,14 +544,14 @@ public class ApexDoc {
 
             idxStart = comment.toLowerCase().indexOf("@description");
             if (idxStart != -1 || i == 1) {
-            	if (idxStart != -1 && comment.length() > idxStart + 13)
-            		cModel.setDescription(comment.substring(idxStart + 12).trim());
-            	else{
-                	Pattern p = Pattern.compile("\\s");
-                	Matcher m = p.matcher(comment);
-                	if (m.find()) {
-                		cModel.setDescription(comment.substring(m.start()).trim());
-                	}
+                if (idxStart != -1 && comment.length() > idxStart + 13)
+                    cModel.setDescription(comment.substring(idxStart + 12).trim());
+                else{
+                    Pattern p = Pattern.compile("\\s");
+                    Matcher m = p.matcher(comment);
+                    if (m.find()) {
+                        cModel.setDescription(comment.substring(m.start()).trim());
+                    }
                 }
                 inDescription = true;
                 continue;
