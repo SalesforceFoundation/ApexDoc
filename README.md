@@ -42,7 +42,6 @@ Located in the lines above the class declaration.  The special tokens are all op
 | @group | a group to display this class under, in the menu hierarchy|
 | @group-content | a relative path to a static html file that provides content about the group|
 | @description | one or more lines that provide an overview of the class|
-| @exceptions | a comma separated list of Exceptions that might be thrown|
 
 Example
 ```
@@ -85,6 +84,7 @@ In order for ApexDoc to identify class methods, the method line must contain an 
 | @description | one or more lines that provide an overview of the method|
 | @param *param name* | a description of what the parameter does|
 | @return | a description of the return value from the method|
+| @exception | a description of an Exception that might be thrown|
 | @example | Example code usage. This will be wrapped in <code> tags to preserve whitespace|
 Example
 ```

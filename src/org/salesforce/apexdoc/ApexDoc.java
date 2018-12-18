@@ -411,9 +411,9 @@ public class ApexDoc {
                 continue;
             }
 
-            idxStart = comment.toLowerCase().indexOf("@exceptions");
+            idxStart = comment.toLowerCase().indexOf("@exception");
             if (idxStart != -1) {
-                mModel.setExceptions(comment.substring(idxStart +11).trim());
+                mModel.getExceptionList().add(comment.substring(idxStart + 10).trim());
                 inDescription = false;
                 inExample = false;
                 continue;

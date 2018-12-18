@@ -278,9 +278,11 @@ public class FileManager {
                     contents += "<div class='methodReturns'>" + escapeHTML(method.getAuthor()) + "</div>";
                 }
 
-                if (method.getExceptions() != "") {
+                if (method.getExceptionList().size() > 0) {
                     contents += "<div class='methodSubTitle'>Exceptions</div>";
-                    contents += "<div class='methodReturns'>" + escapeHTML(method.getExceptions()) + "</div>";
+                    for(String except : method.getExceptionList()){
+                        contents += "<div class='methodReturns'>" + escapeHTML(except) + "</div>";
+                    }
                 }
 
                 if (method.getDate() != "") {

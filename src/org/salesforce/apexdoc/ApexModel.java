@@ -31,14 +31,6 @@ public class ApexModel {
         this.author = author;
     }
 
-    public String getExceptions() {
-        return exceptions == null ? "" : exceptions;
-    }
-
-    public void setExceptions(String exceptions) {
-        this.exceptions = exceptions;
-    }
-
     public String getDate() {
         return date == null ? "" : date;
     }
@@ -88,6 +80,5 @@ public class ApexModel {
     private String returns;
     private String scope;
     private String example;
-    private String exceptions;
 
 }
