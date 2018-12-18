@@ -558,7 +558,7 @@ public class ApexDoc {
                         break;
                 }
                 if (j < comment.length()) {
-                    cModel.setDescription(cModel.getDescription() + ' ' + comment.substring(j));
+                    cModel.setDescription(cModel.getDescription() + Constants.newLinePlaceHolder + comment.substring(j));
                 }
                 continue;
             }
