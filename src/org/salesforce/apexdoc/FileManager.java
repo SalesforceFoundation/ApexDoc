@@ -179,12 +179,21 @@ public class FileManager {
                 strLinkfromModel(cModel, cModel.getTopmostClassName(), hostedSourceURL) +
                 escapeHTML(cModel.getNameLine()) + "</a></div>";
 
+        contents += "<div class='classDetails'>";
+
+        if(cModel.getDeprecated() != ""){
+            contents +="<span class='warning'>Deprecated</span>: " + escapeHTML(cModel.getDeprecated()) + "<br><br/>";
+        }
+
         if (cModel.getDescription() != "")
-            contents += "<div class='classDetails'>" + escapeHTML(cModel.getDescription());
+            contents += "" + escapeHTML(cModel.getDescription()) + "<br><br>";
+
         if (cModel.getAuthor() != "")
-            contents += "<br/><br/>" + escapeHTML(cModel.getAuthor());
+            contents += "Author: " + escapeHTML(cModel.getAuthor()) + "<br>";
+
         if (cModel.getDate() != "")
-            contents += "<br/>" + escapeHTML(cModel.getDate());
+            contents += "Date: " + escapeHTML(cModel.getDate());
+        contents += "</div><p/>";
         contents += "</div><p/>";
 
         if (cModel.getProperties().size() > 0) {
@@ -232,6 +241,11 @@ public class FileManager {
                         "<div class='methodSignature'>" +
                         strLinkfromModel(method, cModel.getTopmostClassName(), hostedSourceURL) +
                         escapeHTML(method.getNameLine()) + "</a></div>";
+
+                if(method.getDeprecated() != ""){
+                    contents +="<div class='methodSubTitle warning'>Deprecated</div>";
+                    contents += "<div class='methodReturns'>" + escapeHTML(method.getDeprecated()) + "</div>";
+                }
 
                 if (method.getDescription() != "")
                     contents += "<div class='methodDescription'>" + escapeHTML(method.getDescription()) + "</div>";

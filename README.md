@@ -43,6 +43,7 @@ Located in the lines above the class declaration. The special tokens are all opt
 | @group | a group to display this class under, in the menu hierarchy|
 | @group-content | a relative path to a static html file that provides content about the group|
 | @description | one or more lines that provide an overview of the class|
+| @deprecated | indicates class should no longer be used; message should indicate replacement |
 
 Example
 ```
@@ -85,7 +86,8 @@ In order for ApexDoc to identify class methods, the method line must contain an 
 | @description | one or more lines that provide an overview of the method|
 | @param *param name* | a description of what the parameter does|
 | @return | a description of the return value from the method|
-| @exception | a description of an Exception that might be thrown|
+| @deprecated | indicates method should no longer be used; message should indicate replacement |
+| @exception | a description of an Exception that might be thrown |
 | @example | Example code usage. This will be wrapped in <code> tags to preserve whitespace|
 Example
 ```
@@ -102,11 +104,11 @@ Example
 
 ***
 ## Javadocs things that might be nice in ApexDocs
-| Tag | Usage | Applies to... |
-|-----|-------|---------------|
+| Tag | Usage | Applies to... | Added |
+|-----|-------|---------------|-------|
 | @see _reference_ |Provides a link to other element of documentation.|Class, Interface, Enum, Field, Method|
 | @throws _classname description_ | Describes an exception that may be thrown from this method. | Method|
-| @deprecated _description_ | Describes an outdated method. | Class, Interface, Enum, Field, Method |
+| @deprecated _description_ | Describes an outdated method. | Class, Interface, Enum, Field, Method | 2019-01-05
 | {@inheritDoc} | Copies the description from the overridden method. | Overriding Method |
 | {@link reference} |Link to other symbol. | Class, Interface, Enum, Field, Method |
 | {@linkplain reference} | Identical to {@link}, except the link's label is displayed in plain text than code font. | Class, Interface, Enum, Field, Method |

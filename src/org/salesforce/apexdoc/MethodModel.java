@@ -54,4 +54,5 @@ public class MethodModel extends ApexModel {
     private ArrayList<String> params;
     private ArrayList<String> exceptions;
     private String returnType;
+
 }

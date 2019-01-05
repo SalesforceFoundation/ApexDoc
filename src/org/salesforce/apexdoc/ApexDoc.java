@@ -413,7 +413,15 @@ public class ApexDoc {
 
             idxStart = comment.toLowerCase().indexOf("@exception");
             if (idxStart != -1) {
-                mModel.getExceptionList().add(comment.substring(idxStart + 10).trim());
+                mModel.getExceptionList().add(comment.substring(idxStart + 11).trim());
+                inDescription = false;
+                inExample = false;
+                continue;
+            }
+
+            idxStart = comment.toLowerCase().indexOf("@deprecated");
+            if (idxStart != -1) {
+                mModel.setDeprecated(comment.substring(idxStart + 11).trim());
                 inDescription = false;
                 inExample = false;
                 continue;
@@ -524,6 +532,13 @@ public class ApexDoc {
             idxStart = comment.toLowerCase().indexOf("@date");
             if (idxStart != -1) {
                 cModel.setDate(comment.substring(idxStart + 5).trim());
+                inDescription = false;
+                continue;
+            }
+
+            idxStart = comment.toLowerCase().indexOf("@deprecated");
+            if (idxStart != -1) {
+                cModel.setDeprecated(comment.substring(idxStart + 11).trim());
                 inDescription = false;
                 continue;
             }
