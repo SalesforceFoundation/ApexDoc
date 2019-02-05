@@ -297,4 +297,10 @@ div.navbar ul li a.scopeprivate {
 
 }
 
+/* placed at end so it overwrites other settings */
+.warning {
+    color: #660000;
+    font-weight: bold;
+}
+
 /* END - SIDEBAR STYLES */
