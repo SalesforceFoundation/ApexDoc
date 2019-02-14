@@ -38,7 +38,7 @@
 		  <archive>
 			<manifest>
 				<!-- Jar file entry point -->
-				<mainClass>org.salesforce.apexdoc.ApexDoc</mainClass>
+				<mainClass>main.ApexDoc</mainClass>
 			</manifest>
 		  </archive>
 		</configuration>

@@ -1,4 +1,4 @@
-package org.salesforce.apexdoc;
+package main;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -17,8 +17,8 @@ public class ClassModel extends ApexModel {
 
     private ArrayList<MethodModel> methods;
     private ArrayList<PropertyModel> properties;
-    private String strClassGroup;
-    private String strClassGroupContent;
+    private String classGroup;
+    private String classGroupContent;
     private ClassModel cmodelParent;
     private ArrayList<ClassModel> childClasses;
     private boolean isInterface;
@@ -45,13 +45,12 @@ public class ClassModel extends ApexModel {
     public ArrayList<MethodModel> getMethodsSorted() {
         @SuppressWarnings("unchecked")
 		List<MethodModel> sorted = (List<MethodModel>)methods.clone();
-        Collections.sort(sorted, new Comparator<MethodModel>(){
-            @Override
+        Collections.sort(sorted, new Comparator<MethodModel>() {
             public int compare(MethodModel o1, MethodModel o2) {
                 String methodName1 = o1.getMethodName();
                 String methodName2 = o2.getMethodName();
                 String className = getClassName();
-                
+
                 if(methodName1.equals(className)){
                     return Integer.MIN_VALUE;
                 } else if(methodName2.equals(className)){
@@ -65,6 +64,10 @@ public class ClassModel extends ApexModel {
 
     public void setMethods(ArrayList<MethodModel> methods) {
         this.methods = methods;
+    }
+
+    public ArrayList<ClassModel> getChildClasses() {
+        return childClasses;
     }
 
     public ArrayList<ClassModel> getChildClassesSorted() {
@@ -118,19 +121,19 @@ public class ClassModel extends ApexModel {
         if (this.cmodelParent != null)
             return cmodelParent.getClassGroup();
         else
-            return strClassGroup;
+            return classGroup;
     }
 
-    public void setClassGroup(String strGroup) {
-        strClassGroup = strGroup;
+    public void setClassGroup(String group) {
+        this.classGroup = group;
     }
 
     public String getClassGroupContent() {
-        return strClassGroupContent;
+        return classGroupContent;
     }
 
-    public void setClassGroupContent(String strGroupContent) {
-        strClassGroupContent = strGroupContent;
+    public void setClassGroupContent(String groupContent) {
+        this.classGroupContent = groupContent;
     }
 
     public boolean getIsInterface() {

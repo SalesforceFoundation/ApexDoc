@@ -1,6 +1,18 @@
-package org.salesforce.apexdoc;
+package main;
 
 public class ApexModel {
+
+    private String deprecated;
+    private String nameLine;
+    private int inameLine;
+    private String description;
+    private String author;
+    private String date;
+    private String returns;
+    private String scope;
+    private String example;
+    private String see;
+
     public String getNameLine() {
         return nameLine;
     }
@@ -31,6 +43,14 @@ public class ApexModel {
         this.author = author;
     }
 
+    public void setDeprecated(String dep) {
+        this.deprecated = dep;
+    }
+
+    public String getDeprecated() {
+        return deprecated == null ? "" : deprecated;
+    }
+
     public String getDate() {
         return date == null ? "" : date;
     }
@@ -55,6 +75,14 @@ public class ApexModel {
         this.example = example;
     }
 
+    public String getSee() {
+        return see == null ? "" : see;
+    }
+
+    public void setSee(String see) {
+        this.see = see;
+    }
+
     public String getScope() {
         return scope == null ? "" : scope;
     }
@@ -71,14 +99,4 @@ public class ApexModel {
                 scope = str;
         }
     }
-
-    private String nameLine;
-    private int inameLine;
-    private String description;
-    private String author;
-    private String date;
-    private String returns;
-    private String scope;
-    private String example;
-
 }

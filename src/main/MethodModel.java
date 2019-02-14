@@ -1,8 +1,11 @@
-package org.salesforce.apexdoc;
+package main;
 
 import java.util.ArrayList;
 
 public class MethodModel extends ApexModel {
+
+    private ArrayList<String> params;
+    private String exceptions;
 
     public MethodModel() {
         params = new ArrayList<String>();
@@ -22,16 +25,16 @@ public class MethodModel extends ApexModel {
         return params;
     }
 
+    public void setException(String exceptions) {
+        this.exceptions = exceptions;
+    }
+
+    public String getException() {
+        return exceptions == null ? "" : exceptions;
+    }
+
     public void setParams(ArrayList<String> params) {
         this.params = params;
-    }
-
-    public String getReturnType() {
-        return returnType;
-    }
-
-    public void setReturnType(String returnType) {
-        this.returnType = returnType;
     }
 
     public String getMethodName() {
@@ -45,7 +48,4 @@ public class MethodModel extends ApexModel {
         }
         return "";
     }
-
-    private ArrayList<String> params;
-    private String returnType;
 }

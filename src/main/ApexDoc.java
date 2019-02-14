@@ -1,4 +1,4 @@
-package org.salesforce.apexdoc;
+package main;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -13,6 +13,7 @@ import java.util.Stack;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 public class ApexDoc {
 
@@ -36,7 +37,7 @@ public class ApexDoc {
             RunApexDoc(args, null);
         } catch (Exception ex) {
             ex.printStackTrace();
-            System.out.println(ex.getMessage());
+            System.out.println(ex.getMessage() + "\n");
             printHelp();
             System.exit(-1);
         }
@@ -50,16 +51,19 @@ public class ApexDoc {
 
     // public main routine which is used by both command line invocation and
     // Eclipse PlugIn invocation
-    public static void RunApexDoc(String[] args, IProgressMonitor monitor) {
+    public static void RunApexDoc(String[] args, IProgressMonitor monitor) throws IllegalArgumentException {
         String sourceDirectory = "";
         String targetDirectory = "";
         String homefilepath = "";
         String authorfilepath = "";
         String hostedSourceURL = "";
+        String documentTitle = "";
+        String sortOrder = "";
+
+        boolean showMethodTOCDescription = true;
 
         // parse command line parameters
         for (int i = 0; i < args.length; i++) {
-
             if (args[i] == null) {
                 continue;
             } else if (args[i].equalsIgnoreCase("-s")) {
@@ -75,10 +79,26 @@ public class ApexDoc {
             } else if (args[i].equalsIgnoreCase("-p")) {
                 String strScope = args[++i];
                 rgstrScope = strScope.split(";");
+            } else if (args[i].equalsIgnoreCase("-d")) {
+                documentTitle = args[++i];
+            } else if (args[i].equalsIgnoreCase("-n")) {
+                showMethodTOCDescription = Boolean.valueOf(args[++i]);
+            } else if (args[i].equalsIgnoreCase("-o")) {
+                sortOrder = args[++i].trim();
             } else {
                 printHelp();
                 System.exit(-1);
             }
+        }
+
+        // validate sortOrder argument, throw if invalid default to 'alpha' if not specified
+        if (!sortOrder.isEmpty()) {
+            if (!sortOrder.equalsIgnoreCase("logical") && !sortOrder.equalsIgnoreCase("alpha")) {
+                throw new IllegalArgumentException("Value for <sort_order> argument '" + sortOrder +
+                    "' is invalid. Options for this argument are: 'logical' or 'alpha'.");
+            }
+        } else {
+            sortOrder = "alpha";
         }
 
         // default scope to global and public if not specified
@@ -93,6 +113,14 @@ public class ApexDoc {
         fm = new FileManager(targetDirectory);
         ArrayList<File> files = fm.getFiles(sourceDirectory);
         ArrayList<ClassModel> cModels = new ArrayList<ClassModel>();
+
+        // set document title & favicon
+        fm.setDocumentTitle(documentTitle);
+        // set property to determine method sort style and
+        // whether or not to hide method descriptions in TOC
+        fm.setShowMethodTOCDescription(showMethodTOCDescription);
+        fm.setSortOrderStyle(sortOrder);
+
 
         if (monitor != null) {
             // each file is parsed, html created, written to disk.
@@ -109,8 +137,9 @@ public class ApexDoc {
                     cModels.add(cModel);
                 }
             }
-            if (monitor != null)
+            if (monitor != null) {
                 monitor.worked(1);
+            }
         }
 
         // create our Groups
@@ -118,16 +147,19 @@ public class ApexDoc {
 
         // load up optional specified file templates
         String projectDetail = fm.parseHTMLFile(authorfilepath);
-        if (monitor != null)
+        if (monitor != null) {
             monitor.worked(1);
+        }
         String homeContents = fm.parseHTMLFile(homefilepath);
-        if (monitor != null)
+        if (monitor != null) {
             monitor.worked(1);
+        }
 
         // create our set of HTML files
         fm.createDoc(mapGroupNameToClassGroup, cModels, projectDetail, homeContents, hostedSourceURL, monitor);
-        if (monitor != null)
+        if (monitor != null) {
             monitor.done();
+        }
 
         // we are done!
         System.out.println("ApexDoc has completed!");
@@ -136,32 +168,37 @@ public class ApexDoc {
     private static void printHelp() {
         System.out.println("ApexDoc - a tool for generating documentation from Salesforce Apex code class files.\n");
         System.out.println("    Invalid Arguments detected.  The correct syntax is:\n");
-        System.out.println("apexdoc -s <source_directory> [-t <target_directory>] [-g <source_url>] [-h <homefile>] [-a <authorfile>] [-p <scope>]\n");
+        System.out.println("apexdoc -s <source_directory> [-t <target_directory>] [-g <source_url>] [-h <homefile>] [-a <authorfile>] [-p <scope>] [-o <sort_order>] [-n <toc_description>] [-d <document_title>]\n");
         System.out.println("<source_directory> - The folder location which contains your apex .cls classes");
         System.out.println("<target_directory> - Optional. Specifies your target folder where documentation will be generated.");
         System.out.println("<source_url> - Optional. Specifies a URL where the source is hosted (so ApexDoc can provide links to your source).");
         System.out.println("<homefile> - Optional. Specifies the html file that contains the contents for the home page\'s content area.");
         System.out.println("<authorfile> - Optional. Specifies the text file that contains project information for the documentation header.");
         System.out.println("<scope> - Optional. Semicolon seperated list of scopes to document.  Defaults to 'global;public'. ");
+        System.out.println("<document_title> - Optional. The value for the document's <title> attribute.  Defaults to 'ApexDocs'. ");
+        System.out.println("<toc_description> - Optional. If 'false', will hide the method's description in the class's TOC. Defaults to 'true'.");
+        System.out.println("<sort_order> - Optional. The order in which class methods, properties, and inner classes are presented. Either 'logical', the order they appear in the source file, or 'alpha', alphabetically. Defaults to 'alpha'. ");
     }
 
-    private static TreeMap<String, ClassGroup> createMapGroupNameToClassGroup(ArrayList<ClassModel> cModels,
-            String sourceDirectory) {
+    private static TreeMap<String, ClassGroup> createMapGroupNameToClassGroup(ArrayList<ClassModel> cModels, String sourceDirectory) {
         TreeMap<String, ClassGroup> map = new TreeMap<String, ClassGroup>();
         for (ClassModel cmodel : cModels) {
-            String strGroup = cmodel.getClassGroup();
-            String strGroupContent = cmodel.getClassGroupContent();
-            if (strGroupContent != null)
-                strGroupContent = sourceDirectory + "/" + strGroupContent;
+            String group = cmodel.getClassGroup();
+            String groupContent = cmodel.getClassGroupContent();
+            if (groupContent != null) {
+                groupContent = sourceDirectory + "/" + groupContent;
+            }
+
             ClassGroup cg;
-            if (strGroup != null) {
-                cg = map.get(strGroup);
-                if (cg == null)
-                    cg = new ClassGroup(strGroup, strGroupContent);
-                else if (cg.getContentSource() == null)
-                    cg.setContentSource(strGroupContent);
+            if (group != null) {
+                cg = map.get(group);
+                if (cg == null) {
+                    cg = new ClassGroup(group, groupContent);
+                } else if (cg.getContentSource() == null) {
+                    cg.setContentSource(groupContent);
+                }
                 // put the new or potentially modified ClassGroup back in the map
-                map.put(strGroup, cg);
+                map.put(group, cg);
             }
         }
         return map;
@@ -204,9 +241,11 @@ public class ApexDoc {
                 if (strLine.length() == 0)
                     continue;
 
-                // ignore anything after // style comments. this allows hiding of tokens from ApexDoc.
+                // ignore anything after // style comments. this allows hiding
+                //  of tokens from ApexDoc. However, don't ignore when line
+                // doesn't start with //, we want to preserver @example comments
                 int ich = strLine.indexOf("//");
-                if (ich > -1) {
+                if (ich == 0) {
                     strLine = strLine.substring(0, ich);
                 }
 
@@ -214,7 +253,7 @@ public class ApexDoc {
                 if (strLine.startsWith("/*")) {
                     commentsStarted = true;
                     boolean commentEnded = false;
-                    if(strLine.startsWith("/**")){
+                    if (strLine.startsWith("/**")) {
                     	if (strLine.endsWith("*/")) {
                             strLine = strLine.replace("*/", "");
                             commentEnded = true;
@@ -231,7 +270,7 @@ public class ApexDoc {
 
                 if (commentsStarted && strLine.endsWith("*/")) {
                     strLine = strLine.replace("*/", "");
-                    if(docBlockStarted){
+                    if (docBlockStarted) {
                     	lstComments.add(strLine);
                     	docBlockStarted = false;
                     }
@@ -240,7 +279,7 @@ public class ApexDoc {
                 }
 
                 if (commentsStarted) {
-                	if(docBlockStarted){
+                	if (docBlockStarted) {
                 		lstComments.add(strLine);
                 	}
                     continue;
@@ -295,10 +334,12 @@ public class ApexDoc {
                     }
 
                     // add it to its parent (or track the parent)
-                    if (cModelParent != null)
+                    if (cModelParent != null) {
                         cModelParent.addChildClass(cModelNew);
-                    else
+                    }
+                    else {
                         cModelParent = cModelNew;
+                    }
                     continue;
                 }
 
@@ -318,12 +359,13 @@ public class ApexDoc {
 
                 // handle set & get within the property
                 if (strLine.contains(" get ") ||
-                        strLine.contains(" set ") ||
-                        strLine.contains(" get;") ||
-                        strLine.contains(" set;") ||
-                        strLine.contains(" get{") ||
-                        strLine.contains(" set{"))
+                    strLine.contains(" set ") ||
+                    strLine.contains(" get;") ||
+                    strLine.contains(" set;") ||
+                    strLine.contains(" get{") ||
+                    strLine.contains(" set{")) {
                     continue;
+                }
 
                 // must be a property
                 PropertyModel propertyModel = new PropertyModel();
@@ -355,19 +397,18 @@ public class ApexDoc {
         return null;
     }
 
-    private static void fillPropertyModel(PropertyModel propertyModel, String name, ArrayList<String> lstComments,
-            int iLine) {
+    private static void fillPropertyModel(PropertyModel propertyModel, String name, ArrayList<String> lstComments, int iLine) {
         propertyModel.setNameLine(name, iLine);
         boolean inDescription = false;
         int i = 0;
         for (String comment : lstComments) {
         	i++;
             comment = comment.trim();
-            int idxStart = comment.toLowerCase().indexOf("@description");
+            int idxStart = comment.toLowerCase().indexOf(Tokens.DESCRIPTION);
             if (idxStart != -1 || i == 1) {
-            	if (idxStart != -1 && comment.length() > idxStart + 13)
-            		propertyModel.setDescription(comment.substring(idxStart + 13).trim());
-            	else{
+            	if (idxStart != -1 && comment.length() > Tokens.DESCRIPTION.length()) {
+            		propertyModel.setDescription(comment.substring(Tokens.DESCRIPTION.length()).trim());
+                } else {
                 	Pattern p = Pattern.compile("\\s");
                 	Matcher m = p.matcher(comment);
                 	if (m.find()) {
@@ -383,8 +424,9 @@ public class ApexDoc {
                 int j;
                 for (j = 0; j < comment.length(); j++) {
                     char ch = comment.charAt(j);
-                    if (ch != '*' && ch != ' ')
+                    if (ch != '*' && ch != ' ') {
                         break;
+                    }
                 }
                 if (j < comment.length()) {
                     propertyModel.setDescription(propertyModel.getDescription() + ' ' + comment.substring(j));
@@ -400,68 +442,94 @@ public class ApexDoc {
         boolean inExample = false;
         int i = 0;
         for (String comment : lstComments) {
-        	i++;
+            i++;
             comment = comment.trim();
 
-            int idxStart = comment.toLowerCase().indexOf("@author");
+            int idxStart = comment.toLowerCase().indexOf(Tokens.AUTHOR);
             if (idxStart != -1) {
-                mModel.setAuthor(comment.substring(idxStart + 8).trim());
+                mModel.setAuthor(comment.substring(idxStart + Tokens.AUTHOR.length()).trim());
                 inDescription = false;
                 inExample = false;
                 continue;
             }
 
-            idxStart = comment.toLowerCase().indexOf("@date");
+            idxStart = comment.toLowerCase().indexOf(Tokens.EXCEPTION);
             if (idxStart != -1) {
-                mModel.setDate(comment.substring(idxStart + 5).trim());
+                mModel.setException(comment.substring(idxStart + Tokens.EXCEPTION.length()).trim());
                 inDescription = false;
                 inExample = false;
                 continue;
             }
 
-            idxStart = comment.toLowerCase().indexOf("@return");
+            idxStart = comment.toLowerCase().indexOf(Tokens.DEPRECATED);
             if (idxStart != -1) {
-                mModel.setReturns(comment.substring(idxStart + 7).trim());
+                mModel.setDeprecated(comment.substring(idxStart + Tokens.DEPRECATED.length()).trim());
                 inDescription = false;
                 inExample = false;
                 continue;
             }
 
-            idxStart = comment.toLowerCase().indexOf("@param");
+            idxStart = comment.toLowerCase().indexOf(Tokens.DATE);
             if (idxStart != -1) {
-                mModel.getParams().add(comment.substring(idxStart + 6).trim());
+                mModel.setDate(comment.substring(idxStart + Tokens.DATE.length()).trim());
                 inDescription = false;
                 inExample = false;
                 continue;
             }
 
-            idxStart = comment.toLowerCase().indexOf("@description");
+            idxStart = comment.toLowerCase().indexOf(Tokens.RETURN);
+            if (idxStart != -1) {
+                mModel.setReturns(comment.substring(idxStart + Tokens.RETURN.length()).trim());
+                inDescription = false;
+                inExample = false;
+                continue;
+            }
+
+            idxStart = comment.toLowerCase().indexOf(Tokens.PARAM);
+            if (idxStart != -1) {
+                mModel.getParams().add(comment.substring(idxStart + Tokens.PARAM.length()).trim());
+                inDescription = false;
+                inExample = false;
+                continue;
+            }
+
+            idxStart = comment.toLowerCase().indexOf(Tokens.SEE);
+            if (idxStart != -1) {
+                mModel.setSee(comment.substring(idxStart + Tokens.SEE.length()).trim());
+                inDescription = false;
+                inExample = false;
+                continue;
+            }
+
+            idxStart = comment.toLowerCase().indexOf(Tokens.DESCRIPTION);
             if (idxStart != -1 || i == 1) {
-                if (idxStart != -1 && comment.length() >= idxStart + 12)
-                    mModel.setDescription(comment.substring(idxStart + 12).trim());
-                else{
-                	Pattern p = Pattern.compile("\\s");
-                	Matcher m = p.matcher(comment);
-                	if (m.find()) {
-                		mModel.setDescription(comment.substring(m.start()).trim());
-                	}
+                int substringStart = idxStart + Tokens.DESCRIPTION.length();
+                if (idxStart != -1 && comment.length() >= substringStart) {
+                    mModel.setDescription(comment.substring(substringStart).trim());
+                } else {
+                    Pattern p = Pattern.compile("\\s");
+                    Matcher m = p.matcher(comment);
+                    if (m.find()) {
+                        mModel.setDescription(comment.substring(m.start()).trim());
+                    }
                 }
                 inDescription = true;
                 inExample = false;
                 continue;
             }
 
-            idxStart = comment.toLowerCase().indexOf("@example");
+            idxStart = comment.toLowerCase().indexOf(Tokens.EXAMPLE);
             if (idxStart != -1 || i == 1) {
-                if (idxStart != -1 && comment.length() >= idxStart + 8) {
-                    mModel.setExample(comment.substring(idxStart + 8).trim());
+                int substringStart = idxStart + Tokens.EXAMPLE.length();
+                if (idxStart != -1 && comment.length() >= substringStart) {
+                    mModel.setExample(comment.substring(substringStart).trim());
                 } else {
-                	Pattern p = Pattern.compile("\\s");
-                	Matcher m = p.matcher(comment.substring(8));
+                    Pattern p = Pattern.compile("\\s");
+                    Matcher m = p.matcher(comment.substring(substringStart));
 
-                	if (m.find()) {
-                		mModel.setExample(comment.substring(m.start()).trim());
-                	}
+                    if (m.find()) {
+                        mModel.setExample(comment.substring(m.start()).trim());
+                    }
                 }
                 inDescription = false;
                 inExample = true;
@@ -473,21 +541,21 @@ public class ApexDoc {
                 int j;
                 for (j = 0; j < comment.length(); j++) {
                     char ch = comment.charAt(j);
-                    if (ch != '*' && ch != ' ')
+                    if (ch != '*' && ch != ' ') {
                         break;
+                    }
                 }
-                if (j < comment.length()) {
-                    if (inDescription) {
+
+                boolean isBlank = comment.equals("*");
+                if (j < comment.length() || isBlank) {
+                    if (inDescription && !isBlank) {
                         mModel.setDescription(mModel.getDescription() + ' ' + comment.substring(j));
                     } else if (inExample) {
-                        // Lets's not include the tag
-                        if (j == 0 && comment.substring(2, 10) == "* @example") {
-                            comment = comment.substring(10);
-                        }
+                        // preserve whitespace in @example blocks using isBlank flag
+                        String previous = mModel.getExample().trim().length() == 0 ? "" : "\n";
+                        String line = previous + (isBlank ? "\n" : comment.substring(2));
 
-                        mModel.setExample(mModel.getExample()
-                            + (mModel.getExample().trim().length() == 0 ? "" : "\n")
-                            + comment.substring(2));
+                        mModel.setExample(mModel.getExample() + line);
                     }
                 }
                 continue;
@@ -495,55 +563,70 @@ public class ApexDoc {
         }
     }
 
-    private static void fillClassModel(ClassModel cModelParent, ClassModel cModel, String name,
-            ArrayList<String> lstComments, int iLine) {
+    private static void fillClassModel(ClassModel cModelParent, ClassModel cModel, String name, ArrayList<String> lstComments, int iLine) {
         cModel.setNameLine(name, iLine);
-        if (name.toLowerCase().contains(" interface "))
+        if (name.toLowerCase().contains(" interface ")) {
             cModel.setIsInterface(true);
+        }
         boolean inDescription = false;
         int i = 0;
         for (String comment : lstComments) {
-        	i++;
+            i++;
             comment = comment.trim();
 
-            int idxStart = comment.toLowerCase().indexOf("@author");
+            int idxStart = comment.toLowerCase().indexOf(Tokens.AUTHOR);
             if (idxStart != -1) {
-                cModel.setAuthor(comment.substring(idxStart + 7).trim());
+                cModel.setAuthor(comment.substring(idxStart + Tokens.AUTHOR.length()).trim());
                 inDescription = false;
                 continue;
             }
 
-            idxStart = comment.toLowerCase().indexOf("@date");
+            idxStart = comment.toLowerCase().indexOf(Tokens.DATE);
             if (idxStart != -1) {
-                cModel.setDate(comment.substring(idxStart + 5).trim());
+                cModel.setDate(comment.substring(idxStart + Tokens.DATE.length()).trim());
                 inDescription = false;
                 continue;
             }
 
-            idxStart = comment.toLowerCase().indexOf("@group "); // needed to include space to not match group-content.
+            idxStart = comment.toLowerCase().indexOf(Tokens.DEPRECATED);
             if (idxStart != -1) {
-                cModel.setClassGroup(comment.substring(idxStart + 6).trim());
+                cModel.setDeprecated(comment.substring(idxStart + Tokens.DEPRECATED.length()).trim());
                 inDescription = false;
                 continue;
             }
 
-            idxStart = comment.toLowerCase().indexOf("@group-content");
+            idxStart = comment.toLowerCase().indexOf(Tokens.GROUP);
             if (idxStart != -1) {
-                cModel.setClassGroupContent(comment.substring(idxStart + 14).trim());
+                cModel.setClassGroup(comment.substring(idxStart + Tokens.GROUP.length()).trim());
                 inDescription = false;
                 continue;
             }
 
-            idxStart = comment.toLowerCase().indexOf("@description");
+            idxStart = comment.toLowerCase().indexOf(Tokens.GROUP_CONTENT);
+            if (idxStart != -1) {
+                cModel.setClassGroupContent(comment.substring(idxStart + Tokens.GROUP_CONTENT.length()).trim());
+                inDescription = false;
+                continue;
+            }
+
+            idxStart = comment.toLowerCase().indexOf(Tokens.SEE);
+            if (idxStart != -1) {
+                cModel.setSee(comment.substring(idxStart + Tokens.SEE.length()).trim());
+                inDescription = false;
+                continue;
+            }
+
+            idxStart = comment.toLowerCase().indexOf(Tokens.DESCRIPTION);
             if (idxStart != -1 || i == 1) {
-            	if (idxStart != -1 && comment.length() > idxStart + 13)
-            		cModel.setDescription(comment.substring(idxStart + 12).trim());
-            	else{
-                	Pattern p = Pattern.compile("\\s");
-                	Matcher m = p.matcher(comment);
-                	if (m.find()) {
-                		cModel.setDescription(comment.substring(m.start()).trim());
-                	}
+                int subStringStart = idxStart + Tokens.DESCRIPTION.length();
+                if (idxStart != -1 && comment.length() > subStringStart) {
+                    cModel.setDescription(comment.substring(subStringStart).trim());
+                } else {
+                    Pattern p = Pattern.compile("\\s");
+                    Matcher m = p.matcher(comment);
+                    if (m.find()) {
+                        cModel.setDescription(comment.substring(m.start()).trim());
+                    }
                 }
                 inDescription = true;
                 continue;
@@ -575,17 +658,16 @@ public class ApexDoc {
      * @return - the previous word, or null if none found.
      */
     public static String strPrevWord(String str, int iSearch) {
-        if (str == null)
-            return null;
-        if (iSearch >= str.length())
-            return null;
+        if (str == null) return null;
+        if (iSearch >= str.length()) return null;
 
         int iStart;
         int iEnd;
         for (iStart = iSearch - 1, iEnd = 0; iStart >= 0; iStart--) {
             if (iEnd == 0) {
-                if (str.charAt(iStart) == ' ')
+                if (str.charAt(iStart) == ' ') {
                     continue;
+                }
                 iEnd = iStart + 1;
             } else if (str.charAt(iStart) == ' ') {
                 iStart++;

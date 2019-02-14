@@ -1,1 +1,12 @@
+# build
 /target
+
+# project
+.classpath
+.project
+
+# logo source
+*.svg
+
+# editors
+.vscode

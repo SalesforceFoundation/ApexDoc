@@ -1,26 +1,24 @@
     // global variables
     var listAllScope = ["global", "public", "private", "testMethod", "webService"];
-    
+
     // document ready function
-    $(function () {  
+    $(function () {
     	readScopeCookie();
-    	
     	hideAllScopes();
-    	
-    	showScopes();
-    	      		
+		showScopes();
     });
-    
+
     function expandListToClass(liClass) {
-        var cl = $('#mynavbar').collapsibleList('.header', {search: false, animate: false});
+		var cl = $('#mynavbar').collapsibleList('.header', { search: false, animate: false });
+
         var clist = $('#mynavbar').data('collapsibleList');
-        clist.collapseAll();  
+        clist.collapseAll();
         $('.nav-selected').each(function() { $(this).removeClass('nav-selected'); });
 
         if (liClass != null) {
         	// liClass is a jquery object.
             liClass.addClass('nav-selected');
-            clist.expandToElementListScope(liClass, getListScope());        
+            clist.expandToElementListScope(liClass, getListScope());
         } else {
 	        // get just the filename without extension from the url
 	        var i = location.pathname.lastIndexOf("/");
@@ -32,9 +30,9 @@
 	            var li = $('#idMenu'+filename);
 	            clist.expandToElementListScope(li, getListScope());
 	        }
-	    }    
-    }  
-    
+	    }
+    }
+
     function getListScope() {
     	var list = [];
     	$('input:checkbox').each(function(index, elem) {
@@ -46,26 +44,26 @@
     	});
     	return list;
     }
-    
+
     function showScopes() {
     	var list = getListScope();
     	for (var i = 0; i < list.length; i++) {
     		ToggleScope(list[i], true);
     	}
     }
-    
+
     function showAllScopes() {
     	for (var i = 0; i < listAllScope.length; i++) {
     		ToggleScope(listAllScope[i], true);
-    	}    
+    	}
     }
 
     function hideAllScopes() {
     	for (var i = 0; i < listAllScope.length; i++) {
     		ToggleScope(listAllScope[i], false);
-    	}    
+    	}
     }
-    
+
     function setScopeCookie() {
     	var list = getListScope();
     	var strScope = '';
@@ -76,16 +74,16 @@
     	}
     	document.cookie = 'scope=' + strScope + '; path=/';
     }
-    
+
     function readScopeCookie() {
     	var strScope = getCookie('scope');
     	if (strScope != null && strScope != '') {
-    		
+
     		// first clear all the scope checkboxes
     		$('input:checkbox').each(function(index, elem) {
 				elem.checked = false;
     		});
-    		
+
     		// now check the appropriate scope checkboxes
 		    var list = strScope.split(',');
 		    for (var i = 0; i < list.length; i++) {
@@ -94,7 +92,7 @@
 		    }
 		} else {
 			showAllScopes();
-		}    
+		}
     }
 
 	function getCookie(cname) {
@@ -108,13 +106,11 @@
 	    return "";
 	}
 
-    function gotomenu(url, event) {
-    	if (document.location.href.toLowerCase().indexOf(url.toLowerCase()) == -1)
+    function goToLocation(url, event) {
+    	if (document.location.href.toLowerCase().indexOf(url.toLowerCase()) == -1) {
 			document.location.href = url;
-		else {
+		} else {
 	        var clist = $('#mynavbar').data('collapsibleList');
-			var filename = url.replace('.html', '');
-            //var li = $('#idMenu'+filename);
             var li = $(event.currentTarget.parentNode);
             var isCollapsed = li.hasClass('collapsed');
             if (isCollapsed) {
@@ -122,11 +118,11 @@
         	    event.stopImmediatePropagation();
 			} else {
 				clist.collapseElement(li);
-				event.stopImmediatePropagation();		
+				event.stopImmediatePropagation();
 			}
 		}
     }
-        
+
     function ToggleScope(scope, isShow) {
     	setScopeCookie();
     	if (isShow == true) {
@@ -135,18 +131,20 @@
 
 	    	// show all methods of the given scope
 	    	$('.methodscope' + scope).show();
-	    	
+
+			// NOTE: not sure if we want to re-expand the menu on every toggle?
+			// this is sort of strange behavior I think...
 			// redisplay the class list
-			expandListToClass();						
+			expandListToClass();
 		} else {
 	    	// hide all properties of the given scope
 	    	$('.propertyscope' + scope).hide();
 
 	    	// hide all methods of the given scope
 	    	$('.methodscope' + scope).hide();
-	    	
+
 	    	// hide all classes of the given scope
 	    	$('.classscope' + scope).hide();
-		}    	
-    }                
-    
+		}
+    }
+
