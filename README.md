@@ -84,7 +84,7 @@ In order for ApexDoc to identify class methods, the method line must contain an 
 | @description | one or more lines that provide an overview of the method|
 | @param *param name* | a description of what the parameter does|
 | @return | a description of the return value from the method|
-| @example | Example code usage. This will be wrapped in <code> tags to preserve whitespace|
+| @example | Example code usage. This will be wrapped in `<code>` tags to preserve whitespace|
 Example
 ```
     /*******************************************************************************************************
