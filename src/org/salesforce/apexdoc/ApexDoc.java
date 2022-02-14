@@ -27,6 +27,7 @@ public class ApexDoc {
             PrintStream ps = new PrintStream(fos);
             System.setOut(ps);
         } catch (Exception ex) {
+            System.out.println("Error: " + ex.getMessage());
         }
     }
 
@@ -80,7 +81,6 @@ public class ApexDoc {
                 System.exit(-1);
             }
         }
-
         // default scope to global and public if not specified
         if (rgstrScope == null || rgstrScope.length == 0) {
             rgstrScope = new String[3];
@@ -529,7 +529,11 @@ public class ApexDoc {
 
             idxStart = comment.toLowerCase().indexOf("@group-content");
             if (idxStart != -1) {
-                cModel.setClassGroupContent(comment.substring(idxStart + 14).trim());
+                String path = comment.substring(idxStart + 14).trim();
+                File f = new File(path);
+                if (f.exists()) {
+                    cModel.setClassGroupContent(path);
+                }
                 inDescription = false;
                 continue;
             }
