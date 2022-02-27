@@ -39,7 +39,7 @@ Located in the lines above the class declaration.  The special tokens are all op
 |-------|-------------|
 | @author | the author of the class |
 | @date | the date the class was first implemented |
-| @group | a group to display this class under, in the menu hierarchy|
+| @group | a group to display this class under, in the menu hierarchy. if undeclared, defaults to 'Miscellaneous'|
 | @group-content | a relative path to a static html file that provides content about the group|
 | @description | one or more lines that provide an overview of the class|
 
