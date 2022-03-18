@@ -1,6 +1,8 @@
 package org.salesforce.apexdoc;
 
 public class ApexModel {
+    private String deprecated;
+
     public String getNameLine() {
         return nameLine;
     }
@@ -29,6 +31,13 @@ public class ApexModel {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public void setDeprecated(String dep) {
+        this.deprecated = dep;
+    }
+    public String getDeprecated() {
+        return deprecated == null ? "" : deprecated;
     }
 
     public String getDate() {

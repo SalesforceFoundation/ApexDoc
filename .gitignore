@@ -1,1 +1,9 @@
-/target
+/*
+!.gitignore
+!.src/
+!.travis.yml
+!.classpath
+!pom.xml
+!README.md
+!LICENSE
+/src/META-INF/*
