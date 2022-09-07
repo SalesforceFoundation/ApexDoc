@@ -38,9 +38,24 @@ public class FileManager {
                 out.append(c);
             }
         }
+        replaceAll(out,Constants.newLinePlaceHolder,Constants.newLineHTML);
         return out.toString();
     }
 
+    /**
+     * There is no replaceAll method for Stringbuilder, so custom method
+     * */
+    public static void replaceAll(StringBuilder builder, String oldString, String newString)
+    {
+        int index = builder.indexOf(oldString);
+        while (index != -1)
+        {
+            builder.replace(index, index + oldString.length(), newString);
+            index += newString.length(); // Move to the end of the replacement
+            index = builder.indexOf(oldString, index);
+        }
+    }
+    
     public FileManager(String path) {
         infoMessages = new StringBuffer();
 
@@ -212,6 +227,8 @@ public class FileManager {
                     "<h2 class='subsection-title'>Methods</h2>" +
                             "<div class='subsection-container'> ";
 
+            
+            
             // method Table of Contents (TOC)
             contents += "<ul class='methodTOC'>";
             for (MethodModel method : cModel.getMethodsSorted()) {
